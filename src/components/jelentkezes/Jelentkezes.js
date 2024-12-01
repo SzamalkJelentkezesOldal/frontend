@@ -1,13 +1,14 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ApiContext } from "../../context/ApiContext";
 import React from "react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import Dropzone from "./Dropzone/Dropzone";
 import "./Dropzone/dropzone.css";
+import axios from "axios";
 
 function Jelentkezes() {
   const { szakLista, postAdat } = useContext(ApiContext);
@@ -16,12 +17,45 @@ function Jelentkezes() {
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   const [portfolio, setPortfolio] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [images, setImages] = useState([]);
+
+  const kepElkuld = async (e) => {
+    if (!files.length) return;
+    const URL = process.env.REACT_APP_CLOUDINARY_URL;
+    const uploaders = files.map((file) => {
+      const formData = new FormData();
+      formData.append("file", file[0]);
+      formData.append("upload_preset", "testing");
+      formData.append("api_key", "832529985323792");
+      return axios
+        .post(URL, formData, {
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        })
+        .then((response) => {
+          const data = response.data;
+
+          const imageurl = data.secure_url;
+          setImages((prev) => {
+            const newArr = [...prev];
+            newArr.push(imageurl);
+            return newArr;
+          });
+        });
+    });
+    await axios.all(uploaders).then(() => {
+      console.log("Összes feltöltődött!");
+    });
+  };
 
   function jelentkezoFelvesz() {
+    kepElkuld();
     const jelentkezoAdatok = {
       jelentkezo: { nev, email, tel },
       jelentkezes: { kivalasztottSzakok },
+      portfolio: { images },
     };
+    console.log(images);
     postAdat("ujJelentkezo", jelentkezoAdatok);
   }
 
@@ -98,7 +132,7 @@ function Jelentkezes() {
           </p>
         </div>
 
-        {portfolio ? <Dropzone /> : ""}
+        {portfolio ? <Dropzone setFiles={setFiles} files={files} /> : ""}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Név</InputGroup.Text>

@@ -3,13 +3,10 @@ import { useDropzone } from "react-dropzone";
 import ListGroup from "react-bootstrap/ListGroup";
 import DropzonePreview from "./DropzonePreview";
 
-function Dropzone() {
-  const [files, setFiles] = useState([]);
+function Dropzone({ setFiles, files }) {
   const [displayError, setDisplayError] = useState(false);
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    console.log(acceptedFiles);
-
     if (acceptedFiles.length) {
       setDisplayError(false);
       setFiles((previousFiles) => [
@@ -33,35 +30,12 @@ function Dropzone() {
     maxSize: 1000000,
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!files?.length) return;
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("file", file[0]));
-    formData.append("upload_preset", "testing");
-
-    const URL = process.env.REACT_APP_CLOUDINARY_URL;
-    try {
-      const response = await fetch(URL, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error("Upload failed:", error);
-    }
-  };
-
   function removeFile(name) {
     setFiles((files) => files.filter((file) => file[0].name !== name));
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <>
       <div {...getRootProps()} className="customDropzone">
         <input {...getInputProps()} />
         {isDragActive ? (
@@ -95,7 +69,7 @@ function Dropzone() {
           </div>
         )}
       </div>
-      <ListGroup className="mt-2">
+      <ListGroup className="mt-2 mb-2">
         {files.map((file, index) => {
           return (
             <DropzonePreview
@@ -108,15 +82,12 @@ function Dropzone() {
           );
         })}
       </ListGroup>
-      <div className="d-flex justify-content-between align-items-center">
-        <button type="submit" className="btn btn-outline-primary my-3">
-          Képek kiválasztása
-        </button>
+      <div className="d-flex  align-items-center">
         {displayError ? (
           <p className="text-danger">Maximum méret: 15MB</p>
         ) : undefined}
       </div>
-    </form>
+    </>
   );
 }
 
