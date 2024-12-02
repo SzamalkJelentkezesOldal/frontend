@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { ApiContext } from "../../context/ApiContext";
 import React from "react";
 import Select from "react-select";
@@ -17,19 +17,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const jelentkezesSchema = z.object({
   email: z.string().email("Érvénytelen e-mail cím!"),
-  nev: z.string().nonempty("A név megadása kötelező!"),
+  nev: z.string().min(1, "A név megadása kötelező!"),
   tel: z
     .string()
     .length(11, "A telefonszámnak 11 karakter hosszúnak kell lennie!"),
-  szakok: z.array(z.string()).min(1, "Legalább egy szakot ki kell választani!"),
+  szakok: z.array(z.number()).min(1, "Legalább egy szakot ki kell választani!"),
 });
 
 function Jelentkezes() {
   const { szakLista, postAdat } = useContext(ApiContext);
-  const [kivalasztottSzakok, setKivalasztottSzakok] = useState([]);
   const [portfolio, setPortfolio] = useState(false);
   const [files, setFiles] = useState([]);
   const [images, setImages] = useState([]);
+  const szakokRef = useRef();
 
   const {
     register,
@@ -41,7 +41,7 @@ function Jelentkezes() {
   } = useForm({
     resolver: zodResolver(jelentkezesSchema),
     defaultValues: {
-      szakok: [], // Alapértelmezett érték egy üres tömb
+      szakok: [],
     },
   });
 
@@ -68,20 +68,21 @@ function Jelentkezes() {
   const jelentkezoFelvesz = async () => {
     let uploadedImages = [];
 
-    const adatok = getValues(["nev", "email", "tel"]);
+    const adatok = getValues(["nev", "email", "tel", "szakok"]);
 
     if (files.length) {
-      uploadedImages = await kepElkuld(); // Feltöltés, ha vannak fájlok
+      uploadedImages = await kepElkuld();
     }
 
     const jelentkezoAdatok = {
-      jelentkezo: { nev: adatok.nev, email: adatok.email, tel: adatok.tel },
-      jelentkezes: { kivalasztottSzakok },
-      portfolio: { images: uploadedImages }, // Üres tömb, ha nincs feltöltött kép
+      jelentkezo: { nev: adatok[0], email: adatok[1], tel: adatok[2] },
+      jelentkezes: { kivalasztottSzakok: adatok[3] },
+      portfolio: { images: uploadedImages },
     };
 
     postAdat("ujJelentkezo", jelentkezoAdatok);
     reset();
+    szakokRef.current.clearValue(); // mivel a react-select nem kompatibilis a react-hook-formos reset()-el
   };
 
   function szakListaOptions() {
@@ -97,18 +98,6 @@ function Jelentkezes() {
   }
 
   function selectAdatok(event) {
-    if (event && event.length) {
-      setKivalasztottSzakok((elozolegKivalasztottSzakok) => {
-        const jelenlegKivalasztottSzakok = [
-          ...elozolegKivalasztottSzakok,
-          event[event.length - 1].value,
-        ];
-        return jelenlegKivalasztottSzakok;
-      });
-    } else {
-      setKivalasztottSzakok([]);
-    }
-
     {
       if (event && event.length) {
         const needsPortfolio = event.some((item) => item.portfolio);
@@ -134,6 +123,7 @@ function Jelentkezes() {
       >
         <div className="mb-3">
           <Select
+            ref={szakokRef}
             onChange={(e) => {
               selectAdatok(e);
               const szakok = e ? e.map((item) => item.value) : [];
