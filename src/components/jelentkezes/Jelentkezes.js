@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { ApiContext } from "../../context/ApiContext";
 import React from "react";
 import Select from "react-select";
@@ -11,27 +11,39 @@ import "./Dropzone/dropzone.css";
 import axios from "axios";
 import Zoom from "@mui/material/Zoom";
 import Tooltip from "@mui/material/Tooltip";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const jelentkezesSchema = z.object({
+  email: z.string().email("Érvénytelen e-mail cím!"),
+  nev: z.string().nonempty("A név megadása kötelező!"),
+  tel: z
+    .string()
+    .length(11, "A telefonszámnak 11 karakter hosszúnak kell lennie!"),
+  szakok: z.array(z.string()).min(1, "Legalább egy szakot ki kell választani!"),
+});
 
 function Jelentkezes() {
   const { szakLista, postAdat } = useContext(ApiContext);
   const [kivalasztottSzakok, setKivalasztottSzakok] = useState([]);
-  const [nev, setNev] = useState("");
-  const [email, setEmail] = useState("");
-  const [tel, setTel] = useState("");
   const [portfolio, setPortfolio] = useState(false);
   const [files, setFiles] = useState([]);
   const [images, setImages] = useState([]);
-  const selectInputRef = useRef();
 
-  function sikeresJelentkezes() {
-    setNev("");
-    setTel("");
-    setEmail("");
-    setPortfolio(false);
-    setFiles([]);
-    setImages([]);
-    selectInputRef.current.clearValue();
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+    setValue,
+  } = useForm({
+    resolver: zodResolver(jelentkezesSchema),
+    defaultValues: {
+      szakok: [], // Alapértelmezett érték egy üres tömb
+    },
+  });
 
   const kepElkuld = async (e) => {
     if (!files.length) return;
@@ -56,18 +68,20 @@ function Jelentkezes() {
   const jelentkezoFelvesz = async () => {
     let uploadedImages = [];
 
+    const adatok = getValues(["nev", "email", "tel"]);
+
     if (files.length) {
       uploadedImages = await kepElkuld(); // Feltöltés, ha vannak fájlok
     }
 
     const jelentkezoAdatok = {
-      jelentkezo: { nev, email, tel },
+      jelentkezo: { nev: adatok.nev, email: adatok.email, tel: adatok.tel },
       jelentkezes: { kivalasztottSzakok },
       portfolio: { images: uploadedImages }, // Üres tömb, ha nincs feltöltött kép
     };
 
     postAdat("ujJelentkezo", jelentkezoAdatok);
-    sikeresJelentkezes();
+    reset();
   };
 
   function szakListaOptions() {
@@ -113,22 +127,25 @@ function Jelentkezes() {
       className="container-fluid d-flex justify-content-center align-items-center"
       style={{ padding: 10 + "vh" }}
     >
-      <div
+      <form
+        onSubmit={handleSubmit(jelentkezoFelvesz)}
         className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
         style={{ width: 500 + "px" }}
       >
         <div className="mb-3">
           <Select
-            onChange={(e) => selectAdatok(e)}
+            onChange={(e) => {
+              selectAdatok(e);
+              const szakok = e ? e.map((item) => item.value) : [];
+              setValue("szakok", szakok);
+            }}
             isMulti
             name="colors"
-            ref={selectInputRef}
             options={szakOptions}
             className="basic-multi-select"
             classNamePrefix="select"
             placeholder="Szakma kiválasztása..."
             noOptionsMessage={() => "Nincs találat"}
-            required
             components={animatedComponents}
             styles={{
               valueContainer: (baseStyles) => ({
@@ -141,6 +158,9 @@ function Jelentkezes() {
           <p className="lead" style={{ fontSize: 13 + "px", marginBottom: 0 }}>
             N = Nappali | E = Esti
           </p>
+          {errors.szakok && (
+            <span className="text-danger">{errors.szakok.message}</span>
+          )}
         </div>
 
         {portfolio ? (
@@ -160,44 +180,58 @@ function Jelentkezes() {
           ""
         )}
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text>Név</InputGroup.Text>
-          <Form.Control
-            placeholder="Róka rudi"
-            value={nev}
-            onChange={(evt) => setNev(evt.target.value)}
-          />
-        </InputGroup>
+        <div className="mb-3">
+          <InputGroup>
+            <InputGroup.Text>Név</InputGroup.Text>
+            <Form.Control
+              type="text"
+              placeholder="Róka rudi"
+              {...register("nev")}
+            />
+          </InputGroup>
+          {errors.nev && (
+            <span className="text-danger">{errors.nev.message}</span>
+          )}
+        </div>
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text>E-mail</InputGroup.Text>
-          <Form.Control
-            placeholder="rokarudi@gmail.com"
-            type="email"
-            value={email}
-            onChange={(evt) => setEmail(evt.target.value)}
-          />
-        </InputGroup>
+        <div className="mb-3">
+          <InputGroup>
+            <InputGroup.Text>E-mail</InputGroup.Text>
+            <Form.Control
+              placeholder="rokarudi@gmail.com"
+              type="email"
+              {...register("email")}
+            />
+          </InputGroup>
+          {errors.email && (
+            <span className="text-danger">{errors.email.message}</span>
+          )}
+        </div>
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text>Telefonszám</InputGroup.Text>
-          <Form.Control
-            type="tel"
-            placeholder="06201234567"
-            pattern="06[0-9]{9}"
-            maxLength={11}
-            value={tel}
-            onChange={(evt) => setTel(evt.target.value)}
-          />
-        </InputGroup>
+        <div className="mb-3">
+          <InputGroup>
+            <InputGroup.Text>Telefonszám</InputGroup.Text>
+            <Form.Control
+              {...register("tel")}
+              type="tel"
+              placeholder="06201234567"
+              pattern="06[0-9]{9}"
+              maxLength={11}
+            />
+          </InputGroup>
+          {errors.tel && (
+            <span className="text-danger">{errors.tel.message}</span>
+          )}
+        </div>
 
         <Button
           className="align-self-center mt-4 w-50"
-          onClick={jelentkezoFelvesz}
+          type="submit"
+          disabled={isSubmitting}
         >
           Jelentkezés
         </Button>
-      </div>
+      </form>
     </section>
   );
 }
