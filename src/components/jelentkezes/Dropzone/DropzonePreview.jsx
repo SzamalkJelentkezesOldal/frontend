@@ -12,7 +12,7 @@ function DropzonePreview({ preview, name, size, removeFile }) {
       as="li"
       className="d-flex justify-content-between align-items-start w-100"
     >
-      <div className="blurContainer">
+      <div className="blurContainer" role="button">
         <div className="blur" onClick={() => setOpen(true)}></div>
         <img src={preview} alt={name} width={90} height={50} />
         <PreviewDialog

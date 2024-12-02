@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { ApiContext } from "../../context/ApiContext";
 import React from "react";
 import Select from "react-select";
@@ -9,6 +9,8 @@ import makeAnimated from "react-select/animated";
 import Dropzone from "./Dropzone/Dropzone";
 import "./Dropzone/dropzone.css";
 import axios from "axios";
+import Zoom from "@mui/material/Zoom";
+import Tooltip from "@mui/material/Tooltip";
 
 function Jelentkezes() {
   const { szakLista, postAdat } = useContext(ApiContext);
@@ -19,6 +21,17 @@ function Jelentkezes() {
   const [portfolio, setPortfolio] = useState(false);
   const [files, setFiles] = useState([]);
   const [images, setImages] = useState([]);
+  const selectInputRef = useRef();
+
+  function sikeresJelentkezes() {
+    setNev("");
+    setTel("");
+    setEmail("");
+    setPortfolio(false);
+    setFiles([]);
+    setImages([]);
+    selectInputRef.current.clearValue();
+  }
 
   const kepElkuld = async (e) => {
     if (!files.length) return;
@@ -28,36 +41,34 @@ function Jelentkezes() {
       formData.append("file", file[0]);
       formData.append("upload_preset", "testing");
       formData.append("api_key", "832529985323792");
-      return axios
-        .post(URL, formData, {
-          headers: { "X-Requested-With": "XMLHttpRequest" },
-        })
-        .then((response) => {
-          const data = response.data;
+      return axios.post(URL, formData, {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
+    });
 
-          const imageurl = data.secure_url;
-          setImages((prev) => {
-            const newArr = [...prev];
-            newArr.push(imageurl);
-            return newArr;
-          });
-        });
-    });
-    await axios.all(uploaders).then(() => {
-      console.log("Összes feltöltődött!");
-    });
+    const results = await axios.all(uploaders);
+    const uploadedImages = results.map((response) => response.data.secure_url);
+
+    setImages(uploadedImages);
+    return uploadedImages; // Visszaadja a képek URL-jeit
   };
 
-  function jelentkezoFelvesz() {
-    kepElkuld();
+  const jelentkezoFelvesz = async () => {
+    let uploadedImages = [];
+
+    if (files.length) {
+      uploadedImages = await kepElkuld(); // Feltöltés, ha vannak fájlok
+    }
+
     const jelentkezoAdatok = {
       jelentkezo: { nev, email, tel },
       jelentkezes: { kivalasztottSzakok },
-      portfolio: { images },
+      portfolio: { images: uploadedImages }, // Üres tömb, ha nincs feltöltött kép
     };
-    console.log(images);
+
     postAdat("ujJelentkezo", jelentkezoAdatok);
-  }
+    sikeresJelentkezes();
+  };
 
   function szakListaOptions() {
     const szakOptions = [];
@@ -86,9 +97,8 @@ function Jelentkezes() {
 
     {
       if (event && event.length) {
-        event[event.length - 1].portfolio
-          ? setPortfolio(true)
-          : setPortfolio(false);
+        const needsPortfolio = event.some((item) => item.portfolio);
+        setPortfolio(needsPortfolio);
       } else {
         setPortfolio(false);
       }
@@ -112,6 +122,7 @@ function Jelentkezes() {
             onChange={(e) => selectAdatok(e)}
             isMulti
             name="colors"
+            ref={selectInputRef}
             options={szakOptions}
             className="basic-multi-select"
             classNamePrefix="select"
@@ -132,7 +143,22 @@ function Jelentkezes() {
           </p>
         </div>
 
-        {portfolio ? <Dropzone setFiles={setFiles} files={files} /> : ""}
+        {portfolio ? (
+          <>
+            <Tooltip
+              arrow
+              title="Bizonyos szakokhoz kötelező a portfolió."
+              slots={{
+                transition: Zoom,
+              }}
+            >
+              <p style={{ width: "fit-content", marginBottom: 0 }}>Portfolió</p>
+            </Tooltip>
+            <Dropzone setFiles={setFiles} files={files} />
+          </>
+        ) : (
+          ""
+        )}
 
         <InputGroup className="mb-3">
           <InputGroup.Text>Név</InputGroup.Text>
