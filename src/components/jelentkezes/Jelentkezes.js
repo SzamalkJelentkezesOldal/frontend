@@ -6,9 +6,6 @@ import { ApiContext } from "../../context/ApiContext";
 import React from "react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import Dropzone from "./Dropzone/Dropzone";
-import "./Dropzone/dropzone.css";
-import axios from "axios";
 import Zoom from "@mui/material/Zoom";
 import Tooltip from "@mui/material/Tooltip";
 import { useForm } from "react-hook-form";
@@ -22,13 +19,20 @@ const jelentkezesSchema = z.object({
     .string()
     .length(11, "A telefonszámnak 11 karakter hosszúnak kell lennie!"),
   szakok: z.array(z.number()).min(1, "Legalább egy szakot ki kell választani!"),
+  portfolioSzakok: z
+    .array(
+      z.object({
+        szak_id: z.number(),
+        portfolio_url: z.string().url("Érvénytelen URL!"),
+      })
+    )
+    .optional(),
 });
 
 function Jelentkezes() {
   const { szakLista, postAdat } = useContext(ApiContext);
   const [portfolio, setPortfolio] = useState(false);
-  const [files, setFiles] = useState([]);
-  const [images, setImages] = useState([]);
+  const [portfoliosSzakok, setPortfoliosSzakok] = useState([]);
   const szakokRef = useRef();
 
   const {
@@ -38,6 +42,7 @@ function Jelentkezes() {
     reset,
     getValues,
     setValue,
+    watch,
   } = useForm({
     resolver: zodResolver(jelentkezesSchema),
     defaultValues: {
@@ -45,39 +50,21 @@ function Jelentkezes() {
     },
   });
 
-  const kepElkuld = async (e) => {
-    if (!files.length) return;
-    const URL = process.env.REACT_APP_CLOUDINARY_URL;
-    const uploaders = files.map((file) => {
-      const formData = new FormData();
-      formData.append("file", file[0]);
-      formData.append("upload_preset", "testing");
-      formData.append("api_key", "832529985323792");
-      return axios.post(URL, formData, {
-        headers: { "X-Requested-With": "XMLHttpRequest" },
-      });
-    });
-
-    const results = await axios.all(uploaders);
-    const uploadedImages = results.map((response) => response.data.secure_url);
-
-    setImages(uploadedImages);
-    return uploadedImages; // Visszaadja a képek URL-jeit
-  };
-
   const jelentkezoFelvesz = async () => {
-    let uploadedImages = [];
+    const adatok = getValues([
+      "nev",
+      "email",
+      "tel",
+      "szakok",
+      "portfolioSzakok",
+    ]);
 
-    const adatok = getValues(["nev", "email", "tel", "szakok"]);
-
-    if (files.length) {
-      uploadedImages = await kepElkuld();
-    }
+    console.log(adatok);
 
     const jelentkezoAdatok = {
       jelentkezo: { nev: adatok[0], email: adatok[1], tel: adatok[2] },
       jelentkezes: { kivalasztottSzakok: adatok[3] },
-      portfolio: { images: uploadedImages },
+      portfolio: { portfolioSzakok: adatok[4] },
     };
 
     postAdat("ujJelentkezo", jelentkezoAdatok);
@@ -98,13 +85,35 @@ function Jelentkezes() {
   }
 
   function selectAdatok(event) {
-    {
-      if (event && event.length) {
-        const needsPortfolio = event.some((item) => item.portfolio);
-        setPortfolio(needsPortfolio);
-      } else {
-        setPortfolio(false);
-      }
+    if (event && event.length) {
+      const selectedSzakok = event.map((item) => item.value);
+      setValue("szakok", selectedSzakok);
+
+      const selectedPortfolios = event.filter((item) => item.portfolio);
+
+      // Előző portfólió adatok megőrzése
+      const currentPortfolioSzakok = watch("portfolioSzakok") || [];
+      const updatedPortfolioSzakok = selectedPortfolios.map((item) => {
+        // Ellenőrizzük, hogy van-e már adat az adott szakhoz
+        const existingPortfolio = currentPortfolioSzakok.find(
+          (portfolio) => portfolio?.szak_id === item.value
+        );
+        return (
+          existingPortfolio || {
+            szak_id: item.value,
+            portfolio_url: "",
+          }
+        );
+      });
+
+      setValue("portfolioSzakok", updatedPortfolioSzakok);
+
+      setPortfoliosSzakok(selectedPortfolios.map((item) => item.value));
+      setPortfolio(selectedPortfolios.length > 0);
+    } else {
+      setPortfolio(false);
+      setValue("szakok", []);
+      setValue("portfolioSzakok", []);
     }
   }
 
@@ -121,13 +130,13 @@ function Jelentkezes() {
         className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
         style={{ width: 500 + "px" }}
       >
+        <pre>{JSON.stringify(watch(), null, 2)}</pre>
+
         <div className="mb-3">
           <Select
             ref={szakokRef}
             onChange={(e) => {
               selectAdatok(e);
-              const szakok = e ? e.map((item) => item.value) : [];
-              setValue("szakok", szakok);
             }}
             isMulti
             name="colors"
@@ -153,21 +162,34 @@ function Jelentkezes() {
           )}
         </div>
 
-        {portfolio ? (
-          <>
-            <Tooltip
-              arrow
-              title="Bizonyos szakokhoz kötelező a portfolió."
-              slots={{
-                transition: Zoom,
-              }}
-            >
-              <p style={{ width: "fit-content", marginBottom: 0 }}>Portfolió</p>
-            </Tooltip>
-            <Dropzone setFiles={setFiles} files={files} />
-          </>
-        ) : (
-          ""
+        {portfolio && portfoliosSzakok.length > 0 && (
+          <div>
+            {portfoliosSzakok.map((szak, index) => (
+              <InputGroup key={szak} className="mb-3">
+                <InputGroup.Text>
+                  <Tooltip
+                    arrow
+                    title="Bizonyos szakokhoz kötelező a portfolió link."
+                    slots={{
+                      transition: Zoom,
+                    }}
+                  >
+                    <p style={{ width: "fit-content", marginBottom: 0 }}>
+                      {szakOptions.find((opt) => opt.value === szak)?.label ||
+                        "Portfolió"}
+                    </p>
+                  </Tooltip>
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  placeholder="Portfólió link"
+                  {...register(`portfolioSzakok.${index}.portfolio_url`, {
+                    shouldUnregister: true,
+                  })}
+                />
+              </InputGroup>
+            ))}
+          </div>
         )}
 
         <div className="mb-3">

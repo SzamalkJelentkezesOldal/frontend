@@ -27,7 +27,7 @@ function Dropzone({ setFiles, files }) {
     accept: {
       "image/*": [],
     },
-    maxSize: 1000000,
+    maxSize: 4000000,
   });
 
   function removeFile(name) {

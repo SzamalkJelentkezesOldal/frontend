@@ -21,9 +21,13 @@ export const ApiProvider = ({ children }) => {
       const response = await myAxios.post(vegpont, adat);
       console.log(response);
     } catch (err) {
-      console.log("Hiba történt az adatok küldésekor.");
-      console.log(err.response.data.errors);
-    } finally {
+      if (err.response && err.response.status === 422) {
+        console.log("Validációs hiba történt:");
+        console.log(err.response.data.errors);
+      } else {
+        console.log("Hiba történt:");
+        console.log(err);
+      }
     }
   };
 
