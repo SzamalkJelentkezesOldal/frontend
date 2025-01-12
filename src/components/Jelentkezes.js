@@ -2,15 +2,14 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import React, { useContext } from "react";
-import Select from "react-select";
 import Zoom from "@mui/material/Zoom";
 import Tooltip from "@mui/material/Tooltip";
-import { JelentkezesContext } from "../../context/JelentkezesContext";
+import { JelentkezesContext } from "../context/JelentkezesContext";
+import CustomSelect from "./CustomSelect";
 
 function Jelentkezes() {
   const {
     szakOptions,
-    animatedComponents,
     selectAdatok,
     jelentkezoFelvesz,
     register,
@@ -33,26 +32,13 @@ function Jelentkezes() {
         style={{ width: 500 + "px" }}
       >
         <div className="mb-3">
-          <Select
+          <CustomSelect
             ref={szakokRef}
             onChange={(e) => {
               selectAdatok(e);
             }}
-            isMulti
-            name="colors"
             options={szakOptions}
-            className="basic-multi-select"
-            classNamePrefix="select"
             placeholder="Szakma kiválasztása..."
-            noOptionsMessage={() => "Nincs találat"}
-            components={animatedComponents}
-            styles={{
-              valueContainer: (baseStyles) => ({
-                ...baseStyles,
-                maxHeight: "100px",
-                overflowY: "auto",
-              }),
-            }}
           />
           <p className="lead" style={{ fontSize: 13 + "px", marginBottom: 0 }}>
             N = Nappali | E = Esti

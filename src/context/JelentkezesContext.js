@@ -1,7 +1,6 @@
 import { createContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import makeAnimated from "react-select/animated";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useContext, useRef } from "react";
 import { ApiContext } from "./ApiContext";
@@ -114,13 +113,11 @@ export const JelentkezesProvider = ({ children }) => {
   }
 
   const szakOptions = szakListaOptions();
-  const animatedComponents = makeAnimated();
 
   return (
     <JelentkezesContext.Provider
       value={{
         szakOptions,
-        animatedComponents,
         selectAdatok,
         jelentkezoFelvesz,
         register,

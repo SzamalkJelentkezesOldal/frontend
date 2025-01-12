@@ -1,4 +1,4 @@
-import Jelentkezes from "./components/jelentkezes/Jelentkezes";
+import Jelentkezes from "./components/Jelentkezes";
 import { JelentkezesProvider } from "./context/JelentkezesContext";
 
 function App() {
