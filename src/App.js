@@ -1,9 +1,12 @@
 import Jelentkezes from "./components/jelentkezes/Jelentkezes";
+import { JelentkezesProvider } from "./context/JelentkezesContext";
 
 function App() {
   return (
     <>
-      <Jelentkezes />
+      <JelentkezesProvider>
+        <Jelentkezes />
+      </JelentkezesProvider>
     </>
   );
 }
