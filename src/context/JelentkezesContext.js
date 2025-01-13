@@ -62,7 +62,7 @@ export const JelentkezesProvider = ({ children }) => {
       portfolio: { portfolioSzakok: adatok[4] },
     };
 
-    postAdat("ujJelentkezo", jelentkezoAdatok);
+    postAdat("/api/ujJelentkezo", jelentkezoAdatok);
     reset();
     szakokRef.current.clearValue(); // mivel a react-select nem kompatibilis a react-hook-formos reset()-el
   };

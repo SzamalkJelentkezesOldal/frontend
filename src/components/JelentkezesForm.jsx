@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { JelentkezesContext } from "../context/JelentkezesContext";
 import CustomSelect from "./CustomSelect";
 
-function Jelentkezes() {
+function JelentkezesForm() {
   const {
     szakOptions,
     selectAdatok,
@@ -23,7 +23,7 @@ function Jelentkezes() {
 
   return (
     <section
-      className="container-fluid d-flex justify-content-center align-items-center"
+      className="container-fluid d-flex justify-content-center align-items-center "
       style={{ padding: 10 + "vh" }}
     >
       <form
@@ -134,4 +134,4 @@ function Jelentkezes() {
   );
 }
 
-export default Jelentkezes;
+export default JelentkezesForm;

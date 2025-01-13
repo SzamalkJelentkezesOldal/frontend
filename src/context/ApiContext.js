@@ -32,7 +32,7 @@ export const ApiProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getAdat("/szakok", setSzakLista);
+    getAdat("/api/szakok", setSzakLista);
   }, []);
 
   return (
