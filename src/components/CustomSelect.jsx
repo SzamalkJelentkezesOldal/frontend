@@ -19,8 +19,10 @@ const CustomSelect = React.forwardRef(
         styles={{
           valueContainer: (baseStyles) => ({
             ...baseStyles,
+            height: "46px",
             maxHeight: "100px",
             overflowY: "auto",
+            color: "#5a5a5a",
           }),
         }}
       />

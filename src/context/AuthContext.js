@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
     } catch (e) {
       if (e.response.status === 401) {
-        console.log("need to log in!");
+        console.log("nincs belépve!");
       }
     }
   };
