@@ -13,7 +13,6 @@ function App() {
         <Route path="beiratkozas" element={<Beiratkozas />} />
       </Route>
       <Route element={<GuestLayout />}>
-        <Route path="jelentkezes" element={<Jelentkezes />} />
         <Route path="/" element={<Jelentkezes />} />
         <Route path="login" element={<Belepes />} />
         <Route path="register/:token" element={<Regisztralas />} />

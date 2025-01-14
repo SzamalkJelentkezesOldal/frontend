@@ -26,7 +26,7 @@ function Navbar() {
           ) : (
             <>
               <Link
-                to="/jelentkezes"
+                to="/"
                 className="text-gray-200 p-4 border-b-2 border-gray-100 border-opacity-0 hover:border-opacity-100 hover:text-gray-100 duration-200"
               >
                 Jelentkezés
