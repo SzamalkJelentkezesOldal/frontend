@@ -1,16 +1,19 @@
-function InputText({ formRegister, label, error }) {
+function InputText({ formRegister, label, error, type }) {
   return (
-    <div className="form__group field">
-      <input
-        type="text"
-        className="form__field"
-        placeholder={label}
-        {...formRegister}
-      />
-      <label htmlFor={label} className="form__label">
-        {label}
-      </label>
-      {error && <span className="text-danger">{error.message}</span>}
+    <div className="mb-4">
+      <div className="form__group field">
+        <input
+          type={type}
+          className="form__field"
+          placeholder={label}
+          id={label}
+          {...formRegister}
+        />
+        <label htmlFor={label} className="form__label">
+          {label}
+        </label>
+      </div>
+      {error && <span className="text-szSecondary-200">{error.message}</span>}
     </div>
   );
 }

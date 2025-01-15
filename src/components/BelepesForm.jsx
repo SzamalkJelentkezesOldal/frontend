@@ -3,6 +3,8 @@ import useAuthContext from "../context/AuthContext";
 import { useContext } from "react";
 import { BelepesContext } from "../context/BelepesContext";
 import { Button, Form, InputGroup } from "react-bootstrap";
+import InputText from "./InputText";
+import SubmitButton from "./SubmitButton";
 
 function BelepesForm() {
   const navigate = useNavigate();
@@ -35,33 +37,21 @@ function BelepesForm() {
         className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
         style={{ width: 500 + "px" }}
       >
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Email</InputGroup.Text>
-            <Form.Control type="email" {...formRegister("email")} />
-          </InputGroup>
-          {errors.email && (
-            <span className="text-danger">{errors.email.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={formRegister("email")}
+          label="Email"
+          error={errors.email}
+          type="email"
+        />
 
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Jelszó</InputGroup.Text>
-            <Form.Control type="password" {...formRegister("password")} />
-          </InputGroup>
-          {errors.password && (
-            <span className="text-danger">{errors.password.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={formRegister("password")}
+          label="Jelszó"
+          error={errors.password}
+          type="password"
+        />
 
-        <Button
-          className="align-self-center mt-4 w-50"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          Belépés
-        </Button>
+        <SubmitButton text="Belépés" isSubmitting={isSubmitting} />
       </form>
     </section>
   );

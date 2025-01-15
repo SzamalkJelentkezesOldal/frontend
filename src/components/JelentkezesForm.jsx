@@ -1,11 +1,10 @@
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button";
 import React, { useContext } from "react";
 import Zoom from "@mui/material/Zoom";
 import Tooltip from "@mui/material/Tooltip";
 import { JelentkezesContext } from "../context/JelentkezesContext";
 import CustomSelect from "./CustomSelect";
+import InputText from "./InputText";
+import SubmitButton from "./SubmitButton";
 
 function JelentkezesForm() {
   const {
@@ -22,14 +21,10 @@ function JelentkezesForm() {
   } = useContext(JelentkezesContext);
 
   return (
-    <section
-      className="container-fluid d-flex justify-content-center align-items-center "
-      style={{ padding: 10 + "vh" }}
-    >
+    <section className="container w-full h-screen ">
       <form
         onSubmit={handleSubmit(jelentkezoFelvesz)}
-        className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
-        style={{ width: 500 + "px" }}
+        className="container min-w-[380px] pl-5 pr-7 pt-20 bg-gray-100/60 border-2 border-gray-200/80 rounded-lg shadow-sm h-screen sm:h-auto sm:p-12 sm:max-w-[640px] sm:mt-20"
       >
         <div className="mb-3">
           <CustomSelect
@@ -44,91 +39,65 @@ function JelentkezesForm() {
             N = Nappali | E = Esti
           </p>
           {errors.szakok && (
-            <span className="text-danger">{errors.szakok.message}</span>
+            <span className="text-szSecondary-200">
+              {errors.szakok.message}
+            </span>
           )}
         </div>
 
         {portfolio && portfoliosSzakok.length > 0 && (
           <div>
             {portfoliosSzakok.map((szak, index) => (
-              <InputGroup key={szak} className="mb-3">
-                <InputGroup.Text>
-                  <Tooltip
-                    arrow
-                    title="Bizonyos szakokhoz kötelező a portfolió link."
-                    slots={{
-                      transition: Zoom,
-                    }}
-                  >
-                    <p style={{ width: "fit-content", marginBottom: 0 }}>
-                      {szakOptions.find((opt) => opt.value === szak)?.label ||
-                        "Portfolió"}
-                    </p>
-                  </Tooltip>
-                </InputGroup.Text>
-                <Form.Control
-                  type="text"
-                  placeholder="Portfólió link"
-                  {...register(`portfolioSzakok.${index}.portfolio_url`, {
-                    shouldUnregister: true,
-                  })}
-                />
-              </InputGroup>
+              <Tooltip
+                key={index}
+                arrow
+                title="Bizonyos szakokhoz kötelező a portfolió link."
+                slots={{
+                  transition: Zoom,
+                }}
+                placement="bottom-start"
+              >
+                <div>
+                  <InputText
+                    key={index}
+                    formRegister={
+                      (`portfolioSzakok.${index}.portfolio_url`,
+                      {
+                        shouldUnregister: true,
+                      })
+                    }
+                    type="text"
+                    error={errors.portfolioSzakok?.[index]?.portfolio_url}
+                    label={szakOptions.find((opt) => opt.value === szak)?.label}
+                  />
+                </div>
+              </Tooltip>
             ))}
           </div>
         )}
 
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Név</InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Róka rudi"
-              {...register("nev")}
-            />
-          </InputGroup>
-          {errors.nev && (
-            <span className="text-danger">{errors.nev.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={register("nev")}
+          label="Név"
+          error={errors.nev}
+          type="text"
+        />
 
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>E-mail</InputGroup.Text>
-            <Form.Control
-              placeholder="rokarudi@gmail.com"
-              type="email"
-              {...register("email")}
-            />
-          </InputGroup>
-          {errors.email && (
-            <span className="text-danger">{errors.email.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={register("email")}
+          label="Email"
+          error={errors.email}
+          type="email"
+        />
 
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Telefonszám</InputGroup.Text>
-            <Form.Control
-              {...register("tel")}
-              type="tel"
-              placeholder="06201234567"
-              pattern="06[0-9]{9}"
-              maxLength={11}
-            />
-          </InputGroup>
-          {errors.tel && (
-            <span className="text-danger">{errors.tel.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={register("tel")}
+          label="Telefonszám"
+          error={errors.tel}
+          type="tel"
+        />
 
-        <Button
-          className="align-self-center mt-4 w-50"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          Jelentkezés
-        </Button>
+        <SubmitButton text="Jelentkezés" isSubmitting={isSubmitting} />
       </form>
     </section>
   );

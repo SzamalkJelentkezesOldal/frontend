@@ -24,7 +24,19 @@ export const JelentkezesProvider = ({ children }) => {
           portfolio_url: z.string().url("Érvénytelen URL!"),
         })
       )
-      .optional(),
+      .optional()
+      .refine(
+        (portfolioSzakok) => {
+          if (!portfolioSzakok) return true;
+          return (
+            portfolioSzakok.length === 0 ||
+            portfolioSzakok.every((szak) => szak.portfolio_url)
+          );
+        },
+        {
+          message: "A portfolió link megadása kötelező!",
+        }
+      ),
   });
 
   const { szakLista, postAdat } = useContext(ApiContext);

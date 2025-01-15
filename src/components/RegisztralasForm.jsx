@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { RegisztralasContext } from "../context/RegisztralasContext";
 import useAuthContext from "../context/AuthContext";
 import { Button, Form, InputGroup } from "react-bootstrap";
+import InputText from "./InputText";
+import SubmitButton from "./SubmitButton";
 
 function RegisztralasForm() {
   const { token } = useParams();
@@ -37,38 +39,21 @@ function RegisztralasForm() {
         className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
         style={{ width: 500 + "px" }}
       >
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Jelszó</InputGroup.Text>
-            <Form.Control type="password" {...formRegister("password")} />
-          </InputGroup>
-          {errors.password && (
-            <span className="text-danger">{errors.password.message}</span>
-          )}
-        </div>
+        <InputText
+          formRegister={register("password")}
+          label="Jelszó"
+          error={errors.password}
+          type="password"
+        />
 
-        <div className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>Jelszó megerősítés</InputGroup.Text>
-            <Form.Control
-              type="password"
-              {...formRegister("confirmPassword")}
-            />
-          </InputGroup>
-          {errors.confirmPassword && (
-            <span className="text-danger">
-              {errors.confirmPassword.message}
-            </span>
-          )}
-        </div>
+        <InputText
+          formRegister={register("confirmPassword")}
+          label="Jelszó megerősítés"
+          error={errors.confirmPassword}
+          type="confirmPassword"
+        />
 
-        <Button
-          className="align-self-center mt-4 w-50"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          Regisztrálás
-        </Button>
+        <SubmitButton isSubmitting={isSubmitting} text="Regisztráció" />
       </form>
     </section>
   );
