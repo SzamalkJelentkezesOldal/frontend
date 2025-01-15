@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RegisztralasContext } from "../context/RegisztralasContext";
 import useAuthContext from "../context/AuthContext";
-import { Button, Form, InputGroup } from "react-bootstrap";
 import InputText from "./InputText";
 import SubmitButton from "./SubmitButton";
+import CustomForm from "./CustomForm";
 
 function RegisztralasForm() {
   const { token } = useParams();
@@ -34,27 +34,21 @@ function RegisztralasForm() {
       className="container-fluid d-flex justify-content-center align-items-center "
       style={{ padding: 10 + "vh" }}
     >
-      <form
-        onSubmit={handleSubmit(handleRegister)}
-        className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
-        style={{ width: 500 + "px" }}
-      >
+      <CustomForm onSubmit={handleSubmit(handleRegister)} title="Regisztráció">
         <InputText
-          formRegister={register("password")}
+          formRegister={formRegister("password")}
           label="Jelszó"
           error={errors.password}
           type="password"
         />
-
         <InputText
-          formRegister={register("confirmPassword")}
+          formRegister={formRegister("confirmPassword")}
           label="Jelszó megerősítés"
           error={errors.confirmPassword}
-          type="confirmPassword"
+          type="password"
         />
-
         <SubmitButton isSubmitting={isSubmitting} text="Regisztráció" />
-      </form>
+      </CustomForm>
     </section>
   );
 }

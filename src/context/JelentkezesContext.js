@@ -54,6 +54,7 @@ export const JelentkezesProvider = ({ children }) => {
     watch,
   } = useForm({
     resolver: zodResolver(jelentkezesSchema),
+    shouldUnregister: true,
     defaultValues: {
       szakok: [],
     },

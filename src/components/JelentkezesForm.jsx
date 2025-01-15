@@ -5,6 +5,7 @@ import { JelentkezesContext } from "../context/JelentkezesContext";
 import CustomSelect from "./CustomSelect";
 import InputText from "./InputText";
 import SubmitButton from "./SubmitButton";
+import CustomForm from "./CustomForm";
 
 function JelentkezesForm() {
   const {
@@ -21,10 +22,10 @@ function JelentkezesForm() {
   } = useContext(JelentkezesContext);
 
   return (
-    <section className="container w-full h-screen ">
-      <form
+    <section className="w-full">
+      <CustomForm
         onSubmit={handleSubmit(jelentkezoFelvesz)}
-        className="container min-w-[380px] pl-5 pr-7 pt-20 bg-gray-100/60 border-2 border-gray-200/80 rounded-lg shadow-sm h-screen sm:h-auto sm:p-12 sm:max-w-[640px] sm:mt-20"
+        title="Jelentkezés"
       >
         <div className="mb-3">
           <CustomSelect
@@ -35,7 +36,10 @@ function JelentkezesForm() {
             options={szakOptions}
             placeholder="Szakma kiválasztása..."
           />
-          <p className="lead" style={{ fontSize: 13 + "px", marginBottom: 0 }}>
+          <p
+            className="text-szPrimary font-semibold px-1"
+            style={{ fontSize: 13 + "px", marginBottom: 0 }}
+          >
             N = Nappali | E = Esti
           </p>
           {errors.szakok && (
@@ -47,11 +51,20 @@ function JelentkezesForm() {
 
         {portfolio && portfoliosSzakok.length > 0 && (
           <div>
+            <div className="container p-2 text-inputGray text-sm font-medium bg-gray-200/70 shadow-md rounded-lg mb-4 relative">
+              <p className="absolute top-[-9px] left-[-8px] bg-szPrimary-200 text-white size-5 text-center rounded-full">
+                ?
+              </p>
+              <p>
+                Kiválasztottál egy olyan képzést, amihez portfóliót kell
+                elküldeni. Kérlek, az egész portfóliódat egy linkben küldd el.
+              </p>
+            </div>
             {portfoliosSzakok.map((szak, index) => (
               <Tooltip
-                key={index}
+                key={`tooltip-${index}`}
                 arrow
-                title="Bizonyos szakokhoz kötelező a portfolió link."
+                title="Bizonyos szakokhoz kötelező a portfólió link."
                 slots={{
                   transition: Zoom,
                 }}
@@ -59,16 +72,16 @@ function JelentkezesForm() {
               >
                 <div>
                   <InputText
-                    key={index}
-                    formRegister={
-                      (`portfolioSzakok.${index}.portfolio_url`,
-                      {
-                        shouldUnregister: true,
-                      })
-                    }
+                    key={`input-${index}`}
+                    formRegister={`portfolioSzakok.${index}.portfolio_url`}
                     type="text"
-                    error={errors.portfolioSzakok?.[index]?.portfolio_url}
-                    label={szakOptions.find((opt) => opt.value === szak)?.label}
+                    error={
+                      errors?.portfolioSzakok?.[index]?.portfolio_url || null
+                    }
+                    label={
+                      szakOptions.find((opt) => opt.value === szak)?.label ||
+                      "Ismeretlen szak"
+                    }
                   />
                 </div>
               </Tooltip>
@@ -98,7 +111,7 @@ function JelentkezesForm() {
         />
 
         <SubmitButton text="Jelentkezés" isSubmitting={isSubmitting} />
-      </form>
+      </CustomForm>
     </section>
   );
 }

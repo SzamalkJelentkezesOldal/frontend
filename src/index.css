@@ -49,6 +49,8 @@
     cursor: text;
     top: 11px;
     color: theme("colors.inputGray");
+    width: 100%;
+    padding-right: 20px;
   }
 
   .form__label {

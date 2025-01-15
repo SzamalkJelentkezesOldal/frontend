@@ -11,7 +11,7 @@ const CustomSelect = React.forwardRef(
         onChange={onChange}
         isMulti
         options={options}
-        className="basic-multi-select"
+        className="basic-multi-select shadow-md"
         classNamePrefix="select"
         placeholder={placeholder}
         noOptionsMessage={() => "Nincs találat"}

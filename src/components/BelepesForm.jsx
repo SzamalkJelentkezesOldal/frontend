@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import useAuthContext from "../context/AuthContext";
 import { useContext } from "react";
 import { BelepesContext } from "../context/BelepesContext";
-import { Button, Form, InputGroup } from "react-bootstrap";
 import InputText from "./InputText";
 import SubmitButton from "./SubmitButton";
+import CustomForm from "./CustomForm";
 
 function BelepesForm() {
   const navigate = useNavigate();
@@ -28,15 +28,8 @@ function BelepesForm() {
   };
 
   return (
-    <section
-      className="container-fluid d-flex justify-content-center align-items-center "
-      style={{ padding: 10 + "vh" }}
-    >
-      <form
-        onSubmit={handleSubmit(handleLogin)}
-        className="bg-light bg-gradient p-5 border border-2 rounded-3 d-flex flex-column"
-        style={{ width: 500 + "px" }}
-      >
+    <section className="w-full">
+      <CustomForm onSubmit={handleSubmit(handleLogin)} title="Bejelentkezés">
         <InputText
           formRegister={formRegister("email")}
           label="Email"
@@ -49,10 +42,11 @@ function BelepesForm() {
           label="Jelszó"
           error={errors.password}
           type="password"
+          password="true"
         />
 
         <SubmitButton text="Belépés" isSubmitting={isSubmitting} />
-      </form>
+      </CustomForm>
     </section>
   );
 }

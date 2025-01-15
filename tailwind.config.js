@@ -7,7 +7,12 @@ module.exports = {
     },
     extend: {
       colors: {
-        szPrimary: "#00848b",
+        szPrimary: {
+          DEFAULT: "#00848b",
+          100: "#d0ede6",
+          200: "#3ac1bd",
+          300: "#00848b",
+        },
         szSecondary: {
           100: "#ff675b",
           200: "#d63637",
