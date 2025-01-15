@@ -22,7 +22,7 @@ function JelentkezesForm() {
   } = useContext(JelentkezesContext);
 
   return (
-    <section className="w-full">
+    <section className="w-full pt-20">
       <CustomForm
         onSubmit={handleSubmit(jelentkezoFelvesz)}
         title="Jelentkezés"

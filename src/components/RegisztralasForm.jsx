@@ -30,22 +30,21 @@ function RegisztralasForm() {
   };
 
   return (
-    <section
-      className="container-fluid d-flex justify-content-center align-items-center "
-      style={{ padding: 10 + "vh" }}
-    >
+    <section className="w-full pt-20">
       <CustomForm onSubmit={handleSubmit(handleRegister)} title="Regisztráció">
         <InputText
           formRegister={formRegister("password")}
           label="Jelszó"
           error={errors.password}
           type="password"
+          password={true}
         />
         <InputText
           formRegister={formRegister("confirmPassword")}
           label="Jelszó megerősítés"
           error={errors.confirmPassword}
           type="password"
+          password={true}
         />
         <SubmitButton isSubmitting={isSubmitting} text="Regisztráció" />
       </CustomForm>

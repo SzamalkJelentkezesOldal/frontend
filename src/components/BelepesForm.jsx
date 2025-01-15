@@ -28,8 +28,8 @@ function BelepesForm() {
   };
 
   return (
-    <section className="w-full">
-      <CustomForm onSubmit={handleSubmit(handleLogin)} title="Bejelentkezés">
+    <section className="w-full pt-20">
+      <CustomForm onSubmit={handleSubmit(handleLogin)} title="Belépés">
         <InputText
           formRegister={formRegister("email")}
           label="Email"
