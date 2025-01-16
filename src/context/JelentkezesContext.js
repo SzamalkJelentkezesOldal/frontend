@@ -1,9 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useContext, useRef } from "react";
 import { ApiContext } from "./ApiContext";
+import { myAxios } from "./MyAxios";
 
 export const JelentkezesContext = createContext("");
 
@@ -39,10 +40,12 @@ export const JelentkezesProvider = ({ children }) => {
       ),
   });
 
-  const { szakLista, postAdat } = useContext(ApiContext);
+  const { szakLista } = useContext(ApiContext);
   const [portfolio, setPortfolio] = useState(false);
   const [portfoliosSzakok, setPortfoliosSzakok] = useState([]);
   const szakokRef = useRef();
+  const [postStatus, setPostStatus] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const {
     register,
@@ -60,6 +63,14 @@ export const JelentkezesProvider = ({ children }) => {
     },
   });
 
+  const handleSnackbarClose = (reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
+
   const jelentkezoFelvesz = async () => {
     const adatok = getValues([
       "nev",
@@ -75,9 +86,29 @@ export const JelentkezesProvider = ({ children }) => {
       portfolio: { portfolioSzakok: adatok[4] },
     };
 
-    postAdat("/api/ujJelentkezo", jelentkezoAdatok);
-    reset();
-    szakokRef.current.clearValue(); // mivel a react-select nem kompatibilis a react-hook-formos reset()-el
+    const result = await postJelentkezo(jelentkezoAdatok);
+
+    if (result) {
+      reset();
+      szakokRef.current.clearValue(); // mivel a react-select nem kompatibilis a react-hook-formos reset()-el
+    }
+  };
+
+  const postJelentkezo = async (data) => {
+    try {
+      const response = await myAxios.post("/api/ujJelentkezo", data);
+      console.log(response);
+      if (response.status === 201) {
+        setPostStatus(true);
+        setSnackbarOpen(true);
+      }
+      return true;
+    } catch (e) {
+      console.log(e.response.data.errors);
+      setPostStatus(false);
+      setSnackbarOpen(true);
+      return false;
+    }
   };
 
   function szakListaOptions() {
@@ -140,6 +171,9 @@ export const JelentkezesProvider = ({ children }) => {
         isSubmitting,
         errors,
         szakokRef,
+        postStatus,
+        handleSnackbarClose,
+        snackbarOpen,
       }}
     >
       {children}

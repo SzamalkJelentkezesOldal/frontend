@@ -6,6 +6,7 @@ import CustomSelect from "./CustomSelect";
 import InputText from "./InputText";
 import SubmitButton from "./SubmitButton";
 import CustomForm from "./CustomForm";
+import CustomSnackbar from "./CustomSnackbar";
 
 function JelentkezesForm() {
   const {
@@ -19,10 +20,13 @@ function JelentkezesForm() {
     isSubmitting,
     errors,
     szakokRef,
+    handleSnackbarClose,
+    snackbarOpen,
+    postStatus,
   } = useContext(JelentkezesContext);
 
   return (
-    <section className="w-full pt-20">
+    <section className="w-full pt-10 ">
       <CustomForm
         onSubmit={handleSubmit(jelentkezoFelvesz)}
         title="Jelentkezés"
@@ -111,6 +115,17 @@ function JelentkezesForm() {
         />
 
         <SubmitButton text="Jelentkezés" isSubmitting={isSubmitting} />
+
+        <CustomSnackbar
+          severity={postStatus}
+          open={snackbarOpen}
+          msg={
+            postStatus
+              ? "Sikeres jelentkezés! E-Mail elküldve."
+              : "Sikertelen jelentkezés!"
+          }
+          handleClose={handleSnackbarClose}
+        />
       </CustomForm>
     </section>
   );

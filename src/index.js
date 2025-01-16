@@ -8,6 +8,9 @@ import { BrowserRouter } from "react-router-dom";
 import { RegisztralasProvider } from "./context/RegisztralasContext";
 import { AuthProvider } from "./context/AuthContext";
 import { BelepesProvider } from "./context/BelepesContext";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { huHU } from "@mui/material/locale";
+const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,7 +21,9 @@ root.render(
           <RegisztralasProvider>
             <BelepesProvider>
               <BrowserRouter>
-                <App />
+                <ThemeProvider theme={themeMUI}>
+                  <App />
+                </ThemeProvider>
               </BrowserRouter>
             </BelepesProvider>
           </RegisztralasProvider>

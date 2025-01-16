@@ -31,7 +31,6 @@ function Navbar() {
             className="hover:bg-szPrimary-200/40 hover:rounded-full p-2 px-3 flex gap-2 items-center"
           >
             <LogInOut isLoggedIn={true} />
-            Kilépés
           </button>
         ) : (
           <>
