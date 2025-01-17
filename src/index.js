@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { BelepesProvider } from "./context/BelepesContext";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { huHU } from "@mui/material/locale";
+import { SzemelyesAdatokProvider } from "./context/beiratkozas/SzemelyesAdatokContext";
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -20,11 +21,13 @@ root.render(
         <JelentkezesProvider>
           <RegisztralasProvider>
             <BelepesProvider>
-              <BrowserRouter>
-                <ThemeProvider theme={themeMUI}>
-                  <App />
-                </ThemeProvider>
-              </BrowserRouter>
+              <SzemelyesAdatokProvider>
+                <BrowserRouter>
+                  <ThemeProvider theme={themeMUI}>
+                    <App />
+                  </ThemeProvider>
+                </BrowserRouter>
+              </SzemelyesAdatokProvider>
             </BelepesProvider>
           </RegisztralasProvider>
         </JelentkezesProvider>

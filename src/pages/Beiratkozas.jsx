@@ -8,9 +8,9 @@ function Beiratkozas() {
   const [currentActive, setCurrentActive] = useState(0);
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-[100vh] screen w-screen min-w-[380px]">
       <BeiratkozasMain currentActive={currentActive} />
-      <div className="bg-gray-50 h-[90vh]">
+      <div className="">
         <div>
           <BeiratkozasSzemelyesAdatok />
         </div>

@@ -11,7 +11,7 @@ function Navbar({ empty }) {
   const { logout, user } = useAuthContext();
 
   return (
-    <nav className="fixed flex flex-col top-0 left-0 w-full z-50  bg-szPrimary text-white   drop-shadow-lg">
+    <nav className="fixed flex flex-col top-0 left-0 w-full z-50  bg-szPrimary text-white  drop-shadow-lg">
       <div className="flex items-center justify-between px-8 py-6 lg:px-32 md:px-16  xl:px-50">
         <a
           href="https://www.szamalk-szalezi.hu/"
@@ -65,7 +65,10 @@ function Navbar({ empty }) {
         }`}
         style={{ transformOrigin: "top" }}
       >
-        <NavItem className="py-4 px-8 md:px-16 hover:bg-szPrimary-200/40" />
+        <NavItem
+          className="py-4  px-8 md:px-16 hover:bg-szPrimary-200/40"
+          onClick={() => setIsOpen(!isOpen)}
+        />
       </div>
     </nav>
   );

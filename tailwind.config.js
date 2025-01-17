@@ -6,6 +6,9 @@ module.exports = {
       center: true,
     },
     extend: {
+      screens: {
+        xsm: "398px",
+      },
       colors: {
         szPrimary: {
           DEFAULT: "#00848b",

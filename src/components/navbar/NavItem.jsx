@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import useAuthContext from "../../context/AuthContext";
 
-function NavItem({ className }) {
-  const { logout, user } = useAuthContext();
+function NavItem({ className, onClick }) {
+  const { user } = useAuthContext();
   return (
     <>
       {user ? (
         <></>
       ) : (
         <>
-          <Link to="/" className={className}>
+          <Link to="/" className={className} onClick={onClick}>
             Jelentkezés
           </Link>
         </>
