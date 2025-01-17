@@ -6,6 +6,7 @@ export const BeiratkozasContext = createContext("");
 export const BeiratkozasProvider = ({ children }) => {
   const [postStatus, setPostStatus] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [stepperActive, setStepperActive] = useState(0);
 
   const handleSnackbarClose = (reason) => {
     if (reason === "clickaway") {
@@ -16,14 +17,6 @@ export const BeiratkozasProvider = ({ children }) => {
   };
 
   const beiratkozasFelvesz = async () => {
-    const adatok = getValues([
-      "nev",
-      "email",
-      "tel",
-      "szakok",
-      "portfolioSzakok",
-    ]);
-
     const beiratkozasAdatok = {
       //   beiratkozas: { nev: adatok[0], email: adatok[1], tel: adatok[2] },
       //   jelentkezes: { kivalasztottSzakok: adatok[3] },
@@ -31,10 +24,6 @@ export const BeiratkozasProvider = ({ children }) => {
     };
 
     const result = await postBeiratkozas(beiratkozasAdatok);
-
-    if (result) {
-      reset();
-    }
   };
 
   const postBeiratkozas = async (data) => {
@@ -57,14 +46,12 @@ export const BeiratkozasProvider = ({ children }) => {
   return (
     <BeiratkozasContext.Provider
       value={{
-        beiratkozasFelvesz,
-        register,
-        handleSubmit,
-        isSubmitting,
-        errors,
         postStatus,
+        beiratkozasFelvesz,
         handleSnackbarClose,
         snackbarOpen,
+        stepperActive,
+        setStepperActive,
       }}
     >
       {children}

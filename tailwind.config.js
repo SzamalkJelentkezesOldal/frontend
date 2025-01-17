@@ -7,7 +7,7 @@ module.exports = {
     },
     extend: {
       screens: {
-        xsm: "398px",
+        xsm: "399px",
       },
       colors: {
         szPrimary: {

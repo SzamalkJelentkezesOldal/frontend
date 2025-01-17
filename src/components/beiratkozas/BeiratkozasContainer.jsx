@@ -15,7 +15,7 @@ function BeiratkozasContainer({
   return (
     <>
       <h1
-        className={`sticky ${isOpen ? "" : `${first ? "pt-[9rem]" : ""} min-h-[3rem]`} top-[14.5rem] py-4 px-4 drop-shadow-sm font-medium text-2xl  text-szPrimary bg-gray-50 border-b-2 border-gray-300 ${isDisabled ? "!bg-disabledGray/50 text-szPrimary/60" : ""} xsm:top-[12.9rem]`}
+        className={`sticky ${isOpen ? "" : `${first ? "pt-[9.5rem] xsm:pt-[8.6rem]" : ""} min-h-[3rem]`} top-[14.5rem] py-4 px-4 drop-shadow-sm font-medium text-2xl  text-szPrimary bg-gray-50 border-b-2 border-gray-300 ${isDisabled ? "!bg-disabledGray/50 text-szPrimary/60" : ""} xsm:top-[12.9rem] z-10`}
       >
         <span className="flex items-center gap-4">
           {isDisabled ? (
@@ -31,7 +31,7 @@ function BeiratkozasContainer({
       {isOpen ? (
         <form
           onSubmit={onSubmit}
-          className={`${first ? "pt-[7.5rem]" : ""} min-w-[380px] flex flex-col aling-center p-2 bg-gray-50 `}
+          className={`${first ? "pt-36 xsm:pt-[7.5rem]" : ""} min-w-[380px] flex flex-col aling-center p-2 bg-gray-50 `}
         >
           {children}
         </form>

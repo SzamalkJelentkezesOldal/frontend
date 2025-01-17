@@ -35,7 +35,8 @@ export const JelentkezesProvider = ({ children }) => {
           );
         },
         {
-          message: "A portfolió link megadása kötelező!",
+          message: "A portfólió link megadása kötelező!",
+          path: ["portfolioSzakok"],
         }
       ),
   });

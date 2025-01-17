@@ -4,13 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
 
-export const SzemelyesAdatokContext = createContext("");
+export const DokumentumokContext = createContext("");
 
-export const SzemelyesAdatokProvider = ({ children }) => {
+export const DokumentumokProvider = ({ children }) => {
   const [magyar, setMagyar] = useState(false);
   const { setStepperActive } = useContext(BeiratkozasContext);
 
-  const szemelyesAdatokSchema = z
+  const dokumentumokSchema = z
     .object({
       vezeteknev: z.string().min(1, "A vezetéknév nem lehet üres!"),
       keresztnev: z.string().min(1, "A keresztnév nem lehet üres!"),
@@ -73,9 +73,8 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
-    watch,
   } = useForm({
-    resolver: zodResolver(szemelyesAdatokSchema),
+    resolver: zodResolver(dokumentumokSchema),
     shouldUnregister: true,
     defaultValues: {
       allampolgarsag: "",
@@ -83,8 +82,6 @@ export const SzemelyesAdatokProvider = ({ children }) => {
   });
 
   const szemelyesAdatokFelvesz = () => {
-    console.log("asda");
-
     const adatok = getValues([
       "vezeteknev",
       "keresztnev",
@@ -111,27 +108,20 @@ export const SzemelyesAdatokProvider = ({ children }) => {
       szulo_elerhetoseg: adatok[9],
     };
 
-    setStepperActive(1);
+    setStepperActive(2);
   };
-
-  const allampolgarsag = watch("allampolgarsag");
-  useEffect(() => {
-    setMagyar(allampolgarsag.toLowerCase().trim() === "magyar");
-  }, [allampolgarsag]);
-
   return (
-    <SzemelyesAdatokContext.Provider
+    <DokumentumokContext.Provider
       value={{
-        szemelyesAdatokFelvesz,
+        dokumentumokFelvesz,
         register,
         handleSubmit,
         isSubmitting,
         errors,
         getValues,
-        magyar,
       }}
     >
       {children}
-    </SzemelyesAdatokContext.Provider>
+    </DokumentumokContext.Provider>
   );
 };
