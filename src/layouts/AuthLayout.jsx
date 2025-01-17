@@ -7,7 +7,7 @@ function AuthLayout() {
 
   return user ? (
     <>
-      <Navbar />
+      <Navbar empty={true} />
       <Outlet />
     </>
   ) : (

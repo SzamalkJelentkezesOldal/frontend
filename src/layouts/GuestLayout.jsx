@@ -7,10 +7,8 @@ function GuestLayout() {
 
   return !user ? (
     <>
-      <>
-        <Navbar />
-        <Outlet />
-      </>
+      <Navbar />
+      <Outlet />
     </>
   ) : (
     <Navigate to="/beiratkozas" />

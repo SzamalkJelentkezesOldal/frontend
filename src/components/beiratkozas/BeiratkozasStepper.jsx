@@ -5,9 +5,9 @@ import { styled } from "@mui/material/styles";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import SzemelyAdatokIcon from "./icons/SzemelyAdatokIcon";
-import DokumentumokIcon from "./icons/DokumentumokIcon";
-import SzakSorrendIcon from "./icons/SzakSorrendIcon";
+import SzemelyAdatokIcon from "../icons/SzemelyAdatokIcon";
+import DokumentumokIcon from "../icons/DokumentumokIcon";
+import SzakSorrendIcon from "../icons/SzakSorrendIcon";
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -16,13 +16,13 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+        "linear-gradient( 136deg, rgba(255, 103, 91, 1) 10%, rgba(255, 103, 91, 10) 30%, rgba(214, 54, 55, 10) 70%,rgba(214, 54, 55, 100) 100%)",
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+        "linear-gradient( 136deg, rgba(255, 103, 91, 1) 10%, rgba(255, 103, 91, 10) 30%, rgba(214, 54, 55, 10) 70%,rgba(214, 54, 55, 100) 100%)",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
@@ -54,7 +54,7 @@ const ColorlibStepIconRoot = styled("div")(({ theme }) => ({
       props: ({ ownerState }) => ownerState.active,
       style: {
         backgroundImage:
-          "linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)",
+          "linear-gradient( 136deg, rgba(255, 103, 91, 1) 10%, rgba(255, 103, 91, 10) 30%, rgba(214, 54, 55, 10) 70%,rgba(214, 54, 55, 100) 100%)",
         boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
       },
     },
@@ -62,7 +62,7 @@ const ColorlibStepIconRoot = styled("div")(({ theme }) => ({
       props: ({ ownerState }) => ownerState.completed,
       style: {
         backgroundImage:
-          "linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)",
+          "linear-gradient( 136deg, rgba(255, 103, 91, 1) 10%, rgba(255, 103, 91, 10) 30%, rgba(214, 54, 55, 10) 70%,rgba(214, 54, 55, 100) 100%)",
       },
     },
   ],
@@ -107,12 +107,12 @@ ColorlibStepIcon.propTypes = {
 
 const steps = ["Személyes adatok", "Dokumentumok", "Sorrend"];
 
-export default function BeiratkozasStepper() {
+export default function BeiratkozasStepper({ currentActive }) {
   return (
     <Stack sx={{ width: "100%" }} spacing={4}>
       <Stepper
         alternativeLabel
-        activeStep={1}
+        activeStep={currentActive}
         connector={<ColorlibConnector />}
       >
         {steps.map((label) => (
