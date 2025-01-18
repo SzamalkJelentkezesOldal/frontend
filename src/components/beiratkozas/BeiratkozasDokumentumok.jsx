@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import InputText from "../InputText";
 import BeiratkozasContainer from "./BeiratkozasContainer";
 

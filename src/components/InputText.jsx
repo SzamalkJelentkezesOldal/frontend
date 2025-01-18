@@ -1,13 +1,20 @@
 import { useState } from "react";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import { Icon, IconButton, SvgIcon } from "@mui/material";
+import { IconButton } from "@mui/material";
 
-function InputText({ formRegister, label, error, type, password }) {
+function InputText({
+  formRegister,
+  label,
+  error,
+  type,
+  password,
+  wrapperClassName,
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="mb-4">
+    <div className={`mb-4 ${wrapperClassName}`}>
       <div className="form__group field shadow-md relative">
         <input
           type={password ? (showPassword ? "text" : "password") : type}
