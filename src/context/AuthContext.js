@@ -5,9 +5,11 @@ export const AuthContext = createContext("");
 export const AuthProvider = ({ children }) => {
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getUser = async () => {
     try {
+      setIsLoading(true);
       const { data } = await myAxios.get("/api/user");
       console.log("fh adatok: ", data);
       setUser(data);
@@ -15,6 +17,8 @@ export const AuthProvider = ({ children }) => {
       if (e.response.status === 401) {
         console.log("nincs belépve!");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -54,7 +58,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, register, user, getUser, logout }}>
+    <AuthContext.Provider
+      value={{ login, register, user, getUser, logout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

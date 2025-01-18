@@ -31,7 +31,7 @@ function BeiratkozasContainer({
       {isOpen ? (
         <form
           onSubmit={onSubmit}
-          className={`${first ? "pt-36 xsm:pt-[7.5rem]" : ""} min-w-[380px] flex flex-col items-center aling-center p-2 bg-gray-50 lg:overflow-x-hidden`}
+          className={`${first ? "pt-36 xsm:pt-[7.5rem]" : ""} min-w-[380px] flex flex-col items-center aling-center p-2 bg-gray-50 `}
         >
           {children}
         </form>

@@ -15,7 +15,7 @@ function BeiratkozasSzemelyesAdatok() {
   } = useContext(SzemelyesAdatokContext);
 
   const inputResponsiveness =
-    "min-w-[330px] xsm:min-w-[390px] sm:min-w-[430px] md:min-w-[450px] lg:min-w-[380px] lg:max-w-[380px] xl:min-w-[450px]";
+    "min-w-[330px] xsm:min-w-[390px] sm:min-w-[430px] md:min-w-[450px] md:max-w-[450px] lg:min-w-[380px] lg:max-w-[380px] xl:min-w-[450px]";
 
   return (
     <BeiratkozasContainer
@@ -24,7 +24,7 @@ function BeiratkozasSzemelyesAdatok() {
       isOpen={false}
       onSubmit={handleSubmit(szemelyesAdatokFelvesz)}
     >
-      <div className="flex flex-col sm:max-w-[768px] sm:items-center  lg:max-w-[1279px] lg:w-full lg:grid lg:grid-cols-2 lg:justify-items-center lg:pt-6 lg:px-10 gap-y-4">
+      <div className="flex flex-col sm:max-w-[768px] sm:items-center  lg:max-w-[1279px] lg:w-full lg:grid lg:grid-cols-2 lg:justify-items-center lg:pt-6 lg:px-10 gap-y-4 ">
         <InputText
           wrapperClassName={inputResponsiveness}
           formRegister={register("vezeteknev")}
