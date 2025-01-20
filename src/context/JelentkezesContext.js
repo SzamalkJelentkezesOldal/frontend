@@ -97,7 +97,7 @@ export const JelentkezesProvider = ({ children }) => {
 
   const postJelentkezo = async (data) => {
     try {
-      const response = await myAxios.post("/api/ujJelentkezo", data);
+      const response = await myAxios.post("/api/uj-jelentkezo", data);
       console.log(response);
       if (response.status === 201) {
         setPostStatus(true);
@@ -117,7 +117,7 @@ export const JelentkezesProvider = ({ children }) => {
     szakLista.map((szak) => {
       return szakOptions.push({
         value: szak.id,
-        label: szak.elnevezes,
+        label: szak.nappali ? "N | " + szak.elnevezes : "E | " + szak.elnevezes,
         portfolio: szak.portfolio,
       });
     });

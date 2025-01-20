@@ -57,10 +57,10 @@ function BeiratkozasSzemelyesAdatok() {
 
         <InputText
           wrapperClassName={inputResponsiveness}
-          formRegister={register("szulo_elerhetoseg")}
-          label="Szülők elérhetősége (telefonszáma)"
-          error={errors.szulo_elerhetoseg}
-          type="tel"
+          formRegister={register("lakcim")}
+          label="Állandó lakcím"
+          error={errors.lakcim}
+          type="text"
         />
 
         <InputText

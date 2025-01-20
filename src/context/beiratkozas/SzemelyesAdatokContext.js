@@ -3,19 +3,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
+import { myAxios } from "../MyAxios";
+import useAuthContext from "../AuthContext";
 
 export const SzemelyesAdatokContext = createContext("");
 
 export const SzemelyesAdatokProvider = ({ children }) => {
   const [magyar, setMagyar] = useState(false);
   const { setStepperActive } = useContext(BeiratkozasContext);
+  const { user } = useAuthContext();
 
   const szemelyesAdatokSchema = z
     .object({
-      vezeteknev: z.string().min(1, "A vezetéknév nem lehet üres!"),
-      keresztnev: z.string().min(1, "A keresztnév nem lehet üres!"),
+      vezeteknev: z.string().min(1, "A vezetéknév kitöltendő!"),
+      keresztnev: z.string().min(1, "A keresztnév kitöltendő!"),
       szuletesi_nev: z.string().optional(),
-      allampolgarsag: z.string().min(1, "Az állampolgárság nem lehet üres!"),
+      allampolgarsag: z.string().min(1, "Az állampolgárság kitöltendő!"),
       adoazonosito: z
         .string()
         .optional()
@@ -30,7 +33,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
           (taj_szam) => !taj_szam || /^\d{9}$/.test(taj_szam),
           "A TAJ számnak pontosan 9 számjegyből kell állnia!"
         ),
-      anyja_neve: z.string().min(1, "Az anyja neve nem lehet üres!"),
+      anyja_neve: z.string().min(1, "Az anyja neve kitöltendő!"),
       szuletesi_datum: z.string().refine((datum) => {
         const parsedDate = Date.parse(datum);
         if (isNaN(parsedDate)) return false;
@@ -48,10 +51,8 @@ export const SzemelyesAdatokProvider = ({ children }) => {
 
         return actualAge >= 15;
       }, "A születési dátum nem érvényes!"),
-      szuletesi_hely: z.string().min(1, "A születési hely nem lehet üres!"),
-      szulo_elerhetoseg: z
-        .string()
-        .length(11, "A telefonszámnak 11 karakter hosszúnak kell lennie!"),
+      szuletesi_hely: z.string().min(1, "A születési hely kitöltendő!"),
+      lakcim: z.string().min(1, "Az állandó lakcím kitöltendő!"),
     })
     .refine(
       (data) => {
@@ -82,9 +83,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     },
   });
 
-  const szemelyesAdatokFelvesz = () => {
-    console.log("asda");
-
+  const szemelyesAdatokFelvesz = async () => {
     const adatok = getValues([
       "vezeteknev",
       "keresztnev",
@@ -95,10 +94,11 @@ export const SzemelyesAdatokProvider = ({ children }) => {
       "anyja_neve",
       "szuletesi_datum",
       "szuletesi_hely",
-      "szulo_elerhetoseg",
+      "lakcim",
     ]);
 
     const szemelyesAdatok = {
+      jelentkezo_id: user.id,
       vezeteknev: adatok[0],
       keresztnev: adatok[1],
       szuletesi_nev: adatok[2],
@@ -108,15 +108,25 @@ export const SzemelyesAdatokProvider = ({ children }) => {
       anyja_neve: adatok[6],
       szuletesi_datum: adatok[7],
       szuletesi_hely: adatok[8],
-      szulo_elerhetoseg: adatok[9],
+      lakcim: adatok[9],
     };
 
-    setStepperActive(1);
+    try {
+      const response = await myAxios.post(
+        "/api/torzsadat-feltolt",
+        szemelyesAdatok
+      );
+      console.log(response);
+
+      setStepperActive(1);
+    } catch (e) {
+      console.log(e.response.data.errors);
+    }
   };
 
   const allampolgarsag = watch("allampolgarsag");
   useEffect(() => {
-    setMagyar(allampolgarsag.toLowerCase().trim() === "magyar");
+    setMagyar(allampolgarsag?.toLowerCase().trim() === "magyar");
   }, [allampolgarsag]);
 
   return (
