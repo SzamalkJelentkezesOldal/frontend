@@ -12,6 +12,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { huHU } from "@mui/material/locale";
 import { SzemelyesAdatokProvider } from "./context/beiratkozas/SzemelyesAdatokContext";
 import { BeiratkozasProvider } from "./context/beiratkozas/BeiratkozasContext";
+import { DokumentumokProvider } from "./context/beiratkozas/DokumentumokContext";
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -23,13 +24,15 @@ root.render(
           <RegisztralasProvider>
             <BelepesProvider>
               <BeiratkozasProvider>
-                <SzemelyesAdatokProvider>
-                  <BrowserRouter>
-                    <ThemeProvider theme={themeMUI}>
-                      <App />
-                    </ThemeProvider>
-                  </BrowserRouter>
-                </SzemelyesAdatokProvider>
+                <DokumentumokProvider>
+                  <SzemelyesAdatokProvider>
+                    <BrowserRouter>
+                      <ThemeProvider theme={themeMUI}>
+                        <App />
+                      </ThemeProvider>
+                    </BrowserRouter>
+                  </SzemelyesAdatokProvider>
+                </DokumentumokProvider>
               </BeiratkozasProvider>
             </BelepesProvider>
           </RegisztralasProvider>

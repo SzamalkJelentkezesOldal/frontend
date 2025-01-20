@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
+@layer base {
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
@@ -12,7 +12,9 @@
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px white;
   }
+}
 
+@layer components {
   .form__group {
     background-color: white;
     position: relative;
