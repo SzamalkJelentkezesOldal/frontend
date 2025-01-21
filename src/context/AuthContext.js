@@ -1,18 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { myAxios } from "./MyAxios";
+import { useNavigate } from "react-router-dom";
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getUser = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const { data } = await myAxios.get("/api/user");
       console.log("fh adatok: ", data);
-      setUser(data);
+      if (JSON.stringify(data) !== JSON.stringify(user)) {
+        setUser(data);
+      }
     } catch (e) {
       if (e.response.status === 401) {
         console.log("nincs belépve!");
@@ -27,6 +31,12 @@ export const AuthProvider = ({ children }) => {
     try {
       await myAxios.post("/login", adat);
       await getUser();
+      navigate("/beiratkozas");
+      // if (user.role === 0) {
+      //   navigate("/beiratkozas");
+      // } else {
+      //   navigate("/admin");
+      // }
     } catch (e) {
       console.log(e.response.data.errors);
     }
@@ -50,12 +60,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     });
   };
-
-  useEffect(() => {
-    if (!user) {
-      getUser();
-    }
-  }, []);
 
   return (
     <AuthContext.Provider

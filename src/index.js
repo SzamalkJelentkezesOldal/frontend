@@ -18,26 +18,26 @@ const themeMUI = createTheme({}, huHU);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ApiProvider>
-      <AuthProvider>
-        <JelentkezesProvider>
-          <RegisztralasProvider>
-            <BelepesProvider>
-              <BeiratkozasProvider>
-                <DokumentumokProvider>
-                  <SzemelyesAdatokProvider>
-                    <BrowserRouter>
+    <BrowserRouter>
+      <ApiProvider>
+        <AuthProvider>
+          <JelentkezesProvider>
+            <RegisztralasProvider>
+              <BelepesProvider>
+                <BeiratkozasProvider>
+                  <DokumentumokProvider>
+                    <SzemelyesAdatokProvider>
                       <ThemeProvider theme={themeMUI}>
                         <App />
                       </ThemeProvider>
-                    </BrowserRouter>
-                  </SzemelyesAdatokProvider>
-                </DokumentumokProvider>
-              </BeiratkozasProvider>
-            </BelepesProvider>
-          </RegisztralasProvider>
-        </JelentkezesProvider>
-      </AuthProvider>
-    </ApiProvider>
+                    </SzemelyesAdatokProvider>
+                  </DokumentumokProvider>
+                </BeiratkozasProvider>
+              </BelepesProvider>
+            </RegisztralasProvider>
+          </JelentkezesProvider>
+        </AuthProvider>
+      </ApiProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
