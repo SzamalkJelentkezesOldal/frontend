@@ -1,5 +1,7 @@
+import AdminFelvesz from "../components/admin/AdminFelvesz";
+
 function Admin() {
-  return <>ADMIN</>;
+  return <AdminFelvesz/>;
 }
 
 export default Admin;

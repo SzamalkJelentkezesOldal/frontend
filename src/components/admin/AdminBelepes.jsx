@@ -1,18 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { AdminContext } from "../../context/admin/AdminContext";
-import { AdminBelepesContext } from "../../context/admin/AdminBelepesContext";
 import InputText from "../InputText";
 import SubmitButton from "../SubmitButton";
 import CustomForm from "../CustomForm";
+import { AdminFelveszContext } from "../../context/admin/AdminFelvesz";
 
 function AdminBelepes() {
   const navigate = useNavigate();
 
-  const { login } = useContext(AdminContext);
-
-  const { handleSubmit, isSubmitting, errors, reset, getValues, formRegister } =
-    useContext(AdminBelepesContext);
+  const { handleSubmit, isSubmitting, errors, formRegister } =
+    useContext(AdminFelveszContext);
 
   const handleLogin = async () => {
     try {

@@ -5,6 +5,7 @@ import GuestLayout from "./layouts/GuestLayout";
 import Belepes from "./pages/Belepes";
 import Jelentkezes from "./pages/Jelentkezes";
 import Regisztralas from "./pages/Regisztralas";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       </Route>
       <Route element={<GuestLayout />}>
         <Route path="/" element={<Jelentkezes />} />
+        <Route path="admin" element={<Admin />} />
         <Route path="login" element={<Belepes />} />
         <Route path="register/:token" element={<Regisztralas />} />
       </Route>
