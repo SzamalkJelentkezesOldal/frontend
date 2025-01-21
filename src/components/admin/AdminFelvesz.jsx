@@ -14,7 +14,7 @@ function AdminFelvesz() {
       <CustomForm
         onSubmit={handleSubmit(ugyintezoFelvesz)}
         title="Ügyintéző felvétel"
-        className={"min-w-[35%] flex-wrap gap-1"}
+        className={"!min-w-[40%] flex flex-wrap gap-2"}
       >
         <InputText
           formRegister={formRegister("nev")}
@@ -45,7 +45,7 @@ function AdminFelvesz() {
         <FormControlLabel
           control={
             <Checkbox
-              formRegister={formRegister("master")}
+            {...formRegister("master")}
               defaultChecked={false}
             />
           }

@@ -8,12 +8,12 @@ export const AdminFelveszContext = createContext("");
 
 export const AdminFelveszProvider = ({ children }) => {
   const felveszSchema = z.object({
-    nev: z.string().min(3,"Érvénytelen név, legalább 3 betű!"),
+    nev: z.string().min(3, "Érvénytelen név, legalább 3 betű!"),
     email: z.string().email("Érvénytelen e-mail cím!"),
     jelszo: z.string().min(8, "A jelszó legalább 8 karakter hosszú legyen!"),
+    jelszoMegerosites: z.string().min(8, "A jelszó megerősítése is legalább 8 karakter hosszú kell legyen!"),
     master: z.boolean(),
-  })
-  .refine((data) => data.jelszo === data.confirmPassword, {
+  }).refine((data) => data.jelszo === data.jelszoMegerosites, {
     message: "A jelszavak nem egyeznek!",
     path: ["jelszoMegerosites"], 
   });
@@ -44,7 +44,7 @@ export const AdminFelveszProvider = ({ children }) => {
 const postUgyintezo = async (data) => {
     try {
         const response = await myAxios.post("/api/uj-ugyintezo", data);
-        console.log(response);
+        console.log("Új ügyintéző felvéve: ", response);
         return true;
       } catch (e) {
         console.log(e.response.data.errors);
