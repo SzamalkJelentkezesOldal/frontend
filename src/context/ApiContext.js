@@ -5,6 +5,7 @@ export const ApiContext = createContext("");
 
 export const ApiProvider = ({ children }) => {
   const [szakLista, setSzakLista] = useState([]);
+  const [ugyintezoLista, setUgyintezoLista] = useState([]);
 
   const getAdat = async (vegpont, callbackfv) => {
     try {
@@ -33,10 +34,11 @@ export const ApiProvider = ({ children }) => {
 
   useEffect(() => {
     getAdat("/api/szakok", setSzakLista);
+    getAdat("/api/ugyintezok", setUgyintezoLista);
   }, []);
 
   return (
-    <ApiContext.Provider value={{ szakLista, postAdat }}>
+    <ApiContext.Provider value={{ szakLista, postAdat, ugyintezoLista }}>
       {children}
     </ApiContext.Provider>
   );

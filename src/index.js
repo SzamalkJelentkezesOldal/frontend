@@ -13,6 +13,7 @@ import { huHU } from "@mui/material/locale";
 import { SzemelyesAdatokProvider } from "./context/beiratkozas/SzemelyesAdatokContext";
 import { BeiratkozasProvider } from "./context/beiratkozas/BeiratkozasContext";
 import { DokumentumokProvider } from "./context/beiratkozas/DokumentumokContext";
+import { AdminFelveszProvider } from "./context/admin/AdminFelveszContext";
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
