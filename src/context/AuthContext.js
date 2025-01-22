@@ -1,32 +1,48 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { myAxios } from "./MyAxios";
+import { useNavigate } from "react-router-dom";
+
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const { data } = await myAxios.get("/api/user");
-      console.log("fh adatok: ", data);
+      setIsAdmin(data.role > 0);
       setUser(data);
-    } catch (e) {
-      if (e.response.status === 401) {
-        console.log("nincs belépve!");
-      }
+      return data;
+    } catch (error) {
+      console.error("Nem vagy belépve:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const login = async ({ ...adat }) => {
     await csrf();
     try {
       await myAxios.post("/login", adat);
-      await getUser();
+      const data = await getUser();
+      console.log(data);
+      console.log(isAdmin);
+      if (data.role > 0) {
+        navigate("/admin/kezdolap");
+      } else {
+        navigate("/beiratkozas");
+      }
     } catch (e) {
       console.log(e.response.data.errors);
     }
@@ -55,11 +71,16 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       getUser();
     }
-  }, []);
+    if (user && user?.role > 0) {
+      navigate("/admin/kezdolap");
+    } else if (user) {
+      navigate("/beiratkozas");
+    }
+  }, [user, getUser, navigate]);
 
   return (
     <AuthContext.Provider
-      value={{ login, register, user, getUser, logout, isLoading }}
+      value={{ login, register, user, getUser, logout, isLoading, isAdmin }}
     >
       {children}
     </AuthContext.Provider>

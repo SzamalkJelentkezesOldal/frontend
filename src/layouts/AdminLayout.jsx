@@ -1,10 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuthContext from "../context/AuthContext";
 import Navbar from "../components/navbar/Navbar";
+import useAuthContext from "../context/AuthContext";
 
 function AdminLayout() {
-  const { user } = useAuthContext();
-  const { isLoading } = useAuthContext();
+  const { isAdmin, isLoading } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -14,18 +13,14 @@ function AdminLayout() {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/" />;
-  } else {
-    return user && user.role > 0 ? (
-      <>
-        <Navbar />
-        <Outlet />
-      </>
-    ) : (
-      <Navigate to="/" />
-    );
-  }
+  return isAdmin ? (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  ) : (
+    <Navigate to="/beiratkozas" />
+  );
 }
 
 export default AdminLayout;

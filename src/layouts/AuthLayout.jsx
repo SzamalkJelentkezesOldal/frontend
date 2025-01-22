@@ -1,10 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuthContext from "../context/AuthContext";
 import Navbar from "../components/navbar/Navbar";
+import useAuthContext from "../context/AuthContext";
 
 function AuthLayout() {
-  const { user } = useAuthContext();
-  const { isLoading } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -16,7 +15,7 @@ function AuthLayout() {
 
   return user ? (
     <>
-      <Navbar empty={true} />
+      <Navbar />
       <Outlet />
     </>
   ) : (
