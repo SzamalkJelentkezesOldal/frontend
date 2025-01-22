@@ -1,5 +1,5 @@
 function Admin() {
-  return <>ADMIN</>;
+  return <div className="pt-40">adningeci</div>;
 }
 
 export default Admin;

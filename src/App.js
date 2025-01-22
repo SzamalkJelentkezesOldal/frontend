@@ -1,4 +1,4 @@
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Beiratkozas from "./pages/Beiratkozas";
 import AuthLayout from "./layouts/AuthLayout";
 import GuestLayout from "./layouts/GuestLayout";
@@ -7,31 +7,22 @@ import Jelentkezes from "./pages/Jelentkezes";
 import Regisztralas from "./pages/Regisztralas";
 import Admin from "./pages/Admin";
 import AdminLayout from "./layouts/AdminLayout";
-import LayoutSelector from "./layouts/LayoutSelector";
-import ProtectedRoute from "./layouts/ProtectedRoute";
+import NoPage from "./pages/NoPage";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LayoutSelector />}>
-        <Route path="login" element={<Belepes />} />
+      <Route path="/hiba" element={<NoPage />} />
+      <Route path="/" element={<GuestLayout />}>
         <Route index element={<Jelentkezes />} />
-        <Route
-          path="beiratkozas"
-          element={
-            // <ProtectedRoute requiredRole={0}>
-            <Beiratkozas />
-            // </ProtectedRoute>
-          }
-        />
-        <Route
-          path="admin"
-          element={
-            // <ProtectedRoute requiredRole={1}>
-            <Admin />
-            // </ProtectedRoute>
-          }
-        />
+        <Route path="login" element={<Belepes />} />
+        <Route path="register/:token" element={<Regisztralas />} />
+      </Route>
+      <Route element={<AuthLayout />}>
+        <Route path="beiratkozas" element={<Beiratkozas />} />
+        <Route element={<AdminLayout />}>
+          <Route path="admin/kezdolap" element={<Admin />} />
+        </Route>
       </Route>
     </Routes>
   );

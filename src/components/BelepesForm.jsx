@@ -21,7 +21,6 @@ function BelepesForm() {
 
       await login({ email, password });
       reset();
-      navigate("/");
     } catch (e) {
       console.log("bejelentkezési hiba");
     }
