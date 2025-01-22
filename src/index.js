@@ -22,21 +22,23 @@ root.render(
     <ApiProvider>
       <BrowserRouter>
         <AuthProvider>
-          <JelentkezesProvider>
-            <RegisztralasProvider>
-              <BelepesProvider>
-                <BeiratkozasProvider>
-                  <DokumentumokProvider>
-                    <SzemelyesAdatokProvider>
-                      <ThemeProvider theme={themeMUI}>
-                        <App />
-                      </ThemeProvider>
-                    </SzemelyesAdatokProvider>
-                  </DokumentumokProvider>
-                </BeiratkozasProvider>
-              </BelepesProvider>
-            </RegisztralasProvider>
-          </JelentkezesProvider>
+          <AdminFelveszProvider>
+            <JelentkezesProvider>
+              <RegisztralasProvider>
+                <BelepesProvider>
+                  <BeiratkozasProvider>
+                    <DokumentumokProvider>
+                      <SzemelyesAdatokProvider>
+                        <ThemeProvider theme={themeMUI}>
+                          <App />
+                        </ThemeProvider>
+                      </SzemelyesAdatokProvider>
+                    </DokumentumokProvider>
+                  </BeiratkozasProvider>
+                </BelepesProvider>
+              </RegisztralasProvider>
+            </JelentkezesProvider>
+          </AdminFelveszProvider>
         </AuthProvider>
       </BrowserRouter>
     </ApiProvider>

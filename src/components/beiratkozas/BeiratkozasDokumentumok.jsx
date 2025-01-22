@@ -1,11 +1,15 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import InputText from "../InputText";
 import BeiratkozasContainer from "./BeiratkozasContainer";
 import { DokumentumokContext } from "../../context/beiratkozas/DokumentumokContext";
+import CustomDropzone from "../Dropzone/CustomDropzone";
+import InputFile from "../InputFile";
 
 function BeiratkozasDokumentumok({ isDisabled }) {
   const { dokumentumokFelvesz, register, handleSubmit, isSubmitting, errors } =
     useContext(DokumentumokContext);
+
+  const [szemelyi, setSzemelyi] = useState([]);
 
   return (
     <BeiratkozasContainer
@@ -14,12 +18,14 @@ function BeiratkozasDokumentumok({ isDisabled }) {
       isDisabled={isDisabled}
       onSubmit={handleSubmit(dokumentumokFelvesz)}
     >
-      <InputText
+      <InputFile
+        title={"Személyi igazolvány első oldala"}
         formRegister={register("adoazonosito")}
         label="Adóigazolvány"
         error={errors.adoazonosito}
-        type="file"
       />
+
+      <CustomDropzone setFiles={setSzemelyi} files={szemelyi} />
     </BeiratkozasContainer>
   );
 }

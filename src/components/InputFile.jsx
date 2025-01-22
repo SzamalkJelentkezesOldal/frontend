@@ -1,24 +1,14 @@
-function InputFile(
-  formRegister,
-  label,
-  error,
-  type,
-  password,
-  wrapperClassName
-) {
+import React from "react";
+import PlusIcon from "./icons/PlusIcon";
+
+function InputFile({ formRegister, label, title, error, wrapperClassName }) {
   return (
-    <div className={`mb-4 ${wrapperClassName}`}>
-      <div className="form__group field shadow-md relative">
-        <input
-          type="file"
-          className="form__field"
-          placeholder={label}
-          id={label}
-          {...formRegister}
-        />
-        <label htmlFor={label} className="form__label">
-          {label}
-        </label>
+    <div className={`w-full container ${wrapperClassName}`}>
+      <div className="bg-white border-[1.3px] p-4 rounded-[6.5px] shadow-md w-full text-xl text-inputGray">
+        <p>{title}</p>
+        <button className="bg-szPrimary-200 p-[2px] text-white text-center rounded-full align-middle hover:bg-szPrimary-300/70">
+          <PlusIcon />
+        </button>
       </div>
       {error && <span className="text-szSecondary-200">{error.message}</span>}
     </div>

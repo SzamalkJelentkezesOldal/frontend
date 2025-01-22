@@ -20,6 +20,7 @@ module.exports = {
           100: "#ff675b",
           200: "#d63637",
         },
+        grayBorder: "#ccced0",
         dark: "#5a5a5a",
         inputGray: "#8b8b8b",
         disabledGray: "#ccc",

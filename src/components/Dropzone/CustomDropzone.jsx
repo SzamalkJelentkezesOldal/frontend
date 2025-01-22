@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import ListGroup from "react-bootstrap/ListGroup";
 import DropzonePreview from "./DropzonePreview";
 
-function Dropzone({ setFiles, files }) {
+function CustomDropzone({ setFiles, files }) {
   const [displayError, setDisplayError] = useState(false);
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
@@ -39,7 +38,7 @@ function Dropzone({ setFiles, files }) {
       <div {...getRootProps()} className="customDropzone">
         <input {...getInputProps()} />
         {isDragActive ? (
-          <div className="d-flex flex-column align-items-center gap-2">
+          <div className="border-2 border-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="40"
@@ -54,7 +53,7 @@ function Dropzone({ setFiles, files }) {
             <p>Engedd el a fájlokat ...</p>
           </div>
         ) : (
-          <div className="d-flex flex-column align-items-center gap-2">
+          <div className="border-2 border-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="40"
@@ -69,7 +68,7 @@ function Dropzone({ setFiles, files }) {
           </div>
         )}
       </div>
-      <ListGroup className="mt-2 mb-2">
+      <ul className="mt-2 mb-2">
         {files.map((file, index) => {
           return (
             <DropzonePreview
@@ -81,7 +80,7 @@ function Dropzone({ setFiles, files }) {
             />
           );
         })}
-      </ListGroup>
+      </ul>
       <div className="d-flex  align-items-center">
         {displayError ? (
           <p className="text-danger">Maximum méret: 15MB</p>
@@ -91,4 +90,4 @@ function Dropzone({ setFiles, files }) {
   );
 }
 
-export default Dropzone;
+export default CustomDropzone;
