@@ -45,17 +45,13 @@ function AdminFelvesz() {
         />
         <FormControlLabel
           control={
-            <Checkbox
-            {...formRegister("master")}
-              defaultChecked={false}
-            />
+            <Checkbox {...formRegister("master")} defaultChecked={false} />
           }
           label="Master"
           labelPlacement="bottom"
         />
         <SubmitButton isSubmitting={isSubmitting} text="Ügyintéző felvétele" />
       </CustomForm>
-      <AdminTablazat />
     </section>
   );
 }

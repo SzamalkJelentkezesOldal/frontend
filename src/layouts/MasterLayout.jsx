@@ -2,8 +2,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "../components/navbar/Navbar";
 import useAuthContext from "../context/AuthContext";
 
-function GuestLayout() {
-  const { user, isLoading, isAdmin } = useAuthContext();
+function MasterLayout() {
+  const { isMaster, isLoading } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -13,19 +13,14 @@ function GuestLayout() {
     );
   }
 
-  if (user && !isLoading) {
-    if (isAdmin) {
-      return <Navigate to="/admin/jelentkezok" />;
-    }
-    return <Navigate to="/beiratkozas" />;
-  }
-
-  return (
+  return isMaster ? (
     <>
       <Navbar />
       <Outlet />
     </>
+  ) : (
+    <Navigate to="/admin/jelentkezok" />
   );
 }
 
-export default GuestLayout;
+export default MasterLayout;

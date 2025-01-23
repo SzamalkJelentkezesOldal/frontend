@@ -5,8 +5,11 @@ import GuestLayout from "./layouts/GuestLayout";
 import Belepes from "./pages/Belepes";
 import Jelentkezes from "./pages/Jelentkezes";
 import Regisztralas from "./pages/Regisztralas";
-import Admin from "./pages/Admin";
 import AdminLayout from "./layouts/AdminLayout";
+import MasterLayout from "./layouts/MasterLayout";
+import AdminJelentkezok from "./pages/AdminJelentkezok";
+import AdminUgyintezok from "./pages/AdminUgyintezok";
+import AdminStatisztika from "./pages/AdminStatisztika";
 
 function App() {
   return (
@@ -19,7 +22,11 @@ function App() {
       <Route element={<AuthLayout />}>
         <Route path="beiratkozas" element={<Beiratkozas />} />
         <Route element={<AdminLayout />}>
-          <Route path="admin/kezdolap" element={<Admin />} />
+          <Route path="admin/jelentkezok" element={<AdminJelentkezok />} />
+          <Route path="admin/statisztika" element={<AdminStatisztika />} />
+          <Route element={<MasterLayout />}>
+            <Route path="admin/ugyintezok" element={<AdminUgyintezok />} />
+          </Route>
         </Route>
       </Route>
     </Routes>
