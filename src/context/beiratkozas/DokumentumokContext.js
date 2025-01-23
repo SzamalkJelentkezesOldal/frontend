@@ -40,6 +40,10 @@ export const DokumentumokProvider = ({ children }) => {
       .array(z.instanceof(File))
       .length(1, "Egy fájlt kell feltölteni a lakcímkártya hátsó oldalához.")
       .nonempty("A lakcímkártya hátsó oldalának feltöltése kötelező."),
+    onarckep: z
+      .array(z.instanceof(File))
+      .length(1, "Egy fájlt kell feltölteni a lakcímkártya hátsó oldalához.")
+      .nonempty("Az önarckép feltöltése kötelező."),
     erettsegik: z.array(z.instanceof(File)).optional(),
     tanulmanyik: z.array(z.instanceof(File)).optional(),
     specialisok: z.array(z.instanceof(File)).optional(),
@@ -66,6 +70,7 @@ export const DokumentumokProvider = ({ children }) => {
       "szemelyi_hatso",
       "lakcim_elso",
       "lakcim_hatso",
+      "onarckep",
       "erettsegik",
       "tanulmanyik",
       "specialisok",
@@ -78,8 +83,10 @@ export const DokumentumokProvider = ({ children }) => {
       szemelyi_hatso: adatok[3],
       lakcim_elso: adatok[4],
       lakcim_hatso: adatok[5],
-      erettsegik: adatok[6],
-      tanulmanyik: adatok[7],
+      onarckep: adatok[6],
+      erettsegik: adatok[7],
+      tanulmanyik: adatok[8],
+      specialisok: adatok[9],
     };
 
     setStepperActive(2);

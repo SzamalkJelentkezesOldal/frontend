@@ -22,7 +22,11 @@ module.exports = {
         },
         grayBorder: "#ccced0",
         dark: "#5a5a5a",
-        inputGray: "#8b8b8b",
+        inputGray: {
+          DEFAULT: "#8b8b8b",
+          50: "#CFD8DC",
+          100: "#8b8b8b",
+        },
         disabledGray: "#ccc",
       },
     },
