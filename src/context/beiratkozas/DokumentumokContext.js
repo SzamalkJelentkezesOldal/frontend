@@ -9,7 +9,41 @@ export const DokumentumokContext = createContext("");
 export const DokumentumokProvider = ({ children }) => {
   const { setStepperActive } = useContext(BeiratkozasContext);
 
-  const dokumentumokSchema = z.object({});
+  const dokumentumokSchema = z.object({
+    adoazonosito: z
+      .array(z.instanceof(File))
+      .length(1, "Egy fájlt kell feltölteni az adóazonosítóhoz.")
+      .nonempty("Az adóazonosító feltöltése kötelező."),
+    taj: z
+      .array(z.instanceof(File))
+      .length(1, "Egy fájlt kell feltölteni a TAJ-hoz.")
+      .nonempty("A TAJ feltöltése kötelező."),
+    szemelyi_elso: z
+      .array(z.instanceof(File))
+      .length(
+        1,
+        "Egy fájlt kell feltölteni a személyi igazolvány első oldalához."
+      )
+      .nonempty("A személyi igazolvány első oldalának feltöltése kötelező."),
+    szemelyi_hatso: z
+      .array(z.instanceof(File))
+      .length(
+        1,
+        "Egy fájlt kell feltölteni a személyi igazolvány hátsó oldalához."
+      )
+      .nonempty("A személyi igazolvány hátsó oldalának feltöltése kötelező."),
+    lakcim_elso: z
+      .array(z.instanceof(File))
+      .length(1, "Egy fájlt kell feltölteni a lakcímkártya első oldalához.")
+      .nonempty("A lakcímkártya első oldalának feltöltése kötelező."),
+    lakcim_hatso: z
+      .array(z.instanceof(File))
+      .length(1, "Egy fájlt kell feltölteni a lakcímkártya hátsó oldalához.")
+      .nonempty("A lakcímkártya hátsó oldalának feltöltése kötelező."),
+    erettsegik: z.array(z.instanceof(File)).optional(),
+    tanulmanyik: z.array(z.instanceof(File)).optional(),
+    specialisok: z.array(z.instanceof(File)).optional(),
+  });
 
   const {
     register,
@@ -34,6 +68,7 @@ export const DokumentumokProvider = ({ children }) => {
       "lakcim_hatso",
       "erettsegik",
       "tanulmanyik",
+      "specialisok",
     ]);
 
     const szemelyesAdatok = {
