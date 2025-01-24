@@ -32,7 +32,6 @@ function AdminTablazat() {
 
   return (
     <section className="container pt-20">
-      {console.log(ugyintezoLista)}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -46,11 +45,11 @@ function AdminTablazat() {
             {ugyintezoLista.map((row) => (
               <StyledTableRow key={row.id}>
                 <StyledTableCell component="th" scope="row">
-                  {row.nev}
+                  {row.name}
                 </StyledTableCell>
                 <StyledTableCell align="right">{row.email}</StyledTableCell>
                 <StyledTableCell align="right">
-                  {row.master ? "Igen" : "Nem"}
+                  {row.role > 1 ? "Igen" : "Nem"}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
