@@ -73,6 +73,7 @@ export const DokumentumokProvider = ({ children }) => {
       "onarckep",
       "erettsegik",
       "tanulmanyik",
+      "nyilatkozatok",
       "specialisok",
     ]);
 
@@ -86,7 +87,8 @@ export const DokumentumokProvider = ({ children }) => {
       onarckep: adatok[6],
       erettsegik: adatok[7],
       tanulmanyik: adatok[8],
-      specialisok: adatok[9],
+      nyilatkozatok: adatok[9],
+      specialisok: adatok[10],
     };
 
     setStepperActive(2);

@@ -58,7 +58,7 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
   };
 
   return (
-    <div className={`w-full container ${wrapperClassName} mb-5`}>
+    <div className={`w-full container ${wrapperClassName} mb-7`}>
       <div className="bg-white border-[1.3px] flex flex-col gap-2 p-4 rounded-[6.5px] shadow-md w-full text-xl text-inputGray">
         <div className="flex items-center gap-4">
           <button
@@ -88,6 +88,9 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
           </p>
         ) : (
           ""
+        )}
+        {error && (
+          <span className="text-szSecondary-200 text-sm">{error.message}</span>
         )}
       </div>
       {/* Fájlok listája törlés és előnézet lehetőséggel */}
@@ -137,7 +140,6 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
           </div>
         </div>
       )}
-      {error && <span className="text-szSecondary-200">{error.message}</span>}
     </div>
   );
 }

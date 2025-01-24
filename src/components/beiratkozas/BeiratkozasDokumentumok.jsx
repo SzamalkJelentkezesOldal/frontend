@@ -4,6 +4,7 @@ import { DokumentumokContext } from "../../context/beiratkozas/DokumentumokConte
 import CustomDropzone from "../Dropzone/CustomDropzone";
 import InputFile from "../InputFile";
 import SubmitButton from "../SubmitButton";
+import InfoBox from "../InfoBox";
 
 function BeiratkozasDokumentumok({ isDisabled }) {
   const { dokumentumokFelvesz, register, handleSubmit, isSubmitting, errors } =
@@ -33,22 +34,18 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         title="Adóigazolvány"
         formRegister={register("adoazonosito")}
         error={errors.adoazonosito}
-        multiple={false}
       />
 
       <InputFile
-        wrapperClassName="!mt-3"
         title="TAJ kártya"
         formRegister={register("taj")}
         error={errors.taj}
-        multiple={false}
       />
 
       <InputFile
         title="Személyazonosító igazolvány első oldal"
         formRegister={register("szemelyi_elso")}
         error={errors.szemelyi_elso}
-        multiple={true}
       />
 
       <InputFile
@@ -62,13 +59,28 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         title="Lakcímet igazoló igazolvány első oldala"
         formRegister={register("lakcim_elso")}
         error={errors.lakcim_elso}
-        multiple={true}
       />
 
       <InputFile
         title="Lakcímet igazoló igazolvány hátsó oldala"
         formRegister={register("lakcim_hatso")}
         error={errors.lakcim_hatso}
+      />
+
+      <InputFile
+        title="Önarckép semleges háttérral"
+        formRegister={register("onarckep")}
+        error={errors.onarckep}
+      />
+
+      <InfoBox className="">
+        Azoktól, akik idén májusban érettségiznek, pótlólag várjuk majd a
+        bizonyítványt, de előzetesen ők is beiratkozhatnak.
+      </InfoBox>
+      <InputFile
+        title="Érettségi bizonyítvány"
+        formRegister={register("erettsegik")}
+        error={errors.erettsegik}
         multiple={true}
       />
 

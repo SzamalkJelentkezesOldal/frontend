@@ -7,6 +7,7 @@ import InputText from "./InputText";
 import SubmitButton from "./SubmitButton";
 import CustomForm from "./CustomForm";
 import CustomSnackbar from "./CustomSnackbar";
+import InfoBox from "./InfoBox";
 
 function JelentkezesForm() {
   const {
@@ -55,15 +56,10 @@ function JelentkezesForm() {
 
         {portfolio && portfoliosSzakok.length > 0 && (
           <div>
-            <div className="container p-2 text-inputGray text-sm font-medium bg-gray-200/70 shadow-md rounded-lg mb-4 relative">
-              <p className="absolute top-[-9px] left-[-8px] bg-szPrimary-200 text-white size-5 text-center rounded-full">
-                ?
-              </p>
-              <p>
-                Kiválasztottál egy olyan képzést, amihez portfóliót kell
-                elküldeni. Kérlek, az egész portfóliódat egy linkben küldd el.
-              </p>
-            </div>
+            <InfoBox>
+              Kiválasztottál egy olyan képzést, amihez portfóliót kell
+              elküldeni. Kérlek, az egész portfóliódat egy linkben küldd el.
+            </InfoBox>
             {portfoliosSzakok.map((szak, index) => (
               <Tooltip
                 key={`tooltip-${index}`}
@@ -114,7 +110,9 @@ function JelentkezesForm() {
           type="tel"
         />
 
-        <SubmitButton text="Jelentkezés" isSubmitting={isSubmitting} />
+        <div className="pb-5 sm:pb-0 flex justify-center">
+          <SubmitButton text="Jelentkezés" isSubmitting={isSubmitting} />
+        </div>
 
         <CustomSnackbar
           severity={postStatus}
