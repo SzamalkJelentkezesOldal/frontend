@@ -54,8 +54,15 @@ function NavItem({ className, onClick }) {
         )
       ) : (
         <>
-          <Link to="/" className={className} onClick={onClick}>
+          <Link to="/" className={`${className} md:hidden`} onClick={onClick}>
             Jelentkezés
+          </Link>
+          <Link
+            to="/login"
+            className={`${className} md:hidden`}
+            onClick={onClick}
+          >
+            Belépés
           </Link>
         </>
       )}
