@@ -14,6 +14,7 @@ import { SzemelyesAdatokProvider } from "./context/beiratkozas/SzemelyesAdatokCo
 import { BeiratkozasProvider } from "./context/beiratkozas/BeiratkozasContext";
 import { DokumentumokProvider } from "./context/beiratkozas/DokumentumokContext";
 import { AdminFelveszProvider } from "./context/admin/AdminFelveszContext";
+import { SorrendProvider } from "./context/beiratkozas/SorrendContext";
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -21,25 +22,27 @@ root.render(
   <React.StrictMode>
     <ApiProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <AdminFelveszProvider>
-            <JelentkezesProvider>
-              <RegisztralasProvider>
-                <BelepesProvider>
-                  <BeiratkozasProvider>
-                    <DokumentumokProvider>
-                      <SzemelyesAdatokProvider>
-                        <ThemeProvider theme={themeMUI}>
-                          <App />
-                        </ThemeProvider>
-                      </SzemelyesAdatokProvider>
-                    </DokumentumokProvider>
-                  </BeiratkozasProvider>
-                </BelepesProvider>
-              </RegisztralasProvider>
-            </JelentkezesProvider>
-          </AdminFelveszProvider>
-        </AuthProvider>
+        <SorrendProvider>
+          <AuthProvider>
+            <AdminFelveszProvider>
+              <JelentkezesProvider>
+                <RegisztralasProvider>
+                  <BelepesProvider>
+                    <BeiratkozasProvider>
+                      <DokumentumokProvider>
+                        <SzemelyesAdatokProvider>
+                          <ThemeProvider theme={themeMUI}>
+                            <App />
+                          </ThemeProvider>
+                        </SzemelyesAdatokProvider>
+                      </DokumentumokProvider>
+                    </BeiratkozasProvider>
+                  </BelepesProvider>
+                </RegisztralasProvider>
+              </JelentkezesProvider>
+            </AdminFelveszProvider>
+          </AuthProvider>
+        </SorrendProvider>
       </BrowserRouter>
     </ApiProvider>
   </React.StrictMode>

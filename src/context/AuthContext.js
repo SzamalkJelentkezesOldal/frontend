@@ -7,12 +7,14 @@ import {
 } from "react";
 import { myAxios } from "./MyAxios";
 import { useNavigate } from "react-router-dom";
+import { SorrendContext } from "./beiratkozas/SorrendContext";
 
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
+  const { setJelentkezesek } = useContext(SorrendContext);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -38,6 +40,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await myAxios.post("/login", adat);
       const data = await getUser();
+      console.log(data);
       if (data?.role > 0) {
         console.log(isAdmin);
         navigate("/admin/jelentkezok");
@@ -76,7 +79,12 @@ export const AuthProvider = ({ children }) => {
         navigate("/admin/jelentkezok");
       } else if (data) {
         navigate("/beiratkozas");
+        const jelentkezesLista = await myAxios.get(
+          `/api/jelentkezesek/${data.email}`
+        );
+        setJelentkezesek(jelentkezesLista.data);
       }
+      console.log(data);
     };
 
     if (!user) {
