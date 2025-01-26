@@ -15,7 +15,7 @@ function BeiratkozasSzemelyesAdatok() {
   } = useContext(SzemelyesAdatokContext);
 
   const inputResponsiveness =
-    "w-[330px] xsm:min-w-[390px] sm:min-w-[430px] md:min-w-[450px] md:max-w-[450px] lg:min-w-[380px] lg:max-w-[380px] xl:min-w-[450px]";
+    "w-[330px] xsm:min-w-[390px] sm:min-w-[430px] md:min-w-[450px] md:max-w-[450px] lg:min-w-[380px] lg:max-w-[380px] xl:max-w-[300px]";
 
   return (
     <BeiratkozasContainer

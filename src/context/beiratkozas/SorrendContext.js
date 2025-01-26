@@ -7,14 +7,7 @@ import { z } from "zod";
 export const SorrendContext = createContext();
 
 export const SorrendProvider = ({ children }) => {
-  const [jelentkezesek, setJelentkezesek] = useState([
-    {
-      sorrend: 0,
-      elnevezes: "",
-      jelentkezo_id: 0,
-      szak_id: 0,
-    },
-  ]);
+  const [jelentkezesek, setJelentkezesek] = useState();
 
   const sorrendSchema = z.object({});
 

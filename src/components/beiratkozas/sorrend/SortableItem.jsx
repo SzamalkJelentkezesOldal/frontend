@@ -16,7 +16,7 @@ const SortableItem = ({ id, szak }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-gray-100 p-2 rounded-lg shadow"
+      className="bg-gray-100 p-2 rounded-lg shadow szak__sorrend"
     >
       {szak}
     </div>

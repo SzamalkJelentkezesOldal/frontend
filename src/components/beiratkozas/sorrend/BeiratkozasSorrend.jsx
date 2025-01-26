@@ -3,6 +3,7 @@ import BeiratkozasContainer from "../BeiratkozasContainer";
 import DraggableList from "./DraggableList";
 import { SorrendContext } from "../../../context/beiratkozas/SorrendContext";
 import SubmitButton from "../../SubmitButton";
+import InfoBox from "../../InfoBox";
 
 function BeiratkozasSorrend({ isDisabled }) {
   const { updateSorrend, handleSubmit, isSubmitting } =
@@ -15,7 +16,12 @@ function BeiratkozasSorrend({ isDisabled }) {
       isDisabled={isDisabled}
       onSubmit={handleSubmit(updateSorrend)}
     >
-      <DraggableList />
+      <div className="container md:max-w-[700px] pt-5">
+        <InfoBox>
+          Módosítsd a szakok sorrendjét saját prefeneciád szerint.
+        </InfoBox>
+        <DraggableList />
+      </div>
       <SubmitButton
         text="Tovább"
         isSubmitting={isSubmitting}

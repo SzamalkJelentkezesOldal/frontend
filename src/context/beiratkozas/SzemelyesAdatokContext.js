@@ -98,7 +98,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     ]);
 
     const szemelyesAdatok = {
-      jelentkezo_id: user.id,
+      email: user.email,
       vezeteknev: adatok[0],
       keresztnev: adatok[1],
       szuletesi_nev: adatok[2],
@@ -120,7 +120,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
 
       setStepperActive(1);
     } catch (e) {
-      console.log(e.response.data.errors);
+      console.log(e);
     }
   };
 

@@ -29,8 +29,6 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
     setExtensionError(false);
     const fileToRemove = selectedFiles[index];
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-
-    // Ha az eltávolított fájl az előnézetben lévő fájl, akkor az előnézetet töröljük
     if (previewFile) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -52,13 +50,15 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewFile(reader.result); // A fájl tartalmát állítja be előnézethez
+      setPreviewFile(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
   return (
-    <div className={`w-full container ${wrapperClassName} mb-7`}>
+    <div
+      className={`w-full container ${wrapperClassName} mb-7 sm:mb-10 md:mb-10 lg:mb-14`}
+    >
       <div className="bg-white border-[1.3px] flex flex-col gap-2 p-4 rounded-[6.5px] shadow-md w-full text-xl text-inputGray">
         <div className="flex items-center gap-4">
           <button
@@ -93,7 +93,6 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
           <span className="text-szSecondary-200 text-sm">{error.message}</span>
         )}
       </div>
-      {/* Fájlok listája törlés és előnézet lehetőséggel */}
       {selectedFiles.length > 0 && (
         <ul className="mt-2 flex flex-wrap gap-[2px]">
           {selectedFiles.map((file, index) => (
@@ -109,7 +108,7 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
               </span>
               <button
                 type="button"
-                className="rounded-full hover:bg-szSecondary-100/50"
+                className="rounded-full hover:bg-white/30"
                 onClick={() => handleRemoveFile(index)}
               >
                 <SmallCloseIcon size="18" color="#8b8b8b" />
@@ -118,23 +117,21 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
           ))}
         </ul>
       )}
-      {/* Előnézeti ablak */}
       {previewFile && (
         <div className="mt-4">
           <div className="flex justify-between items-center">
-            <p className="text-lg font-medium">Előnézet:</p>
             <button
               type="button"
-              className="mt-2 bg-szSecondary-200 rounded-full"
+              className="mt-2 bg-szSecondary-200/80 hover:bg-szSecondary-200 rounded-full"
               onClick={() => setPreviewFile(null)}
             >
               <SmallCloseIcon size="18" color="white" />
             </button>
           </div>
-          <div className="border p-2 rounded shadow-md">
+          <div className="border p-2 rounded shadow-md w-max max-w-full">
             <img
               src={previewFile}
-              alt="File Preview"
+              alt="Fájl előnézet"
               className="max-w-full h-auto"
             />
           </div>
