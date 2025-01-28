@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { ApiContext } from "../../context/ApiContext";
+import EditIcon from "../icons/EditIcon";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,6 +31,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function AdminTablazat() {
   const { ugyintezoLista } = useContext(ApiContext);
 
+
   return (
     <section className="container pt-20">
       <TableContainer component={Paper}>
@@ -37,8 +39,9 @@ function AdminTablazat() {
           <TableHead>
             <TableRow>
               <StyledTableCell>Név</StyledTableCell>
-              <StyledTableCell align="right">E-mail</StyledTableCell>
-              <StyledTableCell align="right">Master</StyledTableCell>
+              <StyledTableCell>E-mail</StyledTableCell>
+              <StyledTableCell>Master</StyledTableCell>
+              <StyledTableCell>Módosítás</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -47,9 +50,12 @@ function AdminTablazat() {
                 <StyledTableCell component="th" scope="row">
                   {row.name}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.email}</StyledTableCell>
-                <StyledTableCell align="right">
+                <StyledTableCell>{row.email}</StyledTableCell>
+                <StyledTableCell>
                   {row.role > 1 ? "Igen" : "Nem"}
+                </StyledTableCell>
+                <StyledTableCell >
+                  <EditIcon size={"24"}/>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
