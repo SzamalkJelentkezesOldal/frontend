@@ -1,5 +1,7 @@
+import AdminNyilatkozat from "../components/admin/AdminNyilatkozat";
+
 function AdminJelentkezok() {
-  return <div className="pt-20">JELENTKEZŐK ODLAL</div>;
+  return <AdminNyilatkozat />;
 }
 
 export default AdminJelentkezok;

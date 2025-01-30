@@ -3,6 +3,10 @@ import axios from "axios";
 export const myAxios = axios.create({
   baseURL: "http://localhost:8000",
   withCredentials: true,
+  headers: {
+    Accept: "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+  },
 });
 
 myAxios.interceptors.request.use(

@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const withMT = require("@material-tailwind/html/utils/withMT");
+module.exports = withMT({
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    fontFamily: {
+      body: ["Roboto", "sans-serif"],
+    },
     container: {
       center: true,
     },
@@ -33,4 +37,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+});

@@ -10,6 +10,8 @@ function InputText({
   type,
   password,
   wrapperClassName,
+  min,
+  max,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -22,6 +24,8 @@ function InputText({
           placeholder={label}
           id={label}
           {...formRegister}
+          min={min}
+          max={max}
         />
         <label htmlFor={label} className="form__label">
           {label}

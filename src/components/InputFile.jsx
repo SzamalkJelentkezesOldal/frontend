@@ -1,8 +1,20 @@
 import PlusIcon from "./icons/PlusIcon";
 import { useRef, useState } from "react";
 import SmallCloseIcon from "./icons/SmallCloseIcon";
+import DownloadIcon from "./icons/DownloadIcon";
 
-function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
+function InputFile({
+  formRegister,
+  title,
+  error,
+  wrapperClassName,
+  multiple,
+  download,
+  handleDownloadClick,
+  accept,
+  setValue,
+  name,
+}) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
@@ -16,6 +28,12 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
     setExtensionError(false);
     const newFiles = Array.from(event.target.files);
 
+    if (multiple) {
+      setValue(name, event.target.files);
+    } else {
+      setValue(name, newFiles[0] || null);
+    }
+
     if (!multiple) {
       setSelectedFiles(newFiles.slice(0, 1));
     } else {
@@ -27,16 +45,28 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
 
   const handleRemoveFile = (index) => {
     setExtensionError(false);
-    const fileToRemove = selectedFiles[index];
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+
+    const newFiles = selectedFiles.filter((_, i) => i !== index);
+
+    if (multiple) {
+      const dataTransfer = new DataTransfer();
+      newFiles.forEach((file) => dataTransfer.items.add(file));
+      setValue(name, dataTransfer.files);
+    } else {
+      setValue(name, null);
+    }
+
+    setSelectedFiles(newFiles);
+
     if (previewFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.result === previewFile) {
-          setPreviewFile(null);
-        }
-      };
-      reader.readAsDataURL(fileToRemove);
+      const removedFile = selectedFiles[index];
+      if (removedFile && previewFile.includes(removedFile.name)) {
+        setPreviewFile(null);
+      }
+    }
+
+    if (newFiles.length === 0) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -72,15 +102,25 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
           <input
             type="file"
             {...formRegister}
-            ref={(e) => {
-              fileInputRef.current = e;
-              if (typeof formRegister === "function") formRegister(e);
-            }}
+            ref={fileInputRef}
             onChange={handleFileChange}
-            accept=".pdf, .jpg, .jpeg, .png"
+            accept={accept || ".pdf, .jpg, .jpeg, .png"}
             className="hidden"
             multiple={multiple}
           />
+
+          {download ? (
+            <button
+              onClick={handleDownloadClick}
+              type="button"
+              className="bg-gradient-to-r from-szSecondary-100/90 to-szSecondary-100 p-[3px] px-2  text-center rounded-2xl align-middle hover:bg-szSecondary-200/90 duration-200 transition-all text-white flex items-center"
+            >
+              <DownloadIcon />
+              <span className="hidden sm:inline text-base">Letöltés</span>
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
         {extensionError ? (
           <p className="text-szSecondary-100 text-sm">
@@ -89,10 +129,10 @@ function InputFile({ formRegister, title, error, wrapperClassName, multiple }) {
         ) : (
           ""
         )}
-        {error && (
-          <span className="text-szSecondary-200 text-sm">{error.message}</span>
-        )}
       </div>
+      {error && (
+        <span className="text-szSecondary-200 text-sm">{error.message}</span>
+      )}
       {selectedFiles.length > 0 && (
         <ul className="mt-2 flex flex-wrap gap-[2px]">
           {selectedFiles.map((file, index) => (

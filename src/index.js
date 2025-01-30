@@ -15,6 +15,7 @@ import { BeiratkozasProvider } from "./context/beiratkozas/BeiratkozasContext";
 import { DokumentumokProvider } from "./context/beiratkozas/DokumentumokContext";
 import { AdminFelveszProvider } from "./context/admin/AdminFelveszContext";
 import { SorrendProvider } from "./context/beiratkozas/SorrendContext";
+import { AdminNyilatkozatProvider } from "./context/admin/AdminNyilatkozatContext";
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -25,21 +26,23 @@ root.render(
         <SorrendProvider>
           <AuthProvider>
             <AdminFelveszProvider>
-              <JelentkezesProvider>
-                <RegisztralasProvider>
-                  <BelepesProvider>
-                    <BeiratkozasProvider>
-                      <DokumentumokProvider>
-                        <SzemelyesAdatokProvider>
-                          <ThemeProvider theme={themeMUI}>
-                            <App />
-                          </ThemeProvider>
-                        </SzemelyesAdatokProvider>
-                      </DokumentumokProvider>
-                    </BeiratkozasProvider>
-                  </BelepesProvider>
-                </RegisztralasProvider>
-              </JelentkezesProvider>
+              <AdminNyilatkozatProvider>
+                <JelentkezesProvider>
+                  <RegisztralasProvider>
+                    <BelepesProvider>
+                      <BeiratkozasProvider>
+                        <DokumentumokProvider>
+                          <SzemelyesAdatokProvider>
+                            <ThemeProvider theme={themeMUI}>
+                              <App />
+                            </ThemeProvider>
+                          </SzemelyesAdatokProvider>
+                        </DokumentumokProvider>
+                      </BeiratkozasProvider>
+                    </BelepesProvider>
+                  </RegisztralasProvider>
+                </JelentkezesProvider>
+              </AdminNyilatkozatProvider>
             </AdminFelveszProvider>
           </AuthProvider>
         </SorrendProvider>

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
+import { myAxios } from "../MyAxios";
 
 export const DokumentumokContext = createContext("");
 
@@ -62,6 +63,39 @@ export const DokumentumokProvider = ({ children }) => {
     },
   });
 
+  const nyilatkozatLetoltes = async () => {
+    const year = new Date().getFullYear();
+    try {
+      await myAxios.get("/sanctum/csrf-cookie");
+
+      const response = await myAxios.get(`/api/nyilatkozat-letoltes/${year}`, {
+        responseType: "blob",
+        validateStatus: (status) => status === 200,
+      });
+
+      if (
+        response.headers["content-type"] !==
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        throw new Error("Érvénytelen fájlformátum");
+      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `nyilatkozat_${year}.docx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(
+        "Letöltési hiba:",
+        error.response?.data?.error || error.message
+      );
+      console.log(error.response?.data?.error || "Ismeretlen hiba történt");
+    }
+  };
+
   const dokumentumokFelvesz = () => {
     const adatok = getValues([
       "adoazonosito",
@@ -102,6 +136,7 @@ export const DokumentumokProvider = ({ children }) => {
         isSubmitting,
         errors,
         getValues,
+        nyilatkozatLetoltes,
       }}
     >
       {children}
