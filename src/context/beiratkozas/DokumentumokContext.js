@@ -87,6 +87,7 @@ export const DokumentumokProvider = ({ children }) => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      console.log(response);
     } catch (error) {
       console.error(
         "Letöltési hiba:",

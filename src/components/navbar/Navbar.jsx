@@ -75,7 +75,7 @@ function Navbar({ empty }) {
       </div>
 
       <div
-        className={`md:hidden bg-szPrimary flex flex-col font-semibold text-lg transition-all duration-500  overflow-hidden ${
+        className={` ${user?.role > 0 ? "lg:hidden" : "md:hidden"} bg-szPrimary flex flex-col font-semibold text-lg transition-all duration-500  overflow-hidden ${
           isOpen
             ? "opacity-100 max-h-[500px] scale-y-100 pointer-events-auto visible"
             : "opacity-0 max-h-0 scale-y-0 pointer-events-none invisible"

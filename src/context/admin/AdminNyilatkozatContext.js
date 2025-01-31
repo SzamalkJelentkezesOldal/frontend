@@ -8,18 +8,22 @@ export const AdminNyilatkozatContext = createContext("");
 
 export const AdminNyilatkozatProvider = ({ children }) => {
   const jelenlegiEv = new Date().getFullYear();
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   const nyilatkozatSchema = z.object({
     ev: z
       .number()
-      .min(jelenlegiEv, `Az év nem lehet kisebb, mint ${jelenlegiEv}`)
-      .max(jelenlegiEv + 1, `Az év nem lehet nagyobb, mint ${jelenlegiEv + 1}`),
+      .min(jelenlegiEv, `Az év nem lehet kisebb, mint ${jelenlegiEv}!`)
+      .max(
+        jelenlegiEv + 1,
+        `Az év nem lehet nagyobb, mint ${jelenlegiEv + 1}!`
+      ),
     nyilatkozat: z
       .any()
       .refine((val) => {
         if (val instanceof FileList) return val.length === 1;
         return val instanceof File;
-      }, "Kötelező egy fájlt feltölteni")
+      }, "Kötelező fájlt feltölteni!")
       .refine((val) => {
         const file = val instanceof FileList ? val[0] : val;
         return (
@@ -27,7 +31,7 @@ export const AdminNyilatkozatProvider = ({ children }) => {
           file?.type ===
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         );
-      }, "Csak .docx formátum elfogadott"),
+      }, "Csak .docx formátum elfogadott!"),
   });
 
   const nyilatkozatFeltolt = async () => {
@@ -45,6 +49,7 @@ export const AdminNyilatkozatProvider = ({ children }) => {
   };
 
   const postNyilatkozat = async (adat) => {
+    setResetTrigger(false);
     try {
       const formData = new FormData();
       const file =
@@ -65,6 +70,7 @@ export const AdminNyilatkozatProvider = ({ children }) => {
         }
       );
       console.log(response);
+      setResetTrigger(true);
       return true;
     } catch (error) {
       console.error("Hiba:", error.response?.data);
@@ -97,6 +103,7 @@ export const AdminNyilatkozatProvider = ({ children }) => {
         watch,
         getValues,
         setValue,
+        resetTrigger,
       }}
     >
       {children}

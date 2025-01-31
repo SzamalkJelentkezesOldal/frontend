@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import CustomForm from "../CustomForm";
 import { AdminNyilatkozatContext } from "../../context/admin/AdminNyilatkozatContext";
 import SubmitButton from "../SubmitButton";
-import InputText from "../InputText";
 import InfoBox from "../InfoBox";
 import InputFile from "../InputFile";
 import InputNumber from "../InputNumber";
@@ -17,6 +16,7 @@ const AdminNyilatkozat = () => {
     errors,
     watch,
     setValue,
+    resetTrigger,
   } = useContext(AdminNyilatkozatContext);
   return (
     <section className="w-full pt-20">
@@ -49,6 +49,7 @@ const AdminNyilatkozat = () => {
             title="Nyilatkozat"
             formRegister={formRegister("nyilatkozat")}
             error={errors.nyilatkozat}
+            resetTrigger={resetTrigger}
           />
         </div>
 

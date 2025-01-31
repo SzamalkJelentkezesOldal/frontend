@@ -54,6 +54,7 @@ function InputNumber({
             min: { value: min, message: `Minimum érték: ${min}` },
             max: { value: max, message: `Maximum érték: ${max}` },
           })}
+          readOnly
           type="number"
           min={min}
           max={max}

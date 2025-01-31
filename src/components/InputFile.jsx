@@ -1,5 +1,5 @@
 import PlusIcon from "./icons/PlusIcon";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SmallCloseIcon from "./icons/SmallCloseIcon";
 import DownloadIcon from "./icons/DownloadIcon";
 
@@ -14,11 +14,20 @@ function InputFile({
   accept,
   setValue,
   name,
+  resetTrigger,
 }) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
   const [extensionError, setExtensionError] = useState(false);
+
+  useEffect(() => {
+    if (resetTrigger) {
+      setSelectedFiles([]);
+      setPreviewFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }, [resetTrigger]);
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
