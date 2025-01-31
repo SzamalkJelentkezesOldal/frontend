@@ -19,10 +19,12 @@ import {
   restrictToVerticalAxis,
   restrictToParentElement,
 } from "@dnd-kit/modifiers";
+import useAuthContext from "../../../context/AuthContext";
 
 const DraggableList = () => {
   const { jelentkezesek, setJelentkezesek } = useContext(SorrendContext);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
+  const { isLoading } = useAuthContext();
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -57,13 +59,19 @@ const DraggableList = () => {
         strategy={verticalListSortingStrategy}
       >
         <div className="space-y-2 bg-white border-[1.3px] flex flex-col gap-2 p-4 rounded-[6.5px] shadow-md w-full text-xl text-inputGray">
-          {jelentkezesek.map((item) => (
-            <SortableItem
-              key={item.szak_id}
-              id={item.szak_id}
-              szak={item.elnevezes}
-            />
-          ))}
+          {!jelentkezesek[0] ? (
+            <div className="w-full flex justify-center">
+              <div className="loader"></div>
+            </div>
+          ) : (
+            jelentkezesek.map((item) => (
+              <SortableItem
+                key={item.szak_id}
+                id={item.szak_id}
+                szak={item.elnevezes}
+              />
+            ))
+          )}
         </div>
       </SortableContext>
     </DndContext>

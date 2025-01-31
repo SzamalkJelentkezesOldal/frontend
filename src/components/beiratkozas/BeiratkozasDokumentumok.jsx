@@ -1,7 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import BeiratkozasContainer from "./BeiratkozasContainer";
 import { DokumentumokContext } from "../../context/beiratkozas/DokumentumokContext";
-import CustomDropzone from "../Dropzone/CustomDropzone";
 import InputFile from "../InputFile";
 import SubmitButton from "../SubmitButton";
 import InfoBox from "../InfoBox";
@@ -14,6 +13,8 @@ function BeiratkozasDokumentumok({ isDisabled }) {
     isSubmitting,
     errors,
     nyilatkozatLetoltes,
+    resetTrigger,
+    setValue,
   } = useContext(DokumentumokContext);
 
   const inputResponsiveness =
@@ -37,12 +38,18 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         title="Adóigazolvány"
         formRegister={register("adoazonosito")}
         error={errors.adoazonosito}
+        name={"adoazonosito"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
       />
 
       <InputFile
         wrapperClassName={inputResponsiveness}
         title="TAJ kártya"
         formRegister={register("taj")}
+        name={"taj"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.taj}
       />
 
@@ -50,6 +57,9 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         wrapperClassName={inputResponsiveness}
         title="Személyazonosító igazolvány első oldal"
         formRegister={register("szemelyi_elso")}
+        name={"szemelyi_elso"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.szemelyi_elso}
       />
 
@@ -57,14 +67,19 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         wrapperClassName={inputResponsiveness}
         title="Személyazonosító igazolvány hátsó oldal"
         formRegister={register("szemelyi_hatso")}
+        name={"szemelyi_hatso"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.szemelyi_hatso}
-        multiple={true}
       />
 
       <InputFile
         wrapperClassName={inputResponsiveness}
         title="Lakcímet igazoló igazolvány első oldala"
         formRegister={register("lakcim_elso")}
+        name={"lakcim_elso"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.lakcim_elso}
       />
 
@@ -72,6 +87,9 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         wrapperClassName={inputResponsiveness}
         title="Lakcímet igazoló igazolvány hátsó oldala"
         formRegister={register("lakcim_hatso")}
+        name={"lakcim_hatso"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.lakcim_hatso}
       />
 
@@ -79,6 +97,9 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         wrapperClassName={inputResponsiveness}
         title="Önarckép semleges háttérral"
         formRegister={register("onarckep")}
+        name={"onarckep"}
+        resetTrigger={resetTrigger}
+        setValue={setValue}
         error={errors.onarckep}
       />
 
@@ -90,6 +111,9 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         <InputFile
           title="Érettségi bizonyítvány"
           formRegister={register("erettsegik")}
+          name={"erettsegik"}
+          resetTrigger={resetTrigger}
+          setValue={setValue}
           error={errors.erettsegik}
           multiple={true}
         />
@@ -103,8 +127,10 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         <InputFile
           title="Nyilatkozatok"
           formRegister={register("nyilatkozatok")}
+          name={"nyilatkozatok"}
+          resetTrigger={resetTrigger}
+          setValue={setValue}
           error={errors.nyilatkozatok}
-          multiple={true}
           download={true}
           handleDownloadClick={nyilatkozatLetoltes}
         />
@@ -119,7 +145,25 @@ function BeiratkozasDokumentumok({ isDisabled }) {
         <InputFile
           title="Tanulmányi dokumentumok"
           formRegister={register("tanulmanyik")}
+          name={"tanulmanyik"}
+          resetTrigger={resetTrigger}
+          setValue={setValue}
           error={errors.tanulmanyik}
+          multiple={true}
+        />
+      </div>
+
+      <div className={`w-full container ${inputResponsiveness}`}>
+        <InfoBox buttonClassName={`pl-[14px]`}>
+          Amennyiben rendelkezik SNI/BTMN határozattal, feltöltése kötelező.
+        </InfoBox>
+        <InputFile
+          title="SNI/BTMN"
+          formRegister={register("specialisok")}
+          name={"specialisok"}
+          resetTrigger={resetTrigger}
+          setValue={setValue}
+          error={errors.specialisok}
           multiple={true}
         />
       </div>

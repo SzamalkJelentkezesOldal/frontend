@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,45 +9,62 @@ export const DokumentumokContext = createContext("");
 
 export const DokumentumokProvider = ({ children }) => {
   const { setStepperActive } = useContext(BeiratkozasContext);
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   const dokumentumokSchema = z.object({
-    adoazonosito: z
-      .array(z.instanceof(File))
-      .length(1, "Egy fájlt kell feltölteni az adóazonosítóhoz.")
-      .nonempty("Az adóazonosító feltöltése kötelező."),
-    taj: z
-      .array(z.instanceof(File))
-      .length(1, "Egy fájlt kell feltölteni a TAJ-hoz.")
-      .nonempty("A TAJ feltöltése kötelező."),
-    szemelyi_elso: z
-      .array(z.instanceof(File))
-      .length(
-        1,
-        "Egy fájlt kell feltölteni a személyi igazolvány első oldalához."
+    adoazonosito: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    taj: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    szemelyi_elso: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    szemelyi_hatso: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    lakcim_elso: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    lakcim_hatso: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    onarckep: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length === 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    nyilatkozatok: z.any().refine((val) => {
+      if (val instanceof FileList) return val.length >= 1;
+      return val instanceof File;
+    }, "Kötelező feltölteni"),
+    erettsegik: z
+      .any()
+      .refine(
+        (val) => !val || val instanceof FileList || val instanceof File,
+        "Érvénytelen fájl"
       )
-      .nonempty("A személyi igazolvány első oldalának feltöltése kötelező."),
-    szemelyi_hatso: z
-      .array(z.instanceof(File))
-      .length(
-        1,
-        "Egy fájlt kell feltölteni a személyi igazolvány hátsó oldalához."
+      .optional(),
+    tanulmanyik: z
+      .any()
+      .refine(
+        (val) => !val || val instanceof FileList || val instanceof File,
+        "Érvénytelen fájl"
       )
-      .nonempty("A személyi igazolvány hátsó oldalának feltöltése kötelező."),
-    lakcim_elso: z
-      .array(z.instanceof(File))
-      .length(1, "Egy fájlt kell feltölteni a lakcímkártya első oldalához.")
-      .nonempty("A lakcímkártya első oldalának feltöltése kötelező."),
-    lakcim_hatso: z
-      .array(z.instanceof(File))
-      .length(1, "Egy fájlt kell feltölteni a lakcímkártya hátsó oldalához.")
-      .nonempty("A lakcímkártya hátsó oldalának feltöltése kötelező."),
-    onarckep: z
-      .array(z.instanceof(File))
-      .length(1, "Egy fájlt kell feltölteni a lakcímkártya hátsó oldalához.")
-      .nonempty("Az önarckép feltöltése kötelező."),
-    erettsegik: z.array(z.instanceof(File)).optional(),
-    tanulmanyik: z.array(z.instanceof(File)).optional(),
-    specialisok: z.array(z.instanceof(File)).optional(),
+      .optional(),
+    specialisok: z
+      .any()
+      .refine(
+        (val) => !val || val instanceof FileList || val instanceof File,
+        "Érvénytelen fájl"
+      )
+      .optional(),
   });
 
   const {
@@ -55,11 +72,23 @@ export const DokumentumokProvider = ({ children }) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
+    reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(dokumentumokSchema),
     shouldUnregister: true,
     defaultValues: {
-      allampolgarsag: "",
+      adoazonosito: undefined,
+      taj: undefined,
+      szemelyi_elso: undefined,
+      szemelyi_hatso: undefined,
+      lakcim_elso: undefined,
+      lakcim_hatso: undefined,
+      onarckep: undefined,
+      nyilatkozatok: undefined,
+      erettsegik: undefined,
+      tanulmanyik: undefined,
+      specialisok: undefined,
     },
   });
 
@@ -93,11 +122,10 @@ export const DokumentumokProvider = ({ children }) => {
         "Letöltési hiba:",
         error.response?.data?.error || error.message
       );
-      console.log(error.response?.data?.error || "Ismeretlen hiba történt");
     }
   };
 
-  const dokumentumokFelvesz = () => {
+  const dokumentumokFelvesz = async () => {
     const adatok = getValues([
       "adoazonosito",
       "taj",
@@ -106,13 +134,13 @@ export const DokumentumokProvider = ({ children }) => {
       "lakcim_elso",
       "lakcim_hatso",
       "onarckep",
+      "nyilatkozatok",
       "erettsegik",
       "tanulmanyik",
-      "nyilatkozatok",
       "specialisok",
     ]);
 
-    const szemelyesAdatok = {
+    const dokumentumAdatok = {
       adoazonosito: adatok[0],
       taj: adatok[1],
       szemelyi_elso: adatok[2],
@@ -120,14 +148,69 @@ export const DokumentumokProvider = ({ children }) => {
       lakcim_elso: adatok[4],
       lakcim_hatso: adatok[5],
       onarckep: adatok[6],
-      erettsegik: adatok[7],
-      tanulmanyik: adatok[8],
-      nyilatkozatok: adatok[9],
+      nyilatkozatok: adatok[7],
+      erettsegik: adatok[8],
+      tanulmanyik: adatok[9],
       specialisok: adatok[10],
     };
 
-    setStepperActive(2);
+    const response = await postDokumentumok(dokumentumAdatok);
+    if (response) {
+      reset();
+    }
   };
+
+  const postDokumentumok = async (data) => {
+    setResetTrigger(false);
+    try {
+      const formData = new FormData();
+
+      const allFields = [
+        "adoazonosito",
+        "taj",
+        "szemelyi_elso",
+        "szemelyi_hatso",
+        "lakcim_elso",
+        "lakcim_hatso",
+        "onarckep",
+        "nyilatkozatok",
+        "erettsegik",
+        "tanulmanyik",
+        "specialisok",
+      ];
+
+      allFields.forEach((field) => {
+        const value = data[field];
+        if (value) {
+          if (value instanceof File) {
+            formData.append(`${field}[]`, value);
+          } else if (value instanceof FileList) {
+            Array.from(value).forEach((file) => {
+              formData.append(`${field}[]`, file);
+            });
+          }
+        }
+      });
+
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      await myAxios.post("/api/dokumentumok-feltolt", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setResetTrigger(true);
+      setStepperActive(2);
+      return true;
+    } catch (error) {
+      console.error("Hiba:", error.response?.data || error.message);
+      return false;
+    }
+  };
+
   return (
     <DokumentumokContext.Provider
       value={{
@@ -138,6 +221,8 @@ export const DokumentumokProvider = ({ children }) => {
         errors,
         getValues,
         nyilatkozatLetoltes,
+        resetTrigger,
+        setValue,
       }}
     >
       {children}
