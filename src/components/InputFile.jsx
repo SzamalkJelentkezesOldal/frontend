@@ -69,7 +69,7 @@ function InputFile({
 
     if (previewFile) {
       const removedFile = selectedFiles[index];
-      if (removedFile && previewFile.includes(removedFile.name)) {
+      if (removedFile && previewFile.name === removedFile.name) {
         setPreviewFile(null);
       }
     }

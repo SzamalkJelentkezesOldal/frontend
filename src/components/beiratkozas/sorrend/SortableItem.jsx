@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const SortableItem = ({ id, szak }) => {
+const SortableItem = ({ id, szak, portfolio, index }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -18,7 +18,7 @@ const SortableItem = ({ id, szak }) => {
       {...listeners}
       className="bg-gray-100 p-2 rounded-lg shadow szak__sorrend"
     >
-      {szak}
+      {index + 1}. {portfolio ? "E |" : "N | "} {szak}
     </div>
   );
 };

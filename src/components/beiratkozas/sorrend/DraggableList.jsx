@@ -2,7 +2,6 @@ import {
   DndContext,
   PointerSensor,
   TouchSensor,
-  closestCenter,
   closestCorners,
   useSensor,
   useSensors,
@@ -19,18 +18,15 @@ import {
   restrictToVerticalAxis,
   restrictToParentElement,
 } from "@dnd-kit/modifiers";
-import useAuthContext from "../../../context/AuthContext";
 
 const DraggableList = () => {
   const { jelentkezesek, setJelentkezesek } = useContext(SorrendContext);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
-  const { isLoading } = useAuthContext();
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      // Szak_id alapján keresd az elemeket
       const oldIndex = jelentkezesek.findIndex(
         (item) => item.szak_id === active.id
       );
@@ -64,11 +60,13 @@ const DraggableList = () => {
               <div className="loader"></div>
             </div>
           ) : (
-            jelentkezesek.map((item) => (
+            jelentkezesek.map((item, index) => (
               <SortableItem
                 key={item.szak_id}
                 id={item.szak_id}
                 szak={item.elnevezes}
+                portfolio={item.portfolio}
+                index={index}
               />
             ))
           )}
