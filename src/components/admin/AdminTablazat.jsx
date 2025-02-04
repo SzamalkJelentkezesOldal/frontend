@@ -8,7 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { ApiContext } from "../../context/ApiContext";
+
 import EditIcon from "../icons/EditIcon";
+import AdminModosit from "./AdminModosit";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,10 +32,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 function AdminTablazat() {
   const { ugyintezoLista } = useContext(ApiContext);
+  const [kivalasztottSor, setKivalasztottSor] = useState(null);
+
+  const kattintas = (sor) => {
+    setKivalasztottSor(sor);
+  }
+  const bezaras = () => {
+    setKivalasztottSor(null); 
+  }
 
 
   return (
     <section className="container pt-20">
+    {kivalasztottSor && (<AdminModosit sor={kivalasztottSor} bezaras={bezaras}/>)}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -45,23 +56,24 @@ function AdminTablazat() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ugyintezoLista.map((row) => (
-              <StyledTableRow key={row.id}>
+            {ugyintezoLista.map((sor) => (
+              <StyledTableRow key={sor.id}>
                 <StyledTableCell component="th" scope="row">
-                  {row.name}
+                  {sor.name}
                 </StyledTableCell>
-                <StyledTableCell>{row.email}</StyledTableCell>
+                <StyledTableCell>{sor.email}</StyledTableCell>
                 <StyledTableCell>
-                  {row.role > 1 ? "Igen" : "Nem"}
+                  {sor.role > 1 ? "Igen" : "Nem"}
                 </StyledTableCell>
-                <StyledTableCell >
-                  <EditIcon size={"24"}/>
+                <StyledTableCell onClick={() => kattintas(sor)}>
+                  <EditIcon size={"24"} />
                 </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      
     </section>
   );
 }
