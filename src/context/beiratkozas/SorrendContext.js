@@ -1,13 +1,16 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { myAxios } from "../MyAxios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { BeiratkozasContext } from "./BeiratkozasContext";
 
 export const SorrendContext = createContext();
 
 export const SorrendProvider = ({ children }) => {
   const [jelentkezesek, setJelentkezesek] = useState([]);
+  const [sorrendLoading, setSorrendLoading] = useState(true);
+  const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
 
   const sorrendSchema = z.object({});
 
@@ -21,10 +24,12 @@ export const SorrendProvider = ({ children }) => {
     defaultValues: {},
   });
 
-  const updateSorrend = async () => {
+  const handleSorrend = async () => {
+    if (!jelentkezesek.length) return;
+
     try {
       const response = await myAxios.patch(
-        `/api/jelentkezesek/sorrend/${jelentkezesek[0].jelentkezo_id}`,
+        `/api/jelentkezesek/sorrend/${jelentkezesek[0].jelentkezo_id}/${stepperActive > 2 ? 0 : 1}`,
         {
           jelentkezesek: jelentkezesek.map((item) => ({
             szak_id: item.szak_id,
@@ -32,21 +37,37 @@ export const SorrendProvider = ({ children }) => {
           })),
         }
       );
-      console.log(response);
+
+      if (stepperActive <= 2) {
+        setStepperActive(3);
+      }
+
+      console.log(response.data);
     } catch (error) {
-      console.error("Hiba a sorrend mentésekor:", error);
+      console.error("Hiba részletei:", {
+        üzenet: error.message,
+        válasz: error.response?.data,
+        státusz: error.response?.status,
+      });
     }
+  };
+
+  const sorrendLekerdez = async () => {
+    console.log("asd");
   };
 
   return (
     <SorrendContext.Provider
       value={{
         jelentkezesek,
-        updateSorrend,
+        handleSorrend,
         setJelentkezesek,
         register,
         handleSubmit,
         isSubmitting,
+        sorrendLoading,
+        setSorrendLoading,
+        sorrendLekerdez,
       }}
     >
       {children}

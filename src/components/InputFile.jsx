@@ -55,6 +55,7 @@ function InputFile({
   const handleRemoveFile = (index) => {
     setExtensionError(false);
 
+    const removedFile = selectedFiles[index];
     const newFiles = selectedFiles.filter((_, i) => i !== index);
 
     if (multiple) {
@@ -68,7 +69,6 @@ function InputFile({
     setSelectedFiles(newFiles);
 
     if (previewFile) {
-      const removedFile = selectedFiles[index];
       if (removedFile && previewFile.name === removedFile.name) {
         setPreviewFile(null);
       }
@@ -89,7 +89,10 @@ function InputFile({
 
     const reader = new FileReader();
     reader.onload = () => {
-      setPreviewFile(reader.result);
+      setPreviewFile({
+        data: reader.result,
+        name: file.name,
+      });
     };
     reader.readAsDataURL(file);
   };
@@ -179,7 +182,7 @@ function InputFile({
           </div>
           <div className="border p-2 rounded shadow-md w-max max-w-full">
             <img
-              src={previewFile}
+              src={previewFile.data}
               alt="Fájl előnézet"
               className="max-w-full h-auto"
             />

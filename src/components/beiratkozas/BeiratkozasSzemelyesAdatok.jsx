@@ -4,14 +4,16 @@ import { SzemelyesAdatokContext } from "../../context/beiratkozas/SzemelyesAdato
 import SubmitButton from "../SubmitButton";
 import InputText from "../InputText";
 
-function BeiratkozasSzemelyesAdatok() {
+function BeiratkozasSzemelyesAdatok({ isCompleted }) {
   const {
-    szemelyesAdatokFelvesz,
+    handleSzemelyesAdatok,
     register,
     handleSubmit,
     isSubmitting,
     errors,
     magyar,
+    adatokEdit,
+    editLoading,
   } = useContext(SzemelyesAdatokContext);
 
   const inputResponsiveness =
@@ -22,7 +24,10 @@ function BeiratkozasSzemelyesAdatok() {
       title={"Személyes Adatok"}
       first={true}
       isOpen={false}
-      onSubmit={handleSubmit(szemelyesAdatokFelvesz)}
+      onSubmit={handleSubmit(handleSzemelyesAdatok)}
+      isCompleted={isCompleted}
+      handleEdit={adatokEdit}
+      editLoading={editLoading}
     >
       <div className="flex flex-col sm:max-w-[768px] sm:items-center  lg:max-w-[1279px] lg:w-full lg:grid lg:grid-cols-2 lg:justify-items-center lg:pt-6 lg:px-10 gap-y-4 ">
         <InputText
@@ -105,11 +110,19 @@ function BeiratkozasSzemelyesAdatok() {
           </>
         ) : null}
       </div>
-      <SubmitButton
-        text="Tovább"
-        isSubmitting={isSubmitting}
-        className="!mb-5 md:max-w-xs lg:mt-8"
-      />
+      {isCompleted ? (
+        <SubmitButton
+          text="Módosítás"
+          isSubmitting={isSubmitting}
+          className="!mb-5 md:max-w-xs lg:mt-8"
+        />
+      ) : (
+        <SubmitButton
+          text="Tovább"
+          isSubmitting={isSubmitting}
+          className="!mb-5 md:max-w-xs lg:mt-8"
+        />
+      )}
     </BeiratkozasContainer>
   );
 }

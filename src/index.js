@@ -23,14 +23,14 @@ root.render(
   <React.StrictMode>
     <ApiProvider>
       <BrowserRouter>
-        <SorrendProvider>
-          <AuthProvider>
-            <AdminFelveszProvider>
-              <AdminNyilatkozatProvider>
-                <JelentkezesProvider>
-                  <RegisztralasProvider>
-                    <BelepesProvider>
-                      <BeiratkozasProvider>
+        <BeiratkozasProvider>
+          <SorrendProvider>
+            <AuthProvider>
+              <AdminFelveszProvider>
+                <AdminNyilatkozatProvider>
+                  <JelentkezesProvider>
+                    <RegisztralasProvider>
+                      <BelepesProvider>
                         <DokumentumokProvider>
                           <SzemelyesAdatokProvider>
                             <ThemeProvider theme={themeMUI}>
@@ -38,14 +38,14 @@ root.render(
                             </ThemeProvider>
                           </SzemelyesAdatokProvider>
                         </DokumentumokProvider>
-                      </BeiratkozasProvider>
-                    </BelepesProvider>
-                  </RegisztralasProvider>
-                </JelentkezesProvider>
-              </AdminNyilatkozatProvider>
-            </AdminFelveszProvider>
-          </AuthProvider>
-        </SorrendProvider>
+                      </BelepesProvider>
+                    </RegisztralasProvider>
+                  </JelentkezesProvider>
+                </AdminNyilatkozatProvider>
+              </AdminFelveszProvider>
+            </AuthProvider>
+          </SorrendProvider>
+        </BeiratkozasProvider>
       </BrowserRouter>
     </ApiProvider>
   </React.StrictMode>

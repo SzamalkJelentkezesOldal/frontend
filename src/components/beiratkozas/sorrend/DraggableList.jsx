@@ -20,7 +20,8 @@ import {
 } from "@dnd-kit/modifiers";
 
 const DraggableList = () => {
-  const { jelentkezesek, setJelentkezesek } = useContext(SorrendContext);
+  const { jelentkezesek, setJelentkezesek, sorrendLoading } =
+    useContext(SorrendContext);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
   const handleDragEnd = (event) => {
@@ -55,7 +56,7 @@ const DraggableList = () => {
         strategy={verticalListSortingStrategy}
       >
         <div className="space-y-2 bg-white border-[1.3px] flex flex-col gap-2 p-4 rounded-[6.5px] shadow-md w-full text-xl text-inputGray">
-          {!jelentkezesek[0] ? (
+          {sorrendLoading ? (
             <div className="w-full flex justify-center">
               <div className="loader"></div>
             </div>

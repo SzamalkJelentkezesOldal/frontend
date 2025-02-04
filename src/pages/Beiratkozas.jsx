@@ -6,20 +6,34 @@ import BeiratkozasSzemelyesAdatok from "../components/beiratkozas/BeiratkozasSze
 import { BeiratkozasContext } from "../context/beiratkozas/BeiratkozasContext";
 
 function Beiratkozas() {
-  const { stepperActive } = useContext(BeiratkozasContext);
+  const { stepperActive, allapotLoading } = useContext(BeiratkozasContext);
+
+  if (allapotLoading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <div className=" min-h-[100vh] screen w-screen">
       <BeiratkozasMain currentActive={stepperActive} />
       <div className="lg:container bg-gray-50 min-h-[100vh] border-x-2 border-gray-300/50 shadow-md pb-10 !max-w-[1000px]">
         <div>
-          <BeiratkozasSzemelyesAdatok />
+          <BeiratkozasSzemelyesAdatok isCompleted={stepperActive > 0} />
         </div>
         <div>
-          <BeiratkozasDokumentumok isDisabled={false} /> {/*stepperActive < 1*/}
+          <BeiratkozasDokumentumok
+            isDisabled={stepperActive < 1}
+            isCompleted={stepperActive > 1}
+          />
         </div>
         <div>
-          <BeiratkozasSorrend isDisabled={false} /> {/*stepperActive < 2*/}
+          <BeiratkozasSorrend
+            isDisabled={stepperActive < 2}
+            isCompleted={stepperActive > 2}
+          />
         </div>
       </div>
     </div>

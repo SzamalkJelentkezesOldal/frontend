@@ -10,8 +10,9 @@ export const SzemelyesAdatokContext = createContext("");
 
 export const SzemelyesAdatokProvider = ({ children }) => {
   const [magyar, setMagyar] = useState(false);
-  const { setStepperActive } = useContext(BeiratkozasContext);
-  const { user } = useAuthContext();
+  const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
+  const [editLoading, setEditLoading] = useState(false);
+  const { user, jelentkezoID } = useAuthContext();
 
   const szemelyesAdatokSchema = z
     .object({
@@ -75,6 +76,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     formState: { errors, isSubmitting },
     getValues,
     watch,
+    reset,
   } = useForm({
     resolver: zodResolver(szemelyesAdatokSchema),
     shouldUnregister: true,
@@ -83,7 +85,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     },
   });
 
-  const szemelyesAdatokFelvesz = async () => {
+  const handleSzemelyesAdatok = async () => {
     const adatok = getValues([
       "vezeteknev",
       "keresztnev",
@@ -111,16 +113,43 @@ export const SzemelyesAdatokProvider = ({ children }) => {
       lakcim: adatok[9],
     };
 
-    try {
-      const response = await myAxios.post(
-        "/api/torzsadat-feltolt",
+    if (stepperActive > 0) {
+      const response = await myAxios.put(
+        `/api/torzsadat-frissit/${jelentkezoID}`,
         szemelyesAdatok
       );
-      console.log(response);
+      console.log("Módosítás sikeres:", response);
+    } else {
+      try {
+        const response = await myAxios.post(
+          "/api/torzsadat-feltolt",
+          szemelyesAdatok
+        );
+        console.log(response);
 
-      setStepperActive(1);
+        setStepperActive(1);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  const adatokEdit = async () => {
+    try {
+      setEditLoading(true);
+      const torzsadatok = await myAxios.get(
+        `/api/jelentkezo-adatai/${user.email}`
+      );
+      const formattedData = {
+        ...torzsadatok.data,
+        adoazonosito: torzsadatok.data.adoazonosito || "",
+        taj_szam: torzsadatok.data.taj_szam || "",
+      };
+      reset(formattedData);
     } catch (e) {
-      console.log(e);
+      console.log("törzsadat lekérés hiba", e);
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -132,13 +161,15 @@ export const SzemelyesAdatokProvider = ({ children }) => {
   return (
     <SzemelyesAdatokContext.Provider
       value={{
-        szemelyesAdatokFelvesz,
+        handleSzemelyesAdatok,
         register,
         handleSubmit,
         isSubmitting,
         errors,
         getValues,
         magyar,
+        adatokEdit,
+        editLoading,
       }}
     >
       {children}

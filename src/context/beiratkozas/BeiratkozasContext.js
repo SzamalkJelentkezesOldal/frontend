@@ -7,6 +7,7 @@ export const BeiratkozasProvider = ({ children }) => {
   const [postStatus, setPostStatus] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [stepperActive, setStepperActive] = useState(0);
+  const [allapotLoading, setAllapotLoading] = useState(false);
 
   const handleSnackbarClose = (reason) => {
     if (reason === "clickaway") {
@@ -52,6 +53,8 @@ export const BeiratkozasProvider = ({ children }) => {
         snackbarOpen,
         stepperActive,
         setStepperActive,
+        setAllapotLoading,
+        allapotLoading,
       }}
     >
       {children}
