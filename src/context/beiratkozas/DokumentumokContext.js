@@ -1,35 +1,39 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
 import { myAxios } from "../MyAxios";
+
 export const DokumentumokContext = createContext("");
 
-const fileSchema = z.custom(
-  (val) => {
-    return typeof val === "string" || val instanceof File;
-  },
-  {
-    message: "Input must be a File instance or a string",
-  }
-);
+// Alap file validátor, ami elfogadja a stringet, File-t vagy FileList-et
+const fileSchema = z.union([
+  z.string(),
+  z.instanceof(File),
+  typeof FileList !== "undefined" ? z.instanceof(FileList) : z.any(),
+]);
 
-// Az alap séma – minden file mező opcionális, majd majd a superRefine ellenőrzi a kötelezőket
+// Opcionális file inputhoz ugyanaz, plusz null érték elfogadása
+const optionalFileSchema = z.union([fileSchema, z.null()]);
+
 const dokumentumokSchemaBase = z.object({
-  adoazonosito: fileSchema.optional(),
-  taj: fileSchema.optional(),
-  szemelyi_elso: fileSchema.optional(),
-  szemelyi_hatso: fileSchema.optional(),
-  lakcim_elso: fileSchema.optional(),
-  lakcim_hatso: fileSchema.optional(),
-  onarckep: fileSchema.optional(),
-  nyilatkozatok: fileSchema.optional(),
-  erettsegik: fileSchema.optional(),
-  tanulmanyik: fileSchema.optional(),
-  specialisok: fileSchema.optional(),
+  // Kötelező mezők: nem használunk preprocess-elést, hanem a validációt a superRefine-ben végezzük.
+  adoazonosito: fileSchema.nullable(),
+  taj: fileSchema.nullable(),
+  szemelyi_elso: fileSchema.nullable(),
+  szemelyi_hatso: fileSchema.nullable(),
+  lakcim_elso: fileSchema.nullable(),
+  lakcim_hatso: fileSchema.nullable(),
+  onarckep: fileSchema.nullable(),
+  nyilatkozatok: fileSchema.nullable(),
 
-  // A current mezők a meglévő fájlok JSON tömbjét tartalmazzák (stringként)
+  // Opcionális mezők: többszörös fájlok megengedettek
+  erettsegik: optionalFileSchema,
+  tanulmanyik: optionalFileSchema,
+  specialisok: optionalFileSchema,
+
+  // _current mezők, amelyek a backendről érkező korábbi fájlokat tartalmazzák JSON tömbként (string)
   adoazonosito_current: z.string().optional(),
   taj_current: z.string().optional(),
   szemelyi_elso_current: z.string().optional(),
@@ -43,7 +47,7 @@ const dokumentumokSchemaBase = z.object({
   specialisok_current: z.string().optional(),
 });
 
-// Kötelező mezők listája
+// Listázd a kötelező mezőket
 const requiredFields = [
   "adoazonosito",
   "taj",
@@ -55,25 +59,22 @@ const requiredFields = [
   "nyilatkozatok",
 ];
 
-// A végső séma: az alap séma után egy superRefine ellenőrzi, hogy
-// minden required mezőnél vagy az új érték, vagy a current (JSON tömbként)
-// legalább egy elemet tartalmaz.
 const dokumentumokSchema = dokumentumokSchemaBase.superRefine((data, ctx) => {
   requiredFields.forEach((field) => {
-    const newValue = data[field];
-    const currentStr = data[`${field}_current`];
+    const newValue = data[field]; // a kötelező mezők értéke null vagy File/FileList/string
     let currentValue = [];
     try {
-      currentValue = currentStr ? JSON.parse(currentStr) : [];
+      currentValue = data[`${field}_current`]
+        ? JSON.parse(data[`${field}_current`])
+        : [];
     } catch (e) {
       currentValue = [];
     }
-    if (
-      !(newValue || (Array.isArray(currentValue) && currentValue.length > 0))
-    ) {
+    // Ha a mező értéke null ÉS a _current érték üres (azaz nincs fájl), akkor hibát dobunk.
+    if (newValue === null && currentValue.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `${field} is required.`,
+        message: `Kitöltendő mező!`,
         path: [field],
       });
     }
@@ -89,23 +90,26 @@ export const DokumentumokProvider = ({ children }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty, dirtyFields },
+    formState: { errors, isSubmitting },
     getValues,
+    trigger,
     setValue,
     reset,
   } = useForm({
     resolver: zodResolver(dokumentumokSchema),
+    mode: "onChange", // azonnali validáció
+    reValidateMode: "onChange",
     shouldUnregister: true,
     defaultValues: {
-      adoazonosito: undefined,
-      taj: undefined,
-      szemelyi_elso: undefined,
-      szemelyi_hatso: undefined,
-      lakcim_elso: undefined,
-      lakcim_hatso: undefined,
-      onarckep: undefined,
-      nyilatkozatok: undefined,
-      erettsegik: undefined,
+      adoazonosito: null,
+      taj: null,
+      szemelyi_elso: null,
+      szemelyi_hatso: null,
+      lakcim_elso: null,
+      lakcim_hatso: null,
+      onarckep: null,
+      nyilatkozatok: null,
+      erettsegik: undefined, // opcionálisak
       tanulmanyik: undefined,
       specialisok: undefined,
       adoazonosito_current: "[]",
@@ -122,22 +126,32 @@ export const DokumentumokProvider = ({ children }) => {
     },
   });
 
-  const hasChanges = Object.keys(dirtyFields).length > 0;
+  // Elmentjük a kezdeti űrlap értékeket
+  const initialValuesRef = useRef(getValues());
+
+  // Amikor reseteljük a formot (például szerkesztésnél), frissítjük a kezdeti értékeket
+  useEffect(() => {
+    initialValuesRef.current = getValues();
+  }, [resetTrigger]);
+
+  // Deep equality ellenőrzés
+  const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   const dokumentumokLekeres = async () => {
     try {
       setEditLoading(true);
       const response = await myAxios.get("/api/dokumentumok");
       setExistingDocuments(response.data);
+      console.log(response.data.adoazonosito);
       reset({
-        adoazonosito: undefined,
-        taj: undefined,
-        szemelyi_elso: undefined,
-        szemelyi_hatso: undefined,
-        lakcim_elso: undefined,
-        lakcim_hatso: undefined,
-        onarckep: undefined,
-        nyilatkozatok: undefined,
+        adoazonosito: null,
+        taj: null,
+        szemelyi_elso: null,
+        szemelyi_hatso: null,
+        lakcim_elso: null,
+        lakcim_hatso: null,
+        onarckep: null,
+        nyilatkozatok: null,
         erettsegik: undefined,
         tanulmanyik: undefined,
         specialisok: undefined,
@@ -159,6 +173,8 @@ export const DokumentumokProvider = ({ children }) => {
         tanulmanyik_current: JSON.stringify(response.data.tanulmanyik || []),
         specialisok_current: JSON.stringify(response.data.specialisok || []),
       });
+      // Frissítjük a kezdeti értékeket a reset után
+      initialValuesRef.current = getValues();
     } catch (error) {
       console.error("Hiba a dokumentumok betöltésekor:", error);
     } finally {
@@ -170,19 +186,16 @@ export const DokumentumokProvider = ({ children }) => {
     const year = new Date().getFullYear();
     try {
       await myAxios.get("/sanctum/csrf-cookie");
-
       const response = await myAxios.get(`/api/nyilatkozat-letoltes/${year}`, {
         responseType: "blob",
         validateStatus: (status) => status === 200,
       });
-
       if (
         response.headers["content-type"] !==
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ) {
         throw new Error("Érvénytelen fájlformátum");
       }
-
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -199,12 +212,29 @@ export const DokumentumokProvider = ({ children }) => {
     }
   };
 
-  const dokumentumokFelvesz = async () => {
-    if (!isDirty) {
-      alert("Nincs változás, így nem történik módosítás.");
+  const onError = (errors) => {
+    console.log("Validation errors:", errors);
+  };
+
+  const onSubmit = async () => {
+    // Először validáljuk a formot
+    const valid = await trigger();
+    if (!valid) {
+      console.log("Validation errors:", errors);
       return;
     }
 
+    // Deep equality: ellenőrizzük, hogy a jelenlegi űrlap értékek megegyeznek-e a kezdeti értékekkel
+    const currentValues = getValues();
+    if (deepEqual(currentValues, initialValuesRef.current)) {
+      console.log("Nincs változás, így nem történik módosítás.");
+      return;
+    }
+
+    await dokumentumokFelvesz();
+  };
+
+  const dokumentumokFelvesz = async () => {
     const adatok = getValues([
       "adoazonosito",
       "taj",
@@ -262,7 +292,6 @@ export const DokumentumokProvider = ({ children }) => {
     setResetTrigger(false);
     try {
       const formData = new FormData();
-
       const allFields = [
         "adoazonosito",
         "taj",
@@ -276,7 +305,6 @@ export const DokumentumokProvider = ({ children }) => {
         "tanulmanyik",
         "specialisok",
       ];
-
       allFields.forEach((field) => {
         const megmaradt = data[`${field}_current`];
         if (megmaradt) {
@@ -303,7 +331,6 @@ export const DokumentumokProvider = ({ children }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-
       setResetTrigger(true);
       setStepperActive(2);
     } catch (error) {
@@ -326,8 +353,9 @@ export const DokumentumokProvider = ({ children }) => {
         existingDocuments,
         dokumentumokLekeres,
         editLoading,
-        isDirty,
-        hasChanges,
+        onSubmit,
+        onError,
+        trigger,
       }}
     >
       {children}

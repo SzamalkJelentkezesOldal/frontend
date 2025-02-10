@@ -2,7 +2,6 @@ import PlusIcon from "./icons/PlusIcon";
 import { useEffect, useRef, useState } from "react";
 import SmallCloseIcon from "./icons/SmallCloseIcon";
 import DownloadIcon from "./icons/DownloadIcon";
-import { myAxios } from "../context/MyAxios";
 
 function InputFile({
   formRegister,
@@ -17,6 +16,7 @@ function InputFile({
   name,
   resetTrigger,
   existingFiles,
+  trigger,
 }) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -38,16 +38,20 @@ function InputFile({
       };
     });
     setExistingPreviews(previews);
+    // Itt a backendről érkező fájlok beállítása: ez nem számít felhasználói módosításnak, ezért nem használunk shouldDirty opciót
     setValue(`${name}_current`, JSON.stringify(existingFiles));
   }, [resetTrigger, existingFiles, name, setValue]);
 
   const handleDeleteExisting = (index) => {
     const newExistingPreviews = existingPreviews.filter((_, i) => i !== index);
     setExistingPreviews(newExistingPreviews);
-    setValue(
-      `${name}_current`,
-      JSON.stringify(newExistingPreviews.map((file) => file.path))
+    // Frissítjük a _current értéket:
+    const updatedCurrent = JSON.stringify(
+      newExistingPreviews.map((file) => file.path)
     );
+    setValue(`${name}_current`, updatedCurrent, { shouldDirty: true });
+    // Indítsuk el a validációt az adott mezőre:
+    trigger(name);
   };
 
   const handleButtonClick = () => {
@@ -59,15 +63,16 @@ function InputFile({
     const newFiles = Array.from(event.target.files);
 
     if (multiple) {
-      setValue(name, event.target.files);
+      // Felhasználói változás esetén jelöljük dirty-ként
+      setValue(name, event.target.files, { shouldDirty: true });
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
     } else {
       // Ha nem multiple, cseréljük fel a korábbi (selectedFiles) értéket
-      setValue(name, newFiles[0] || null);
+      setValue(name, newFiles[0] || null, { shouldDirty: true });
       setSelectedFiles(newFiles.slice(0, 1));
       // Töröljük az előző, current értéket, mert új fájl érkezik
       setExistingPreviews([]);
-      setValue(`${name}_current`, "[]");
+      setValue(`${name}_current`, "[]", { shouldDirty: true });
     }
 
     event.target.value = "";
@@ -81,9 +86,11 @@ function InputFile({
     if (multiple) {
       const dataTransfer = new DataTransfer();
       newFiles.forEach((file) => dataTransfer.items.add(file));
-      setValue(name, dataTransfer.files);
+      setValue(name, dataTransfer.files, { shouldDirty: true });
     } else {
-      setValue(name, null);
+      setValue(name, newFiles.length === 0 ? undefined : newFiles[0], {
+        shouldDirty: true,
+      });
     }
 
     setSelectedFiles(newFiles);
@@ -103,7 +110,9 @@ function InputFile({
     setExtensionError(false);
     const apiUrl = process.env.REACT_APP_API_URL;
     if (file?.path) {
-      const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(file.path)}`;
+      const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(
+        file.path
+      )}`;
       setPreviewFile({ data: previewUrl, name: file.name });
       return;
     }
@@ -139,7 +148,10 @@ function InputFile({
           <input
             type="file"
             {...formRegister}
-            ref={fileInputRef}
+            ref={(e) => {
+              fileInputRef.current = e;
+              formRegister.ref(e);
+            }}
             onChange={handleFileChange}
             accept={accept || ".pdf, .jpg, .jpeg, .png"}
             className="hidden"
