@@ -1,79 +1,98 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
 import { myAxios } from "../MyAxios";
-
 export const DokumentumokContext = createContext("");
+
+const fileSchema = z.custom(
+  (val) => {
+    return typeof val === "string" || val instanceof File;
+  },
+  {
+    message: "Input must be a File instance or a string",
+  }
+);
+
+// Az alap séma – minden file mező opcionális, majd majd a superRefine ellenőrzi a kötelezőket
+const dokumentumokSchemaBase = z.object({
+  adoazonosito: fileSchema.optional(),
+  taj: fileSchema.optional(),
+  szemelyi_elso: fileSchema.optional(),
+  szemelyi_hatso: fileSchema.optional(),
+  lakcim_elso: fileSchema.optional(),
+  lakcim_hatso: fileSchema.optional(),
+  onarckep: fileSchema.optional(),
+  nyilatkozatok: fileSchema.optional(),
+  erettsegik: fileSchema.optional(),
+  tanulmanyik: fileSchema.optional(),
+  specialisok: fileSchema.optional(),
+
+  // A current mezők a meglévő fájlok JSON tömbjét tartalmazzák (stringként)
+  adoazonosito_current: z.string().optional(),
+  taj_current: z.string().optional(),
+  szemelyi_elso_current: z.string().optional(),
+  szemelyi_hatso_current: z.string().optional(),
+  lakcim_elso_current: z.string().optional(),
+  lakcim_hatso_current: z.string().optional(),
+  onarckep_current: z.string().optional(),
+  nyilatkozatok_current: z.string().optional(),
+  erettsegik_current: z.string().optional(),
+  tanulmanyik_current: z.string().optional(),
+  specialisok_current: z.string().optional(),
+});
+
+// Kötelező mezők listája
+const requiredFields = [
+  "adoazonosito",
+  "taj",
+  "szemelyi_elso",
+  "szemelyi_hatso",
+  "lakcim_elso",
+  "lakcim_hatso",
+  "onarckep",
+  "nyilatkozatok",
+];
+
+// A végső séma: az alap séma után egy superRefine ellenőrzi, hogy
+// minden required mezőnél vagy az új érték, vagy a current (JSON tömbként)
+// legalább egy elemet tartalmaz.
+const dokumentumokSchema = dokumentumokSchemaBase.superRefine((data, ctx) => {
+  requiredFields.forEach((field) => {
+    const newValue = data[field];
+    const currentStr = data[`${field}_current`];
+    let currentValue = [];
+    try {
+      currentValue = currentStr ? JSON.parse(currentStr) : [];
+    } catch (e) {
+      currentValue = [];
+    }
+    if (
+      !(newValue || (Array.isArray(currentValue) && currentValue.length > 0))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${field} is required.`,
+        path: [field],
+      });
+    }
+  });
+});
 
 export const DokumentumokProvider = ({ children }) => {
   const { setStepperActive } = useContext(BeiratkozasContext);
+  const [existingDocuments, setExistingDocuments] = useState({});
   const [resetTrigger, setResetTrigger] = useState(false);
-
-  const dokumentumokSchema = z.object({
-    adoazonosito: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    taj: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    szemelyi_elso: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    szemelyi_hatso: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    lakcim_elso: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    lakcim_hatso: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    onarckep: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length === 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    nyilatkozatok: z.any().refine((val) => {
-      if (val instanceof FileList) return val.length >= 1;
-      return val instanceof File;
-    }, "Kötelező feltölteni"),
-    erettsegik: z
-      .any()
-      .refine(
-        (val) => !val || val instanceof FileList || val instanceof File,
-        "Érvénytelen fájl"
-      )
-      .optional(),
-    tanulmanyik: z
-      .any()
-      .refine(
-        (val) => !val || val instanceof FileList || val instanceof File,
-        "Érvénytelen fájl"
-      )
-      .optional(),
-    specialisok: z
-      .any()
-      .refine(
-        (val) => !val || val instanceof FileList || val instanceof File,
-        "Érvénytelen fájl"
-      )
-      .optional(),
-  });
+  const [editLoading, setEditLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
     getValues,
-    reset,
     setValue,
+    reset,
   } = useForm({
     resolver: zodResolver(dokumentumokSchema),
     shouldUnregister: true,
@@ -89,8 +108,63 @@ export const DokumentumokProvider = ({ children }) => {
       erettsegik: undefined,
       tanulmanyik: undefined,
       specialisok: undefined,
+      adoazonosito_current: "[]",
+      taj_current: "[]",
+      szemelyi_elso_current: "[]",
+      szemelyi_hatso_current: "[]",
+      lakcim_elso_current: "[]",
+      lakcim_hatso_current: "[]",
+      onarckep_current: "[]",
+      nyilatkozatok_current: "[]",
+      erettsegik_current: "[]",
+      tanulmanyik_current: "[]",
+      specialisok_current: "[]",
     },
   });
+
+  const hasChanges = Object.keys(dirtyFields).length > 0;
+
+  const dokumentumokLekeres = async () => {
+    try {
+      setEditLoading(true);
+      const response = await myAxios.get("/api/dokumentumok");
+      setExistingDocuments(response.data);
+      reset({
+        adoazonosito: undefined,
+        taj: undefined,
+        szemelyi_elso: undefined,
+        szemelyi_hatso: undefined,
+        lakcim_elso: undefined,
+        lakcim_hatso: undefined,
+        onarckep: undefined,
+        nyilatkozatok: undefined,
+        erettsegik: undefined,
+        tanulmanyik: undefined,
+        specialisok: undefined,
+        adoazonosito_current: JSON.stringify(response.data.adoazonosito || []),
+        taj_current: JSON.stringify(response.data.taj || []),
+        szemelyi_elso_current: JSON.stringify(
+          response.data.szemelyi_elso || []
+        ),
+        szemelyi_hatso_current: JSON.stringify(
+          response.data.szemelyi_hatso || []
+        ),
+        lakcim_elso_current: JSON.stringify(response.data.lakcim_elso || []),
+        lakcim_hatso_current: JSON.stringify(response.data.lakcim_hatso || []),
+        onarckep_current: JSON.stringify(response.data.onarckep || []),
+        nyilatkozatok_current: JSON.stringify(
+          response.data.nyilatkozatok || []
+        ),
+        erettsegik_current: JSON.stringify(response.data.erettsegik || []),
+        tanulmanyik_current: JSON.stringify(response.data.tanulmanyik || []),
+        specialisok_current: JSON.stringify(response.data.specialisok || []),
+      });
+    } catch (error) {
+      console.error("Hiba a dokumentumok betöltésekor:", error);
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   const nyilatkozatLetoltes = async () => {
     const year = new Date().getFullYear();
@@ -126,6 +200,11 @@ export const DokumentumokProvider = ({ children }) => {
   };
 
   const dokumentumokFelvesz = async () => {
+    if (!isDirty) {
+      alert("Nincs változás, így nem történik módosítás.");
+      return;
+    }
+
     const adatok = getValues([
       "adoazonosito",
       "taj",
@@ -138,6 +217,17 @@ export const DokumentumokProvider = ({ children }) => {
       "erettsegik",
       "tanulmanyik",
       "specialisok",
+      "adoazonosito_current",
+      "taj_current",
+      "szemelyi_elso_current",
+      "szemelyi_hatso_current",
+      "lakcim_elso_current",
+      "lakcim_hatso_current",
+      "onarckep_current",
+      "nyilatkozatok_current",
+      "erettsegik_current",
+      "tanulmanyik_current",
+      "specialisok_current",
     ]);
 
     const dokumentumAdatok = {
@@ -152,12 +242,20 @@ export const DokumentumokProvider = ({ children }) => {
       erettsegik: adatok[8],
       tanulmanyik: adatok[9],
       specialisok: adatok[10],
+      adoazonosito_current: adatok[11],
+      taj_current: adatok[12],
+      szemelyi_elso_current: adatok[13],
+      szemelyi_hatso_current: adatok[14],
+      lakcim_elso_current: adatok[15],
+      lakcim_hatso_current: adatok[16],
+      onarckep_current: adatok[17],
+      nyilatkozatok_current: adatok[18],
+      erettsegik_current: adatok[19],
+      tanulmanyik_current: adatok[20],
+      specialisok_current: adatok[21],
     };
 
-    const response = await postDokumentumok(dokumentumAdatok);
-    if (response) {
-      reset();
-    }
+    await postDokumentumok(dokumentumAdatok);
   };
 
   const postDokumentumok = async (data) => {
@@ -180,6 +278,10 @@ export const DokumentumokProvider = ({ children }) => {
       ];
 
       allFields.forEach((field) => {
+        const megmaradt = data[`${field}_current`];
+        if (megmaradt) {
+          formData.append(`${field}_current`, megmaradt);
+        }
         const value = data[field];
         if (value) {
           if (value instanceof File) {
@@ -204,10 +306,8 @@ export const DokumentumokProvider = ({ children }) => {
 
       setResetTrigger(true);
       setStepperActive(2);
-      return true;
     } catch (error) {
       console.error("Hiba:", error.response?.data || error.message);
-      return false;
     }
   };
 
@@ -223,6 +323,11 @@ export const DokumentumokProvider = ({ children }) => {
         nyilatkozatLetoltes,
         resetTrigger,
         setValue,
+        existingDocuments,
+        dokumentumokLekeres,
+        editLoading,
+        isDirty,
+        hasChanges,
       }}
     >
       {children}

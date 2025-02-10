@@ -2,6 +2,7 @@ import PlusIcon from "./icons/PlusIcon";
 import { useEffect, useRef, useState } from "react";
 import SmallCloseIcon from "./icons/SmallCloseIcon";
 import DownloadIcon from "./icons/DownloadIcon";
+import { myAxios } from "../context/MyAxios";
 
 function InputFile({
   formRegister,
@@ -15,11 +16,13 @@ function InputFile({
   setValue,
   name,
   resetTrigger,
+  existingFiles,
 }) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
   const [extensionError, setExtensionError] = useState(false);
+  const [existingPreviews, setExistingPreviews] = useState([]);
 
   useEffect(() => {
     if (resetTrigger) {
@@ -27,7 +30,25 @@ function InputFile({
       setPreviewFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
-  }, [resetTrigger]);
+    const previews = existingFiles.map((file) => {
+      const ext = file.split(".").pop();
+      return {
+        name: `${name}.${ext}`,
+        path: file,
+      };
+    });
+    setExistingPreviews(previews);
+    setValue(`${name}_current`, JSON.stringify(existingFiles));
+  }, [resetTrigger, existingFiles, name, setValue]);
+
+  const handleDeleteExisting = (index) => {
+    const newExistingPreviews = existingPreviews.filter((_, i) => i !== index);
+    setExistingPreviews(newExistingPreviews);
+    setValue(
+      `${name}_current`,
+      JSON.stringify(newExistingPreviews.map((file) => file.path))
+    );
+  };
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
@@ -39,22 +60,21 @@ function InputFile({
 
     if (multiple) {
       setValue(name, event.target.files);
-    } else {
-      setValue(name, newFiles[0] || null);
-    }
-
-    if (!multiple) {
-      setSelectedFiles(newFiles.slice(0, 1));
-    } else {
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    } else {
+      // Ha nem multiple, cseréljük fel a korábbi (selectedFiles) értéket
+      setValue(name, newFiles[0] || null);
+      setSelectedFiles(newFiles.slice(0, 1));
+      // Töröljük az előző, current értéket, mert új fájl érkezik
+      setExistingPreviews([]);
+      setValue(`${name}_current`, "[]");
     }
 
-    event.target.value = null;
+    event.target.value = "";
   };
 
   const handleRemoveFile = (index) => {
     setExtensionError(false);
-
     const removedFile = selectedFiles[index];
     const newFiles = selectedFiles.filter((_, i) => i !== index);
 
@@ -81,12 +101,17 @@ function InputFile({
 
   const handlePreview = (file) => {
     setExtensionError(false);
+    const apiUrl = process.env.REACT_APP_API_URL;
+    if (file?.path) {
+      const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(file.path)}`;
+      setPreviewFile({ data: previewUrl, name: file.name });
+      return;
+    }
     const allowedExtensions = ["image/jpeg", "image/jpg", "image/png"];
     if (!allowedExtensions.includes(file.type)) {
       setExtensionError(true);
       return;
     }
-
     const reader = new FileReader();
     reader.onload = () => {
       setPreviewFile({
@@ -105,7 +130,7 @@ function InputFile({
         <div className="flex items-center gap-4">
           <button
             type="button"
-            className="bg-szPrimary-200 p-[2px] text-white text-center rounded-full align-middle hover:bg-szPrimary-300/70"
+            className="bg-szPrimary-200 p-[2px] text-white text-center rounded-full hover:bg-szPrimary-300/70"
             onClick={handleButtonClick}
           >
             <PlusIcon />
@@ -120,30 +145,50 @@ function InputFile({
             className="hidden"
             multiple={multiple}
           />
-
-          {download ? (
+          {download && (
             <button
               onClick={handleDownloadClick}
               type="button"
-              className="bg-gradient-to-r from-szSecondary-100/90 to-szSecondary-100 p-[3px] px-2  text-center rounded-2xl align-middle hover:bg-szSecondary-200/90 duration-200 transition-all text-white flex items-center"
+              className="bg-gradient-to-r from-szSecondary-100/90 to-szSecondary-100 p-[3px] px-2 text-center rounded-2xl hover:bg-szSecondary-200/90 duration-200 transition-all text-white flex items-center"
             >
               <DownloadIcon />
               <span className="hidden sm:inline text-base">Letöltés</span>
             </button>
-          ) : (
-            <></>
           )}
         </div>
-        {extensionError ? (
+        {extensionError && (
           <p className="text-szSecondary-100 text-sm">
             Csak képeknek van előnézete.
           </p>
-        ) : (
-          ""
         )}
       </div>
       {error && (
         <span className="text-szSecondary-200 text-sm">{error.message}</span>
+      )}
+      {existingPreviews.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-[2px]">
+          {existingPreviews.map((file, index) => (
+            <li
+              key={`existing-${index}`}
+              className="text-sm text-gray-600 bg-inputGray-50 p-1 px-2 rounded-xl flex items-center justify-between gap-2 w-max"
+            >
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={() => handlePreview(file)}
+              >
+                {file.name}
+              </span>
+              <span className="text-gray-400 ml-2">(Feltöltve)</span>
+              <button
+                type="button"
+                className="rounded-full hover:bg-white/30"
+                onClick={() => handleDeleteExisting(index)}
+              >
+                <SmallCloseIcon size="18" color="#8b8b8b" />
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
       {selectedFiles.length > 0 && (
         <ul className="mt-2 flex flex-wrap gap-[2px]">

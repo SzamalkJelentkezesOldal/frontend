@@ -88,21 +88,21 @@ export const AuthProvider = ({ children }) => {
           const jelentkezesAllapot = await myAxios.get(
             `/api/jelentkezes-allapot/${data.email}`
           );
-          setJelentkezoID(jelentkezesAllapot.data.jelentkezo_id);
+          setJelentkezoID(jelentkezesAllapot?.data?.jelentkezo_id);
 
-          if (jelentkezesAllapot.data.elnevezes === "Regisztrált") {
+          if (jelentkezesAllapot?.data?.elnevezes === "Regisztrált") {
             setStepperActive(0);
           } else if (
-            jelentkezesAllapot.data.elnevezes === "Törzsadatok feltöltve"
+            jelentkezesAllapot?.data?.elnevezes === "Törzsadatok feltöltve"
           ) {
             setStepperActive(1);
           } else if (
-            jelentkezesAllapot.data.elnevezes === "Dokumentumok feltöltve"
+            jelentkezesAllapot?.data?.elnevezes === "Dokumentumok feltöltve"
           ) {
             setStepperActive(2);
           } else if (
-            jelentkezesAllapot.data.elnevezes === "Eldöntésre vár" ||
-            jelentkezesAllapot.data.elnevezes === "Módósításra vár"
+            jelentkezesAllapot?.data?.elnevezes === "Eldöntésre vár" ||
+            jelentkezesAllapot?.data?.elnevezes === "Módósításra vár"
           ) {
             setStepperActive(3);
           }
@@ -144,6 +144,7 @@ export const AuthProvider = ({ children }) => {
         isAdmin,
         isMaster,
         jelentkezoID,
+        csrf,
       }}
     >
       {children}

@@ -15,6 +15,11 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
     nyilatkozatLetoltes,
     resetTrigger,
     setValue,
+    existingDocuments,
+    dokumentumokLekeres,
+    editLoading,
+    isDirty,
+    hasChanges,
   } = useContext(DokumentumokContext);
 
   const inputResponsiveness =
@@ -27,6 +32,8 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
       isDisabled={isDisabled}
       onSubmit={handleSubmit(dokumentumokFelvesz)}
       isCompleted={isCompleted}
+      handleEdit={dokumentumokLekeres}
+      editLoading={editLoading}
     >
       <div
         className={`overflow-hidden transition-[max-height, padding, visibility] duration-300 ease-in-out bg-gray-200/70 shadow-md rounded-lg mt-2 text-inputGray text-sm font-medium p-4  mb-4 sm:mb-7 lg:mb-10`}
@@ -42,6 +49,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"adoazonosito"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.adoazonosito || []}
       />
 
       <InputFile
@@ -51,6 +59,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"taj"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.taj || []}
         error={errors.taj}
       />
 
@@ -61,6 +70,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"szemelyi_elso"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.szemelyi_elso || []}
         error={errors.szemelyi_elso}
       />
 
@@ -71,6 +81,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"szemelyi_hatso"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.szemelyi_hatso || []}
         error={errors.szemelyi_hatso}
       />
 
@@ -81,6 +92,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"lakcim_elso"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.lakcim_elso || []}
         error={errors.lakcim_elso}
       />
 
@@ -91,6 +103,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"lakcim_hatso"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.lakcim_hatso || []}
         error={errors.lakcim_hatso}
       />
 
@@ -101,6 +114,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
         name={"onarckep"}
         resetTrigger={resetTrigger}
         setValue={setValue}
+        existingFiles={existingDocuments.onarckep || []}
         error={errors.onarckep}
       />
 
@@ -115,6 +129,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
           name={"erettsegik"}
           resetTrigger={resetTrigger}
           setValue={setValue}
+          existingFiles={existingDocuments.erettsegik || []}
           error={errors.erettsegik}
           multiple={true}
         />
@@ -131,6 +146,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
           name={"nyilatkozatok"}
           resetTrigger={resetTrigger}
           setValue={setValue}
+          existingFiles={existingDocuments.nyilatkozatok || []}
           error={errors.nyilatkozatok}
           download={true}
           handleDownloadClick={nyilatkozatLetoltes}
@@ -149,6 +165,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
           name={"tanulmanyik"}
           resetTrigger={resetTrigger}
           setValue={setValue}
+          existingFiles={existingDocuments.tanulmanyik || []}
           error={errors.tanulmanyik}
           multiple={true}
         />
@@ -164,16 +181,27 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
           name={"specialisok"}
           resetTrigger={resetTrigger}
           setValue={setValue}
+          existingFiles={existingDocuments.specialisok || []}
           error={errors.specialisok}
           multiple={true}
         />
       </div>
 
-      <SubmitButton
-        text="Tovább"
-        isSubmitting={isSubmitting}
-        className="!mb-5 !mt-10 md:max-w-xs lg:mt-8"
-      />
+      {isCompleted ? (
+        <SubmitButton
+          text="Módosítás"
+          isSubmitting={isSubmitting}
+          disabled={!isDirty}
+          className="!mb-5 !mt-10 md:max-w-xs lg:mt-8"
+        />
+      ) : (
+        <SubmitButton
+          text="Tovább"
+          isSubmitting={isSubmitting}
+          disabled={!hasChanges}
+          className="!mb-5 !mt-10 md:max-w-xs lg:mt-8"
+        />
+      )}
     </BeiratkozasContainer>
   );
 }

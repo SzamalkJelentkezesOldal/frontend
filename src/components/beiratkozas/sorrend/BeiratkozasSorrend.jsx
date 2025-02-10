@@ -37,7 +37,13 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <SubmitSpinner /> : "Beiratkozás"}
+          {isSubmitting ? (
+            <>
+              <SubmitSpinner /> Beiratkozás
+            </>
+          ) : (
+            "Beiratkozás"
+          )}
         </button>
       )}
     </BeiratkozasContainer>
