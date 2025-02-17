@@ -7,18 +7,15 @@ import { myAxios } from "../MyAxios";
 
 export const DokumentumokContext = createContext("");
 
-// Alap file validátor, ami elfogadja a stringet, File-t vagy FileList-et
 const fileSchema = z.union([
   z.string(),
   z.instanceof(File),
   typeof FileList !== "undefined" ? z.instanceof(FileList) : z.any(),
 ]);
 
-// Opcionális file inputhoz ugyanaz, plusz null érték elfogadása
 const optionalFileSchema = z.union([fileSchema, z.null()]);
 
 const dokumentumokSchemaBase = z.object({
-  // Kötelező mezők: nem használunk preprocess-elést, hanem a validációt a superRefine-ben végezzük.
   adoazonosito: fileSchema.nullable(),
   taj: fileSchema.nullable(),
   szemelyi_elso: fileSchema.nullable(),
@@ -28,12 +25,10 @@ const dokumentumokSchemaBase = z.object({
   onarckep: fileSchema.nullable(),
   nyilatkozatok: fileSchema.nullable(),
 
-  // Opcionális mezők: többszörös fájlok megengedettek
   erettsegik: optionalFileSchema,
   tanulmanyik: optionalFileSchema,
   specialisok: optionalFileSchema,
 
-  // _current mezők, amelyek a backendről érkező korábbi fájlokat tartalmazzák JSON tömbként (string)
   adoazonosito_current: z.string().optional(),
   taj_current: z.string().optional(),
   szemelyi_elso_current: z.string().optional(),
@@ -47,7 +42,6 @@ const dokumentumokSchemaBase = z.object({
   specialisok_current: z.string().optional(),
 });
 
-// Listázd a kötelező mezőket
 const requiredFields = [
   "adoazonosito",
   "taj",
@@ -61,7 +55,7 @@ const requiredFields = [
 
 const dokumentumokSchema = dokumentumokSchemaBase.superRefine((data, ctx) => {
   requiredFields.forEach((field) => {
-    const newValue = data[field]; // a kötelező mezők értéke null vagy File/FileList/string
+    const newValue = data[field];
     let currentValue = [];
     try {
       currentValue = data[`${field}_current`]
@@ -70,7 +64,6 @@ const dokumentumokSchema = dokumentumokSchemaBase.superRefine((data, ctx) => {
     } catch (e) {
       currentValue = [];
     }
-    // Ha a mező értéke null ÉS a _current érték üres (azaz nincs fájl), akkor hibát dobunk.
     if (newValue === null && currentValue.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -86,6 +79,7 @@ export const DokumentumokProvider = ({ children }) => {
   const [existingDocuments, setExistingDocuments] = useState({});
   const [resetTrigger, setResetTrigger] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     register,
@@ -126,15 +120,12 @@ export const DokumentumokProvider = ({ children }) => {
     },
   });
 
-  // Elmentjük a kezdeti űrlap értékeket
   const initialValuesRef = useRef(getValues());
 
-  // Amikor reseteljük a formot (például szerkesztésnél), frissítjük a kezdeti értékeket
   useEffect(() => {
     initialValuesRef.current = getValues();
   }, [resetTrigger]);
 
-  // Deep equality ellenőrzés
   const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   const dokumentumokLekeres = async () => {
@@ -173,7 +164,6 @@ export const DokumentumokProvider = ({ children }) => {
         tanulmanyik_current: JSON.stringify(response.data.tanulmanyik || []),
         specialisok_current: JSON.stringify(response.data.specialisok || []),
       });
-      // Frissítjük a kezdeti értékeket a reset után
       initialValuesRef.current = getValues();
     } catch (error) {
       console.error("Hiba a dokumentumok betöltésekor:", error);
@@ -217,14 +207,12 @@ export const DokumentumokProvider = ({ children }) => {
   };
 
   const onSubmit = async () => {
-    // Először validáljuk a formot
     const valid = await trigger();
     if (!valid) {
       console.log("Validation errors:", errors);
       return;
     }
 
-    // Deep equality: ellenőrizzük, hogy a jelenlegi űrlap értékek megegyeznek-e a kezdeti értékekkel
     const currentValues = getValues();
     if (deepEqual(currentValues, initialValuesRef.current)) {
       console.log("Nincs változás, így nem történik módosítás.");
@@ -331,6 +319,7 @@ export const DokumentumokProvider = ({ children }) => {
           "Content-Type": "multipart/form-data",
         },
       });
+      setIsOpen(false);
       setResetTrigger(true);
       setStepperActive(2);
     } catch (error) {
@@ -356,6 +345,8 @@ export const DokumentumokProvider = ({ children }) => {
         onSubmit,
         onError,
         trigger,
+        isOpen,
+        setIsOpen,
       }}
     >
       {children}

@@ -14,6 +14,9 @@ function BeiratkozasSzemelyesAdatok({ isCompleted }) {
     magyar,
     adatokEdit,
     editLoading,
+    isDirty,
+    isOpen,
+    setIsOpen,
   } = useContext(SzemelyesAdatokContext);
 
   const inputResponsiveness =
@@ -23,11 +26,12 @@ function BeiratkozasSzemelyesAdatok({ isCompleted }) {
     <BeiratkozasContainer
       title={"Személyes Adatok"}
       first={true}
-      isOpen={false}
+      isOpen={isOpen}
       onSubmit={handleSubmit(handleSzemelyesAdatok)}
       isCompleted={isCompleted}
       handleEdit={adatokEdit}
       editLoading={editLoading}
+      setIsOpen={setIsOpen}
     >
       <div className="flex flex-col sm:max-w-[768px] sm:items-center  lg:max-w-[1279px] lg:w-full lg:grid lg:grid-cols-2 lg:justify-items-center lg:pt-6 lg:px-10 gap-y-4 ">
         <InputText
@@ -114,6 +118,7 @@ function BeiratkozasSzemelyesAdatok({ isCompleted }) {
         <SubmitButton
           text="Módosítás"
           isSubmitting={isSubmitting}
+          disabled={!isDirty}
           className="!mb-5 md:max-w-xs lg:mt-8"
         />
       ) : (

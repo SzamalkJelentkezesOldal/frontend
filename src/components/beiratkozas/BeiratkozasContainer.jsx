@@ -14,9 +14,9 @@ function BeiratkozasContainer({
   isCompleted,
   handleEdit,
   editLoading,
+  isOpen,
+  setIsOpen,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
       <h1

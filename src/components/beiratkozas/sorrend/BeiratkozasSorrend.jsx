@@ -7,17 +7,24 @@ import InfoBox from "../../InfoBox";
 import SubmitSpinner from "../../icons/SubmitSpinner";
 
 function BeiratkozasSorrend({ isDisabled, isCompleted }) {
-  const { handleSorrend, handleSubmit, isSubmitting, sorrendLekerdez } =
-    useContext(SorrendContext);
+  const {
+    handleSorrend,
+    handleSubmit,
+    isSubmitting,
+    sorrendLekerdez,
+    isOpen,
+    setIsOpen,
+  } = useContext(SorrendContext);
 
   return (
     <BeiratkozasContainer
       title={"Sorrend"}
-      isOpen={false}
+      isOpen={isOpen}
       isDisabled={isDisabled}
       onSubmit={handleSubmit(handleSorrend)}
       isCompleted={isCompleted}
       handleEdit={sorrendLekerdez}
+      setIsOpen={setIsOpen}
     >
       <div className="container md:max-w-[700px] pt-5">
         <InfoBox>

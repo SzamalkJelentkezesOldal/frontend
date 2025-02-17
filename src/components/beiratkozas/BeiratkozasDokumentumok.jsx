@@ -21,6 +21,8 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
     onError,
     onSubmit,
     trigger,
+    isOpen,
+    setIsOpen,
   } = useContext(DokumentumokContext);
 
   const inputResponsiveness =
@@ -29,12 +31,13 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
   return (
     <BeiratkozasContainer
       title={"Dokumentumok"}
-      isOpen={false}
+      isOpen={isOpen}
       isDisabled={isDisabled}
       onSubmit={handleSubmit(onSubmit, onError)}
       isCompleted={isCompleted}
       handleEdit={dokumentumokLekeres}
       editLoading={editLoading}
+      setIsOpen={setIsOpen}
     >
       <div
         className={`overflow-hidden transition-[max-height, padding, visibility] duration-300 ease-in-out bg-gray-200/70 shadow-md rounded-lg mt-2 text-inputGray text-sm font-medium p-4  mb-4 sm:mb-7 lg:mb-10`}

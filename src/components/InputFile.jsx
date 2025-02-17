@@ -17,6 +17,7 @@ function InputFile({
   resetTrigger,
   existingFiles,
   trigger,
+  admin,
 }) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,21 +26,22 @@ function InputFile({
   const [existingPreviews, setExistingPreviews] = useState([]);
 
   useEffect(() => {
-    if (resetTrigger) {
-      setSelectedFiles([]);
-      setPreviewFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+    if (!admin) {
+      if (resetTrigger) {
+        setSelectedFiles([]);
+        setPreviewFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+      const previews = existingFiles.map((file) => {
+        const ext = file.split(".").pop();
+        return {
+          name: `${name}.${ext}`,
+          path: file,
+        };
+      });
+      setExistingPreviews(previews);
+      setValue(`${name}_current`, JSON.stringify(existingFiles));
     }
-    const previews = existingFiles.map((file) => {
-      const ext = file.split(".").pop();
-      return {
-        name: `${name}.${ext}`,
-        path: file,
-      };
-    });
-    setExistingPreviews(previews);
-    // Itt a backendről érkező fájlok beállítása: ez nem számít felhasználói módosításnak, ezért nem használunk shouldDirty opciót
-    setValue(`${name}_current`, JSON.stringify(existingFiles));
   }, [resetTrigger, existingFiles, name, setValue]);
 
   const handleDeleteExisting = (index) => {

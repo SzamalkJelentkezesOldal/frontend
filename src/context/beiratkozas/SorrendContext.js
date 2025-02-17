@@ -11,6 +11,7 @@ export const SorrendProvider = ({ children }) => {
   const [jelentkezesek, setJelentkezesek] = useState([]);
   const [sorrendLoading, setSorrendLoading] = useState(true);
   const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
+  const [isOpen, setIsOpen] = useState(false);
 
   const sorrendSchema = z.object({});
 
@@ -42,6 +43,7 @@ export const SorrendProvider = ({ children }) => {
         setStepperActive(3);
       }
 
+      setIsOpen(false);
       console.log(response.data);
     } catch (error) {
       console.error("Hiba részletei:", {
@@ -68,6 +70,8 @@ export const SorrendProvider = ({ children }) => {
         sorrendLoading,
         setSorrendLoading,
         sorrendLekerdez,
+        isOpen,
+        setIsOpen,
       }}
     >
       {children}

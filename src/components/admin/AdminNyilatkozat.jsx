@@ -50,6 +50,7 @@ const AdminNyilatkozat = () => {
             formRegister={formRegister("nyilatkozat")}
             error={errors.nyilatkozat}
             resetTrigger={resetTrigger}
+            admin={true}
           />
         </div>
 

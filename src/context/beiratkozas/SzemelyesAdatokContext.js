@@ -13,12 +13,17 @@ export const SzemelyesAdatokProvider = ({ children }) => {
   const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
   const [editLoading, setEditLoading] = useState(false);
   const { user, jelentkezoID } = useAuthContext();
+  const [isOpen, setIsOpen] = useState(false);
 
   const szemelyesAdatokSchema = z
     .object({
       vezeteknev: z.string().min(1, "A vezetéknév kitöltendő!"),
       keresztnev: z.string().min(1, "A keresztnév kitöltendő!"),
-      szuletesi_nev: z.string().optional(),
+      szuletesi_nev: z
+        .string()
+        .optional()
+        .nullable()
+        .transform((val) => val ?? ""),
       allampolgarsag: z.string().min(1, "Az állampolgárság kitöltendő!"),
       adoazonosito: z
         .string()
@@ -73,15 +78,25 @@ export const SzemelyesAdatokProvider = ({ children }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
     getValues,
     watch,
     reset,
   } = useForm({
+    mode: "onChange",
     resolver: zodResolver(szemelyesAdatokSchema),
-    shouldUnregister: true,
+    shouldUnregister: false,
     defaultValues: {
+      vezeteknev: "",
+      keresztnev: "",
+      szuletesi_nev: "",
+      anyja_neve: "",
+      lakcim: "",
+      szuletesi_hely: "",
+      szuletesi_datum: "",
       allampolgarsag: "",
+      adoazonosito: "",
+      taj_szam: "",
     },
   });
 
@@ -114,11 +129,19 @@ export const SzemelyesAdatokProvider = ({ children }) => {
     };
 
     if (stepperActive > 0) {
-      const response = await myAxios.put(
-        `/api/torzsadat-frissit/${jelentkezoID}`,
-        szemelyesAdatok
-      );
-      console.log("Módosítás sikeres:", response);
+      const teljesAdatok = getValues();
+
+      try {
+        const response = await myAxios.patch(
+          `/api/torzsadat-frissit/${jelentkezoID}`,
+          teljesAdatok
+        );
+        console.log("Módosítás sikeres:", response);
+
+        setIsOpen(false);
+      } catch (e) {
+        console.log(e);
+      }
     } else {
       try {
         const response = await myAxios.post(
@@ -127,6 +150,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
         );
         console.log(response);
 
+        setIsOpen(false);
         setStepperActive(1);
       } catch (e) {
         console.log(e);
@@ -170,6 +194,9 @@ export const SzemelyesAdatokProvider = ({ children }) => {
         magyar,
         adatokEdit,
         editLoading,
+        isDirty,
+        isOpen,
+        setIsOpen,
       }}
     >
       {children}
