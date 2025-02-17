@@ -10,6 +10,7 @@ import MasterLayout from "./layouts/MasterLayout";
 import AdminJelentkezok from "./pages/AdminJelentkezok";
 import AdminUgyintezok from "./pages/AdminUgyintezok";
 import AdminStatisztika from "./pages/AdminStatisztika";
+import AdminNyilatkozat from "./components/admin/AdminNyilatkozat";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route element={<AdminLayout />}>
           <Route path="admin/jelentkezok" element={<AdminJelentkezok />} />
           <Route path="admin/statisztika" element={<AdminStatisztika />} />
+          <Route path="admin/nyilatkozat" element={<AdminNyilatkozat />} />
           <Route element={<MasterLayout />}>
             <Route path="admin/ugyintezok" element={<AdminUgyintezok />} />
           </Route>

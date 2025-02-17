@@ -1,7 +1,5 @@
-import AdminNyilatkozat from "../components/admin/AdminNyilatkozat";
-
 function AdminJelentkezok() {
-  return <AdminNyilatkozat />;
+  return <p className="pt-60">admin jelentkezők oldal</p>;
 }
 
 export default AdminJelentkezok;

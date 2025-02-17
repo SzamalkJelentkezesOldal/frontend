@@ -12,7 +12,7 @@ module.exports = withMT({
     extend: {
       screens: {
         xsm: "399px",
-        sl: "945px",
+        sl: "1100px",
       },
       colors: {
         szPrimary: {
