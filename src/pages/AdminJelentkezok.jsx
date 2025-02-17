@@ -1,5 +1,11 @@
+import AdminJelentkezokTabla from "../components/admin/AdminJelentkezok";
+
 function AdminJelentkezok() {
-  return <p className="pt-60">admin jelentkezők oldal</p>;
+  return (
+    <div className="pt-60">
+      <AdminJelentkezokTabla />
+    </div>
+  );
 }
 
 export default AdminJelentkezok;

@@ -1,137 +1,90 @@
-// AdminJelentkezok.jsx
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useContext } from "react";
+import { AdminJelentkezokContext } from "../../context/admin/AdminJelentkezokContext";
+import React from "react";
 
-// TanStack Table hookok importálása
-import {
-  useReactTable,
-  getCoreRowModel,
-  getPaginationRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-
-// Importáljuk a shadcn/ui Data Table komponenseit
-// (Győződj meg róla, hogy a shadcn/ui telepítve van, illetve a komponensek elérhetők a megadott útvonalon)
-import {
-  Table,
-  TableHeader,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
-
-// Oszlopdefiníciók: email, név és státusz
-const columns = [
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: "name",
-    header: "Név",
-    cell: (info) => info.getValue(),
-  },
-  {
-    accessorKey: "status",
-    header: "Státusz",
-    cell: (info) => info.getValue(),
-  },
-];
-
-const AdminJelentkezok = () => {
-  // Állapotok az adatokhoz és az oldalazáshoz
-  const [data, setData] = useState([]);
-  const [pageCount, setPageCount] = useState(0); // összes oldal száma
-  const [pageIndex, setPageIndex] = useState(0); // 0-indexelt
-  const [pageSize, setPageSize] = useState(10);
-  const [loading, setLoading] = useState(false);
-
-  // Adatlekérési függvény: axios-szal kérjük le az aktuális oldalt
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      // Az API úgy várja a paramétereket, hogy a "page" 1-indexelt, "limit" pedig az oldalon megjelenítendő sorok száma
-      const response = await axios.get(
-        "https://your-backend-endpoint.com/api/users",
-        {
-          params: {
-            page: pageIndex + 1,
-            limit: pageSize,
-          },
-        }
-      );
-      // Tegyük fel, hogy az API a következő formátumban adja vissza az adatokat:
-      // { results: [...], totalCount: number }
-      const { results, totalCount } = response.data;
-      setData(results);
-      setPageCount(Math.ceil(totalCount / pageSize));
-    } catch (error) {
-      console.error("Hiba az adatok lekérésekor:", error);
-    }
-    setLoading(false);
-  };
-
-  // Adatlekérés a pageIndex vagy pageSize változásakor
-  useEffect(() => {
-    fetchData();
-  }, [pageIndex, pageSize]);
-
-  // TanStack Table inicializálása
-  const table = useReactTable({
-    data,
+const AdminJelentkezokTabla = () => {
+  const {
+    table,
+    flexRender,
+    loading,
     columns,
-    manualPagination: true, // szerveroldali oldalazás miatt
-    pageCount: pageCount,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+    data,
+    setPageIndex,
+    setPageSize,
+    pageCount,
+    pageIndex,
+    pageSize,
+  } = useContext(AdminJelentkezokContext);
 
   return (
     <div className="p-4">
-      {loading && <div className="mb-2">Betöltés...</div>}
-
-      {/* Shadcn/ui Data Table komponens */}
-      <Table>
-        <TableHeader>
+      {loading && <div className="mb-2 text-gray-600">Betöltés...</div>}
+      <table className="min-w-full border-collapse border border-gray-300">
+        <thead className="bg-gray-50">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <th
+                  key={header.id}
+                  className="px-4 py-2 border border-gray-300 text-left text-sm font-medium text-gray-700"
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                </TableHead>
+                </th>
               ))}
-            </TableRow>
+            </tr>
           ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+        </thead>
+        <tbody className="bg-white">
+          {table.getRowModel().rows.map((row) => (
+            // Minden sort egy React.Fragmentbe csomagolunk, hogy utána opcionálisan kibontott tartalmat is rendereljünk.
+            <React.Fragment key={row.id}>
+              <tr className="border-b border-gray-200">
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <td
+                    key={cell.id}
+                    className="px-4 py-2 border border-gray-300 text-sm text-gray-600"
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                  </td>
                 ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center">
+              </tr>
+              {row.getIsExpanded() && (
+                <tr>
+                  <td colSpan={columns.length} className="bg-gray-100 p-4">
+                    {/* Ide jöhet a kibontott tartalom – itt példaként megjelenítjük a név és státusz értékét */}
+                    <div className="text-sm text-gray-700">
+                      <p>
+                        <strong>Név:</strong> {row.original.nev}
+                      </p>
+                      <p>
+                        <strong>Státusz:</strong> {row.original.status}
+                      </p>
+                      {/* További részletek is megjeleníthetők itt */}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+          {data.length === 0 && !loading && (
+            <tr>
+              <td
+                colSpan={columns.length}
+                className="px-4 py-2 text-center text-gray-500"
+              >
                 Nincs adat.
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           )}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
 
-      {/* Oldal navigáció */}
+      {/* Pagination vezérlők */}
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => setPageIndex((old) => Math.max(old - 1, 0))}
@@ -140,8 +93,8 @@ const AdminJelentkezok = () => {
         >
           Előző
         </button>
-        <span>
-          Oldal {pageIndex + 1} / {pageCount}
+        <span className="text-sm text-gray-700">
+          Oldal <strong>{pageIndex + 1}</strong> / <strong>{pageCount}</strong>
         </span>
         <button
           onClick={() =>
@@ -156,9 +109,9 @@ const AdminJelentkezok = () => {
           value={pageSize}
           onChange={(e) => {
             setPageSize(Number(e.target.value));
-            setPageIndex(0); // visszaállítjuk az első oldalt
+            setPageIndex(0); // az oldalváltásnál visszaállunk az első oldalra
           }}
-          className="ml-4 p-1 border rounded"
+          className="ml-4 p-1 border rounded text-sm"
         >
           {[10, 20, 30].map((size) => (
             <option key={size} value={size}>
@@ -171,4 +124,4 @@ const AdminJelentkezok = () => {
   );
 };
 
-export default AdminJelentkezok;
+export default AdminJelentkezokTabla;
