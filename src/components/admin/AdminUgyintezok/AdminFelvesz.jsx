@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import InputText from "../InputText";
-import SubmitButton from "../SubmitButton";
-import CustomForm from "../CustomForm";
-import { AdminFelveszContext } from "../../context/admin/AdminFelveszContext";
+import InputText from "../../InputText";
+import SubmitButton from "../../SubmitButton";
+import CustomForm from "../../CustomForm";
+import { AdminFelveszContext } from "../../../context/admin/AdminFelveszContext";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
 function AdminFelvesz() {

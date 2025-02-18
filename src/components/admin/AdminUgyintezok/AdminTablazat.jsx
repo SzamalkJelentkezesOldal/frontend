@@ -7,10 +7,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { ApiContext } from "../../context/ApiContext";
-
-import EditIcon from "../icons/EditIcon";
+import EditIcon from "../../icons/EditIcon";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import AdminModosit from "./AdminModosit";
+import { AdminUgyintezoContext } from "../../../context/admin/AdminUgyintezoContext";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,20 +32,26 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function AdminTablazat() {
-  const { ugyintezoLista } = useContext(ApiContext);
-  const [kivalasztottSor, setKivalasztottSor] = useState(null);
-
-  const kattintas = (sor) => {
-    setKivalasztottSor(sor);
-  }
-  const bezaras = () => {
-    setKivalasztottSor(null); 
-  }
-
+  const {
+    register,
+    handleSubmit,
+    isSubmitting,
+    errors,
+    getValues,
+    adatokEdit,
+    editLoading,
+    handleUgyintezoAdatok,
+    handleClickOpen,
+    handleClose,
+    theme,
+    fullScreen,
+    open,
+    setOpen,
+    ugyintezoLista,
+  } = useContext(AdminUgyintezoContext);
 
   return (
     <section className="container pt-20">
-    {kivalasztottSor && (<AdminModosit sor={kivalasztottSor} bezaras={bezaras}/>)}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -53,6 +60,7 @@ function AdminTablazat() {
               <StyledTableCell>E-mail</StyledTableCell>
               <StyledTableCell>Master</StyledTableCell>
               <StyledTableCell>Módosítás</StyledTableCell>
+              <StyledTableCell>Törlés</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -65,15 +73,39 @@ function AdminTablazat() {
                 <StyledTableCell>
                   {sor.role > 1 ? "Igen" : "Nem"}
                 </StyledTableCell>
-                <StyledTableCell onClick={() => kattintas(sor)}>
+                <StyledTableCell onClick={handleClickOpen}>
                   <EditIcon size={"24"} />
                 </StyledTableCell>
+                <StyledTableCell /*onClick={}*/>
+                  <PersonRemoveIcon size={"24"} />
+                </StyledTableCell>
+                <Dialog
+                  fullScreen={fullScreen}
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="responsive-dialog-title"
+                  disableEnforceFocus
+                >
+                  <DialogTitle id="responsive-dialog-title">
+                    {"Ügyintéző módosítása"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <AdminModosit />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button type={"button"} autoFocus onClick={handleClose}>
+                      Mégse
+                    </Button>
+                    <Button type={"submit"} onClick={handleClose} autoFocus>
+                      Módosítás
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      
     </section>
   );
 }

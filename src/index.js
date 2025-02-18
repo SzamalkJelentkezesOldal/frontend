@@ -17,6 +17,8 @@ import { AdminFelveszProvider } from "./context/admin/AdminFelveszContext";
 import { SorrendProvider } from "./context/beiratkozas/SorrendContext";
 import { AdminNyilatkozatProvider } from "./context/admin/AdminNyilatkozatContext";
 import { AdminJelentkezokProvider } from "./context/admin/AdminJelentkezokContext";
+import { AdminUgyintezoProvider } from "./context/admin/AdminUgyintezoContext";
+
 const themeMUI = createTheme({}, huHU);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -27,25 +29,27 @@ root.render(
         <BeiratkozasProvider>
           <SorrendProvider>
             <AuthProvider>
-              <AdminFelveszProvider>
-                <AdminJelentkezokProvider>
-                  <AdminNyilatkozatProvider>
-                    <JelentkezesProvider>
-                      <RegisztralasProvider>
-                        <BelepesProvider>
-                          <DokumentumokProvider>
-                            <SzemelyesAdatokProvider>
-                              <ThemeProvider theme={themeMUI}>
-                                <App />
-                              </ThemeProvider>
-                            </SzemelyesAdatokProvider>
-                          </DokumentumokProvider>
-                        </BelepesProvider>
-                      </RegisztralasProvider>
-                    </JelentkezesProvider>
-                  </AdminNyilatkozatProvider>
-                </AdminJelentkezokProvider>
-              </AdminFelveszProvider>
+              <AdminUgyintezoProvider>
+                <AdminFelveszProvider>
+                  <AdminJelentkezokProvider>
+                    <AdminNyilatkozatProvider>
+                      <JelentkezesProvider>
+                        <RegisztralasProvider>
+                          <BelepesProvider>
+                            <DokumentumokProvider>
+                              <SzemelyesAdatokProvider>
+                                <ThemeProvider theme={themeMUI}>
+                                  <App />
+                                </ThemeProvider>
+                              </SzemelyesAdatokProvider>
+                            </DokumentumokProvider>
+                          </BelepesProvider>
+                        </RegisztralasProvider>
+                      </JelentkezesProvider>
+                    </AdminNyilatkozatProvider>
+                  </AdminJelentkezokProvider>
+                </AdminFelveszProvider>
+              </AdminUgyintezoProvider>
             </AuthProvider>
           </SorrendProvider>
         </BeiratkozasProvider>
