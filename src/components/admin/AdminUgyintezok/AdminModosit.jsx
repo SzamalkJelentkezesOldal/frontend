@@ -13,7 +13,7 @@ function AdminModosit({}) {
   } = useContext(AdminUgyintezoContext);
 
   return (
-    <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
+    <>
       <TextField
         autoFocus
         required
@@ -45,7 +45,7 @@ function AdminModosit({}) {
       />
 
       <FormControlLabel control={<Checkbox />} label="Master" />
-    </form>
+    </>
   );
 }
 

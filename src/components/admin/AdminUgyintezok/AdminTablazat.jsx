@@ -8,10 +8,16 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "../../icons/EditIcon";
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import AdminModosit from "./AdminModosit";
 import { AdminUgyintezoContext } from "../../../context/admin/AdminUgyintezoContext";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,6 +54,7 @@ function AdminTablazat() {
     open,
     setOpen,
     ugyintezoLista,
+    setKivalasztottUgyintezo,
   } = useContext(AdminUgyintezoContext);
 
   return (
@@ -73,7 +80,13 @@ function AdminTablazat() {
                 <StyledTableCell>
                   {sor.role > 1 ? "Igen" : "Nem"}
                 </StyledTableCell>
-                <StyledTableCell onClick={handleClickOpen}>
+                <StyledTableCell
+                  onClick={() => {
+                    console.log(sor.id);
+                    handleClickOpen();
+                    setKivalasztottUgyintezo(sor.id);
+                  }}
+                >
                   <EditIcon size={"24"} />
                 </StyledTableCell>
                 <StyledTableCell /*onClick={}*/>
@@ -86,20 +99,22 @@ function AdminTablazat() {
                   aria-labelledby="responsive-dialog-title"
                   disableEnforceFocus
                 >
-                  <DialogTitle id="responsive-dialog-title">
-                    {"Ügyintéző módosítása"}
-                  </DialogTitle>
-                  <DialogContent>
-                    <AdminModosit />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button type={"button"} autoFocus onClick={handleClose}>
-                      Mégse
-                    </Button>
-                    <Button type={"submit"} onClick={handleClose} autoFocus>
-                      Módosítás
-                    </Button>
-                  </DialogActions>
+                  <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
+                    <DialogTitle id="responsive-dialog-title">
+                      {"Ügyintéző módosítása"}
+                    </DialogTitle>
+                    <DialogContent>
+                      <AdminModosit />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button type={"button"} autoFocus onClick={handleClose}>
+                        Mégse
+                      </Button>
+                      <Button type={"submit"} onClick={handleClose} autoFocus>
+                        Módosítás
+                      </Button>
+                    </DialogActions>
+                  </form>
                 </Dialog>
               </StyledTableRow>
             ))}
