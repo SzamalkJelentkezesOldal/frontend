@@ -40,6 +40,7 @@ function JelentkezesForm() {
             }}
             options={szakOptions}
             placeholder="Szakma kiválasztása..."
+            isMulti={true}
           />
           <p
             className="text-szPrimary font-semibold px-1"

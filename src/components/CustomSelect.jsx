@@ -2,14 +2,15 @@ import React from "react";
 import makeAnimated from "react-select/animated";
 import Select from "react-select";
 const CustomSelect = React.forwardRef(
-  ({ onChange, options, placeholder }, ref) => {
+  ({ onChange, options, placeholder, isMulti }, ref) => {
     const animatedComponents = makeAnimated();
 
     return (
       <Select
+        defaultValue={options[0] || null}
         ref={ref}
         onChange={onChange}
-        isMulti
+        isMulti={isMulti}
         options={options}
         className="basic-multi-select shadow-md"
         classNamePrefix="select"

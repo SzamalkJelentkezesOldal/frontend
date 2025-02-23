@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 
 import { createContext } from "react";
+import { set } from "react-hook-form";
 
 export const AdminJelentkezokContext = createContext("");
 
@@ -49,6 +50,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
   const [pageCount, setPageCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState({}); // Expanzió állapot
+  const [selectedFilter, setSelectedFilter] = useState(1);
 
   // Adatlekérés axios-szal, a Laravel backend API-jából.
   // Tegyük fel, hogy az API a következő formátumban adja vissza az adatokat:
@@ -60,6 +62,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
         params: {
           page: pageIndex + 1, // az API 1-indexelt oldalt vár
           limit: pageSize,
+          filter: selectedFilter,
         },
       });
       const { results, totalCount } = response.data;
@@ -75,7 +78,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
   // Újra lekérjük az adatokat, amikor az oldal vagy az oldal méret változik
   useEffect(() => {
     fetchData();
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, selectedFilter]);
 
   // TanStack Table inicializálása, beleértve a manuális paginationt és a row expanziót
   const table = useReactTable({
@@ -90,6 +93,10 @@ export const AdminJelentkezokProvider = ({ children }) => {
     getExpandedRowModel: getExpandedRowModel(),
   });
 
+  function jelentkezokSzurese(szuro) {
+    setSelectedFilter(szuro);
+  }
+
   return (
     <AdminJelentkezokContext.Provider
       value={{
@@ -103,6 +110,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
         pageCount,
         pageIndex,
         pageSize,
+        jelentkezokSzurese,
       }}
     >
       {children}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 function InputText({
   formRegister,
@@ -12,6 +13,7 @@ function InputText({
   wrapperClassName,
   min,
   max,
+  search,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,6 +46,19 @@ function InputText({
               showPassword ? VisibilityOutlinedIcon : VisibilityOffOutlinedIcon
             }
             onClick={() => setShowPassword(!showPassword)}
+          />
+        )}
+        {search && (
+          <IconButton
+            sx={{
+              height: 40,
+              width: 40,
+              position: "absolute",
+              right: 6,
+              top: 3,
+            }}
+            component={search ? SearchIcon : ""}
+            onClick={() => console.log("keresés")}
           />
         )}
       </div>

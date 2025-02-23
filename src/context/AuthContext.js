@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     const initializeUser = async () => {
       const data = await getUser();
       if (data?.role > 0) {
-        navigate("/admin/jelentkezok");
+        // navigate("/admin/jelentkezok");
       } else if (data) {
         navigate("/beiratkozas");
         try {

@@ -40,7 +40,7 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
         />
       ) : (
         <button
-          className="min-w-36 p-3 text-gray-50/90 self-center mt-10 w-1/4 bg-gradient-to-br from-szSecondary-100/80 via-szSecondary-100  to-szSecondary-200 rounded-lg px-5 shadow-lg hover:text-white hover:bg-red-800 hover:shadow-xl duration-200 transition-all font-semibold tracking-widest"
+          className="min-w-36 p-3 text-gray-50/90 self-center mt-10 w-1/4 bg-gradient-to-br from-szSecondary-100/80 via-szSecondary-100  to-szSecondary-200 rounded-lg px-5 shadow-lg hover:text-white hover:bg-red-800 hover:shadow-xl duration-200 transition-all font-semibold tracking-widest flex items-center justify-center"
           type="submit"
           disabled={isSubmitting}
         >

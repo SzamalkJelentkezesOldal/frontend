@@ -1,5 +1,5 @@
-import AdminFelvesz from "../components/admin/AdminUgyintezok/AdminFelvesz";
-import AdminTablazat from "../components/admin/AdminUgyintezok/AdminTablazat";
+import AdminFelvesz from "../components/admin/admin_ugyintezok/AdminFelvesz";
+import AdminTablazat from "../components/admin/admin_ugyintezok/AdminTablazat";
 
 function AdminUgyintezok() {
   return (
