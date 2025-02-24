@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BeiratkozasContext } from "./BeiratkozasContext";
+import useAuthContext from "../AuthContext";
 
 export const SorrendContext = createContext();
 
@@ -12,6 +13,7 @@ export const SorrendProvider = ({ children }) => {
   const [sorrendLoading, setSorrendLoading] = useState(true);
   const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
   const [isOpen, setIsOpen] = useState(false);
+  // const { user } = useAuthContext();
 
   const sorrendSchema = z.object({});
 
@@ -54,9 +56,7 @@ export const SorrendProvider = ({ children }) => {
     }
   };
 
-  const sorrendLekerdez = async () => {
-    console.log("asd");
-  };
+  const sorrendLekerdez = async () => {};
 
   return (
     <SorrendContext.Provider

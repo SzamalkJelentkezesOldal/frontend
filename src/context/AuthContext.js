@@ -83,6 +83,7 @@ export const AuthProvider = ({ children }) => {
         // navigate("/admin/jelentkezok");
       } else if (data) {
         navigate("/beiratkozas");
+
         try {
           setAllapotLoading(true);
           const jelentkezesAllapot = await myAxios.get(
@@ -130,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       initializeUser();
     }
-  }, [user, getUser, navigate]);
+  }, [user, getUser, navigate, setJelentkezesek]);
 
   return (
     <AuthContext.Provider

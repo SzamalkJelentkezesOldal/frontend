@@ -185,18 +185,32 @@ const AdminJelentkezokTabla = () => {
                                     </p>
                                     <div className="mt-1">
                                       <div className="flex flex-wrap gap-2 mt-1">
-                                        {doc.previewUrls &&
-                                          doc.previewUrls.map((url, index) => (
-                                            <a
-                                              key={index}
-                                              href={url}
-                                              target="_blank"
-                                              rel="noopener noreferrer"
-                                              className="text-blue-500 underline text-sm"
-                                            >
-                                              {`Fájl ${index + 1}`}
-                                            </a>
-                                          ))}
+                                        {doc.fajlok &&
+                                          doc.fajlok.map((file, index) => {
+                                            // A preview URL generálása hasonlóan az InputFile komponenshez:
+                                            const apiUrl =
+                                              process.env.REACT_APP_API_URL;
+                                            const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(file)}`;
+                                            return (
+                                              <>
+                                                <a
+                                                  key={index}
+                                                  href={previewUrl}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="text-blue-500 underline text-sm"
+                                                >
+                                                  {`Fájl ${index + 1}`}
+                                                  <img
+                                                    key={index}
+                                                    src={previewUrl}
+                                                    alt={`Dokumentum ${index + 1}`}
+                                                    className="max-w-xs h-auto border rounded shadow-sm"
+                                                  />
+                                                </a>
+                                              </>
+                                            );
+                                          })}
                                       </div>
                                     </div>
                                   </li>
@@ -254,26 +268,28 @@ const AdminJelentkezokTabla = () => {
 
         {/* Pagination vezérlők */}
         <div className="flex items-center justify-between mt-4">
-          <button
-            onClick={() => setPageIndex((old) => Math.max(old - 1, 0))}
-            disabled={pageIndex === 0}
-            className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-          >
-            Előző
-          </button>
-          <span className="text-sm text-gray-700">
-            Oldal <strong>{pageIndex + 1}</strong> /{" "}
-            <strong>{pageCount}</strong>
-          </span>
-          <button
-            onClick={() =>
-              setPageIndex((old) => Math.min(old + 1, pageCount - 1))
-            }
-            disabled={pageIndex >= pageCount - 1}
-            className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-          >
-            Következő
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setPageIndex((old) => Math.max(old - 1, 0))}
+              disabled={pageIndex === 0}
+              className="px-3 py-1 bg-szPrimary-200 text-white rounded disabled:opacity-50"
+            >
+              Előző
+            </button>
+            <span className="text-sm text-gray-700">
+              Oldal <strong>{pageIndex + 1}</strong> /{" "}
+              <strong>{pageCount}</strong>
+            </span>
+            <button
+              onClick={() =>
+                setPageIndex((old) => Math.min(old + 1, pageCount - 1))
+              }
+              disabled={pageIndex >= pageCount - 1}
+              className="px-3 py-1 bg-szPrimary-200 text-white rounded disabled:opacity-50"
+            >
+              Következő
+            </button>
+          </div>
           <select
             value={pageSize}
             onChange={(e) => {

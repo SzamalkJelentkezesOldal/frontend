@@ -10,7 +10,6 @@ import {
 } from "@tanstack/react-table";
 
 import { createContext } from "react";
-import { set } from "react-hook-form";
 
 export const AdminJelentkezokContext = createContext("");
 
@@ -51,10 +50,9 @@ export const AdminJelentkezokProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState({}); // Expanzió állapot
   const [selectedFilter, setSelectedFilter] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField, setSearchField] = useState("email");
 
-  // Adatlekérés axios-szal, a Laravel backend API-jából.
-  // Tegyük fel, hogy az API a következő formátumban adja vissza az adatokat:
-  // { results: [...], totalCount: number }
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -63,6 +61,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
           page: pageIndex + 1, // az API 1-indexelt oldalt vár
           limit: pageSize,
           filter: selectedFilter,
+          search: searchQuery, //keresett szöveg
+          searchField: searchField, // keresett mező
         },
       });
       const { results, totalCount } = response.data;
@@ -75,10 +75,9 @@ export const AdminJelentkezokProvider = ({ children }) => {
     setLoading(false);
   };
 
-  // Újra lekérjük az adatokat, amikor az oldal vagy az oldal méret változik
   useEffect(() => {
     fetchData();
-  }, [pageIndex, pageSize, selectedFilter]);
+  }, [pageIndex, pageSize, selectedFilter, searchQuery, searchField]);
 
   // TanStack Table inicializálása, beleértve a manuális paginationt és a row expanziót
   const table = useReactTable({
@@ -111,6 +110,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
         pageIndex,
         pageSize,
         jelentkezokSzurese,
+        setSearchQuery,
+        setSearchField,
       }}
     >
       {children}

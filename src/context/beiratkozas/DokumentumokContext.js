@@ -13,7 +13,10 @@ const fileSchema = z.union([
   typeof FileList !== "undefined" ? z.instanceof(FileList) : z.any(),
 ]);
 
-const optionalFileSchema = z.union([fileSchema, z.null()]);
+const multiFilePreprocess = z.preprocess(
+  (val) => (val instanceof FileList ? Array.from(val) : val),
+  z.array(fileSchema).optional()
+);
 
 const dokumentumokSchemaBase = z.object({
   adoazonosito: fileSchema.nullable(),
@@ -25,9 +28,9 @@ const dokumentumokSchemaBase = z.object({
   onarckep: fileSchema.nullable(),
   nyilatkozatok: fileSchema.nullable(),
 
-  erettsegik: optionalFileSchema,
-  tanulmanyik: optionalFileSchema,
-  specialisok: optionalFileSchema,
+  erettsegik: multiFilePreprocess,
+  tanulmanyik: multiFilePreprocess,
+  specialisok: multiFilePreprocess,
 
   adoazonosito_current: z.string().optional(),
   taj_current: z.string().optional(),
@@ -75,7 +78,7 @@ const dokumentumokSchema = dokumentumokSchemaBase.superRefine((data, ctx) => {
 });
 
 export const DokumentumokProvider = ({ children }) => {
-  const { setStepperActive } = useContext(BeiratkozasContext);
+  const { setStepperActive, stepperActive } = useContext(BeiratkozasContext);
   const [existingDocuments, setExistingDocuments] = useState({});
   const [resetTrigger, setResetTrigger] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
@@ -103,9 +106,9 @@ export const DokumentumokProvider = ({ children }) => {
       lakcim_hatso: null,
       onarckep: null,
       nyilatkozatok: null,
-      erettsegik: undefined, // opcionálisak
-      tanulmanyik: undefined,
-      specialisok: undefined,
+      erettsegik: [], // opcionálisak
+      tanulmanyik: [],
+      specialisok: [],
       adoazonosito_current: "[]",
       taj_current: "[]",
       szemelyi_elso_current: "[]",
@@ -306,6 +309,10 @@ export const DokumentumokProvider = ({ children }) => {
             Array.from(value).forEach((file) => {
               formData.append(`${field}[]`, file);
             });
+          } else if (Array.isArray(value)) {
+            value.forEach((file) => {
+              formData.append(`${field}[]`, file);
+            });
           }
         }
       });
@@ -321,7 +328,9 @@ export const DokumentumokProvider = ({ children }) => {
       });
       setIsOpen(false);
       setResetTrigger(true);
-      setStepperActive(2);
+      if (stepperActive === 1) {
+        setStepperActive(2);
+      }
     } catch (error) {
       console.error("Hiba:", error.response?.data || error.message);
     }

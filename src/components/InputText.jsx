@@ -14,6 +14,7 @@ function InputText({
   min,
   max,
   search,
+  onChange,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,6 +29,7 @@ function InputText({
           {...formRegister}
           min={min}
           max={max}
+          onChange={onChange}
         />
         <label htmlFor={label} className="form__label">
           {label}

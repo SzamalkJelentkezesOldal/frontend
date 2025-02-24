@@ -41,6 +41,12 @@ function InputFile({
       });
       setExistingPreviews(previews);
       setValue(`${name}_current`, JSON.stringify(existingFiles));
+    } else {
+      if (resetTrigger) {
+        setSelectedFiles([]);
+        setPreviewFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
     }
   }, [resetTrigger, existingFiles, name, setValue]);
 
@@ -62,17 +68,15 @@ function InputFile({
 
   const handleFileChange = (event) => {
     setExtensionError(false);
-    const newFiles = Array.from(event.target.files);
+    const newFiles = Array.from(event.target.files); // FileList -> Array
 
     if (multiple) {
-      // Felhasználói változás esetén jelöljük dirty-ként
-      setValue(name, event.target.files, { shouldDirty: true });
+      // Most már a newFiles tömböt adod át, nem a FileList-et
+      setValue(name, newFiles, { shouldDirty: true });
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
     } else {
-      // Ha nem multiple, cseréljük fel a korábbi (selectedFiles) értéket
       setValue(name, newFiles[0] || null, { shouldDirty: true });
       setSelectedFiles(newFiles.slice(0, 1));
-      // Töröljük az előző, current értéket, mert új fájl érkezik
       setExistingPreviews([]);
       setValue(`${name}_current`, "[]", { shouldDirty: true });
     }

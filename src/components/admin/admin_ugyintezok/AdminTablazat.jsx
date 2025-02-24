@@ -58,7 +58,7 @@ function AdminTablazat() {
   } = useContext(AdminUgyintezoContext);
 
   return (
-    <section className="container pt-20">
+    <section className="container pt-20 pb-10">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>

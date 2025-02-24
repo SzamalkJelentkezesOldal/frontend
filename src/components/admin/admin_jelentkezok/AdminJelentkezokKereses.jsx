@@ -10,7 +10,9 @@ import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezok
 import { useContext } from "react";
 
 function AdminJelentkezokKereses() {
-  const { jelentkezokSzurese } = useContext(AdminJelentkezokContext);
+  const { jelentkezokSzurese, setSearchQuery, setSearchField } = useContext(
+    AdminJelentkezokContext
+  );
 
   const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -27,7 +29,27 @@ function AdminJelentkezokKereses() {
 
   return (
     <section className="flex flex-col aling-center p-4 mb-10 shadow-lg bg-gray-50 w-screen sm:p-12 sm:max-w-[540px] sm:mt-10 sm:min-h-[max-content] sm:rounded-3xl xsm:px-8 sm:container sm:mb-12  md:max-w-[660px]  lg:max-w-[800px]">
-      <InputText label="Keresés" type="text" search={true} />
+      <div className="mb-2 w-1/2 md:w-1/3 lg:w-1/4">
+        <CustomSelect
+          onChange={(e) => setSearchField(e.value)}
+          options={[
+            { value: "email", label: "Email" },
+            { value: "nev", label: "Név" },
+          ]}
+          placeholder="Keresési mező..."
+          isMulti={false}
+          defaultValue={0}
+        />
+      </div>
+
+      <InputText
+        wrapperClassName={"mb-8"}
+        label="Keresés"
+        type="text"
+        search={true}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <p className="text-dark">További lehetőségek</p>
@@ -47,6 +69,7 @@ function AdminJelentkezokKereses() {
                 ]}
                 placeholder="Jelentkezők szűrése..."
                 isMulti={false}
+                defaultValue={0}
               />
             </div>
           </div>

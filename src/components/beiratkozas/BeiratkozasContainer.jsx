@@ -1,7 +1,6 @@
 import ArrowUpIcon from "../icons/ArrowUpIcon";
 import ArrowDownIcon from "../icons/ArrowDownIcon";
 import BlockIcon from "../icons/BlockIcon";
-import { useState } from "react";
 import CheckIcon from "../icons/CheckIcon";
 import EditIcon from "../icons/EditIcon";
 

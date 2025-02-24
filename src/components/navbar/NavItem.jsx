@@ -17,6 +17,13 @@ function NavItem({ className, onClick }) {
                 Ügyintézők
               </Link>
               <Link
+                to="/admin/nyilatkozat"
+                className={className}
+                onClick={onClick}
+              >
+                Nyilatkozat
+              </Link>
+              <Link
                 to="/admin/jelentkezok"
                 className={className}
                 onClick={onClick}
