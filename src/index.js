@@ -18,6 +18,8 @@ import { SorrendProvider } from "./context/beiratkozas/SorrendContext";
 import { AdminNyilatkozatProvider } from "./context/admin/AdminNyilatkozatContext";
 import { AdminJelentkezokProvider } from "./context/admin/AdminJelentkezokContext";
 import { AdminUgyintezoProvider } from "./context/admin/AdminUgyintezoContext";
+import { AdminSzakStatisztikaProvider } from "./context/admin/AdminSzakStatisztikaContext";
+
 
 const themeMUI = createTheme({}, huHU);
 
@@ -29,27 +31,29 @@ root.render(
         <BeiratkozasProvider>
           <SorrendProvider>
             <AuthProvider>
-              <AdminUgyintezoProvider>
-                <AdminFelveszProvider>
-                  <AdminJelentkezokProvider>
-                    <AdminNyilatkozatProvider>
-                      <JelentkezesProvider>
-                        <RegisztralasProvider>
-                          <BelepesProvider>
-                            <DokumentumokProvider>
-                              <SzemelyesAdatokProvider>
-                                <ThemeProvider theme={themeMUI}>
-                                  <App />
-                                </ThemeProvider>
-                              </SzemelyesAdatokProvider>
-                            </DokumentumokProvider>
-                          </BelepesProvider>
-                        </RegisztralasProvider>
-                      </JelentkezesProvider>
-                    </AdminNyilatkozatProvider>
-                  </AdminJelentkezokProvider>
-                </AdminFelveszProvider>
-              </AdminUgyintezoProvider>
+              <AdminSzakStatisztikaProvider>
+                <AdminUgyintezoProvider>
+                  <AdminFelveszProvider>
+                    <AdminJelentkezokProvider>
+                      <AdminNyilatkozatProvider>
+                        <JelentkezesProvider>
+                          <RegisztralasProvider>
+                            <BelepesProvider>
+                              <DokumentumokProvider>
+                                <SzemelyesAdatokProvider>
+                                  <ThemeProvider theme={themeMUI}>
+                                    <App />
+                                  </ThemeProvider>
+                                </SzemelyesAdatokProvider>
+                              </DokumentumokProvider>
+                            </BelepesProvider>
+                          </RegisztralasProvider>
+                        </JelentkezesProvider>
+                      </AdminNyilatkozatProvider>
+                    </AdminJelentkezokProvider>
+                  </AdminFelveszProvider>
+                </AdminUgyintezoProvider>
+              </AdminSzakStatisztikaProvider>
             </AuthProvider>
           </SorrendProvider>
         </BeiratkozasProvider>
