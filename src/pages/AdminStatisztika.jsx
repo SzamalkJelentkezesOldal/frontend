@@ -1,5 +1,9 @@
+import AdminSzakStatisztika from "../components/admin/admin_statisztika/AdminSzakStatisztika";
+
 function AdminStatisztika() {
-  return <div className="pt-20">ADMIN STATISZTIKA</div>;
+  return(
+    <AdminSzakStatisztika/>
+  );
 }
 
 export default AdminStatisztika;
