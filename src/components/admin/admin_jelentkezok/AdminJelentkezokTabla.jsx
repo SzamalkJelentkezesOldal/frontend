@@ -24,250 +24,255 @@ const AdminJelentkezokTabla = () => {
     );
   } else {
     return (
-      <div className="p-4">
-        <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-50">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="px-4 py-2 border border-gray-300 text-left text-sm font-medium text-gray-700"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
+      <div className="p-4 mb-10 flex flex-col justify-center items-center w-full">
+        <div className="w-full flex justify-center pb-3">
+          <div className="rounded-md overflow-hidden overflow-x-scroll sm:overflow-x-auto shadow-lg w-full min-w-650 lg:max-w-[1140px]">
+            <table className="border-collapse w-full min-w-650 lg:max-w-[1140px]">
+              <thead className="h-[56.5px] bg-szPrimary ">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="px-4 py-2  text-left text-sm font-medium text-white first:w-[0px]"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white">
-            {table.getRowModel().rows.map((row) => (
-              // Minden sort egy React.Fragmentbe csomagolunk, hogy utána opcionálisan kibontott tartalmat is rendereljünk.
-              <React.Fragment key={row.id}>
-                <tr className="border-b border-gray-200">
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-4 py-2 border border-gray-300 text-sm text-gray-600"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                {row.getIsExpanded() && (
-                  <tr>
-                    <td colSpan={columns.length} className="bg-gray-50 p-6">
-                      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
-                        <h3 className="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">
-                          Jelentkező Részletes Adatai
-                        </h3>
-                        {/* Alapadatok */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">
-                              Név:
-                            </span>{" "}
-                            {row.original.nev}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">
-                              Email:
-                            </span>{" "}
-                            {row.original.email}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">
-                              Státusz:
-                            </span>{" "}
-                            {row.original.status}
-                          </p>
-                        </div>
-
-                        {/* Személyes adatok (torzsadatok) */}
-                        {row.original.torzsadatok && (
-                          <div className="mt-6 border-t pt-4">
-                            <h4 className="text-xl font-semibold text-gray-800 mb-2">
-                              Személyes Adatok
-                            </h4>
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <React.Fragment key={row.id}>
+                    <tr className="odd:bg-tableBg even:bg-white border-b-[1px] border-grayBorder/40 last:border-0">
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-4 py-2  text-sm text-gray-600"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                    {row.getIsExpanded() && (
+                      <tr>
+                        <td colSpan={columns.length} className="bg-gray-50 p-6">
+                          <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+                            <h3 className="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">
+                              Jelentkező Részletes Adatai
+                            </h3>
+                            {/* Alapadatok */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <p className="text-sm text-gray-600">
                                 <span className="font-medium text-gray-800">
-                                  Vezetéknév:
+                                  Név:
                                 </span>{" "}
-                                {row.original.torzsadatok.vezeteknev}
+                                {row.original.nev}
                               </p>
                               <p className="text-sm text-gray-600">
                                 <span className="font-medium text-gray-800">
-                                  Keresztnév:
+                                  Email:
                                 </span>{" "}
-                                {row.original.torzsadatok.keresztnev}
+                                {row.original.email}
                               </p>
                               <p className="text-sm text-gray-600">
                                 <span className="font-medium text-gray-800">
-                                  Adóazonosító:
+                                  Státusz:
                                 </span>{" "}
-                                {row.original.torzsadatok.adoazonosito}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Lakcím:
-                                </span>{" "}
-                                {row.original.torzsadatok.lakcim}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  TAJ szám:
-                                </span>{" "}
-                                {row.original.torzsadatok.taj_szam}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Születési hely:
-                                </span>{" "}
-                                {row.original.torzsadatok.szuletesi_hely}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Születési név:
-                                </span>{" "}
-                                {row.original.torzsadatok.szuletesi_nev}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Születési dátum:
-                                </span>{" "}
-                                {row.original.torzsadatok.szuletesi_datum}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Állampolgárság:
-                                </span>{" "}
-                                {row.original.torzsadatok.allampolgarsag}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-800">
-                                  Anyja neve:
-                                </span>{" "}
-                                {row.original.torzsadatok.anyja_neve}
+                                {row.original.status}
                               </p>
                             </div>
+                            {/* Személyes adatok (torzsadatok) */}
+                            {row.original.torzsadatok && (
+                              <div className="mt-6 border-t pt-4">
+                                <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                                  Személyes Adatok
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Vezetéknév:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.vezeteknev}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Keresztnév:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.keresztnev}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Adóazonosító:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.adoazonosito}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Lakcím:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.lakcim}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      TAJ szám:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.taj_szam}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Születési hely:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.szuletesi_hely}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Születési név:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.szuletesi_nev}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Születési dátum:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.szuletesi_datum}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Állampolgárság:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.allampolgarsag}
+                                  </p>
+                                  <p className="text-sm text-gray-600">
+                                    <span className="font-medium text-gray-800">
+                                      Anyja neve:
+                                    </span>{" "}
+                                    {row.original.torzsadatok.anyja_neve}
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                            {/* Dokumentumok */}
+                            {row.original.dokumentumok &&
+                              row.original.dokumentumok.length > 0 && (
+                                <div className="mt-6 border-t pt-4">
+                                  <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                                    Dokumentumok
+                                  </h4>
+                                  <ul className="ml-6">
+                                    {row.original.dokumentumok.map((doc) => (
+                                      <li
+                                        key={doc.id}
+                                        className="text-sm text-gray-600 mb-3"
+                                      >
+                                        <p>
+                                          <span className="font-medium text-gray-800">
+                                            Dokumentum típusa:
+                                          </span>{" "}
+                                          {doc.dokumentumTipus
+                                            ? doc.dokumentumTipus
+                                            : "Nincs típus információ"}
+                                        </p>
+                                        <div className="mt-1">
+                                          <div className="flex flex-wrap gap-2 mt-1">
+                                            {doc.fajlok &&
+                                              doc.fajlok.map((file, index) => {
+                                                // A preview URL generálása hasonlóan az InputFile komponenshez:
+                                                const apiUrl =
+                                                  process.env.REACT_APP_API_URL;
+                                                const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(file)}`;
+                                                return (
+                                                  <>
+                                                    <a
+                                                      key={index}
+                                                      href={previewUrl}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                      className="text-blue-500 underline text-sm"
+                                                    >
+                                                      {`Fájl ${index + 1}`}
+                                                      <img
+                                                        key={index}
+                                                        src={previewUrl}
+                                                        alt={`Dokumentum ${index + 1}`}
+                                                        className="max-w-xs h-auto border rounded shadow-sm"
+                                                      />
+                                                    </a>
+                                                  </>
+                                                );
+                                              })}
+                                          </div>
+                                        </div>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            {/* Jelentkezett szakok */}
+                            {row.original.jelentkezesek &&
+                              row.original.jelentkezesek.length > 0 && (
+                                <div className="mt-6 border-t pt-4">
+                                  <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                                    Jelentkezett Szakok
+                                  </h4>
+                                  <ul className="">
+                                    {row.original.jelentkezesek.map((jel) => (
+                                      <li
+                                        key={jel.id}
+                                        className="text-sm text-gray-600"
+                                      >
+                                        {jel.szak ? (
+                                          <span>
+                                            <span className="font-medium text-gray-800">
+                                              {jel.allapot < 5
+                                                ? "#"
+                                                : jel.sorrend + 1}
+                                            </span>
+                                            {". "}
+                                            {jel.szak.nappali
+                                              ? "N | " + jel.szak.elnevezes
+                                              : "E | " + jel.szak.elnevezes}
+                                          </span>
+                                        ) : (
+                                          "Nincs szak információ"
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
                           </div>
-                        )}
-
-                        {/* Dokumentumok */}
-                        {row.original.dokumentumok &&
-                          row.original.dokumentumok.length > 0 && (
-                            <div className="mt-6 border-t pt-4">
-                              <h4 className="text-xl font-semibold text-gray-800 mb-2">
-                                Dokumentumok
-                              </h4>
-                              <ul className="ml-6">
-                                {row.original.dokumentumok.map((doc) => (
-                                  <li
-                                    key={doc.id}
-                                    className="text-sm text-gray-600 mb-3"
-                                  >
-                                    <p>
-                                      <span className="font-medium text-gray-800">
-                                        Dokumentum típusa:
-                                      </span>{" "}
-                                      {doc.dokumentumTipus
-                                        ? doc.dokumentumTipus
-                                        : "Nincs típus információ"}
-                                    </p>
-                                    <div className="mt-1">
-                                      <div className="flex flex-wrap gap-2 mt-1">
-                                        {doc.fajlok &&
-                                          doc.fajlok.map((file, index) => {
-                                            // A preview URL generálása hasonlóan az InputFile komponenshez:
-                                            const apiUrl =
-                                              process.env.REACT_APP_API_URL;
-                                            const previewUrl = `${apiUrl}/api/dokumentumok/preview?path=${encodeURIComponent(file)}`;
-                                            return (
-                                              <>
-                                                <a
-                                                  key={index}
-                                                  href={previewUrl}
-                                                  target="_blank"
-                                                  rel="noopener noreferrer"
-                                                  className="text-blue-500 underline text-sm"
-                                                >
-                                                  {`Fájl ${index + 1}`}
-                                                  <img
-                                                    key={index}
-                                                    src={previewUrl}
-                                                    alt={`Dokumentum ${index + 1}`}
-                                                    className="max-w-xs h-auto border rounded shadow-sm"
-                                                  />
-                                                </a>
-                                              </>
-                                            );
-                                          })}
-                                      </div>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                        {/* Jelentkezett szakok */}
-                        {row.original.jelentkezesek &&
-                          row.original.jelentkezesek.length > 0 && (
-                            <div className="mt-6 border-t pt-4">
-                              <h4 className="text-xl font-semibold text-gray-800 mb-2">
-                                Jelentkezett Szakok
-                              </h4>
-                              <ul className="ml-6">
-                                {row.original.jelentkezesek.map((jel) => (
-                                  <li
-                                    key={jel.id}
-                                    className="text-sm text-gray-600"
-                                  >
-                                    {jel.szak ? (
-                                      <span>
-                                        <span className="font-medium text-gray-800">
-                                          Szak:
-                                        </span>{" "}
-                                        {jel.szak.elnevezes}
-                                      </span>
-                                    ) : (
-                                      "Nincs szak információ"
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                      </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+                {data.length === 0 && !loading && (
+                  <tr>
+                    <td
+                      colSpan={columns.length}
+                      className="px-4 py-2 text-center text-gray-500"
+                    >
+                      Nincs adat.
                     </td>
                   </tr>
                 )}
-              </React.Fragment>
-            ))}
-            {data.length === 0 && !loading && (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-2 text-center text-gray-500"
-                >
-                  Nincs adat.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
         {/* Pagination vezérlők */}
-        <div className="flex items-center justify-between mt-4">
+        <div className="w-full flex items-center justify-between mt-4 min-w-650  lg:max-w-[1140px]">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setPageIndex((old) => Math.max(old - 1, 0))}

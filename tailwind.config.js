@@ -27,6 +27,7 @@ module.exports = withMT({
         },
         grayBorder: "#ccced0",
         dark: "#5a5a5a",
+        tableBg: "#0000000a",
         inputGray: {
           DEFAULT: "#8b8b8b",
           50: "#CFD8DC",

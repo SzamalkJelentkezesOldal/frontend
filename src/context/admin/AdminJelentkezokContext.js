@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { myAxios } from "../MyAxios";
+import CheckIcon from "../../components/icons/CheckIcon";
+import MoreIcon from "../../components/icons/MoreIcon";
+import RejectionIcon from "../../components/icons/RejectIcon";
+import EditIcon from "../../components/icons/EditIcon";
+import QuestionIcon from "../../components/icons/QuestionIcon";
+import InProgressIcon from "../../components/icons/InProgressIcon";
 
 import {
   useReactTable,
@@ -16,19 +22,23 @@ export const AdminJelentkezokContext = createContext("");
 export const AdminJelentkezokProvider = ({ children }) => {
   const columns = [
     {
-      accessorKey: "email",
-      header: "Email",
+      accessorKey: "expand",
+      header: "",
       cell: (info) => (
         <div className="flex items-center">
           <button
             onClick={() => info.row.toggleExpanded()}
-            className="mr-2 px-2 py-1 bg-gray-200 rounded text-sm"
+            className="px-2 py-1 bg-inputGray-50 text-dark shadow-md rounded text-sm font-semibold"
           >
             {info.row.getIsExpanded() ? "-" : "+"}
           </button>
           <span>{info.getValue()}</span>
         </div>
       ),
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
     },
     {
       accessorKey: "nev",
@@ -38,7 +48,47 @@ export const AdminJelentkezokProvider = ({ children }) => {
     {
       accessorKey: "status",
       header: "Státusz",
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        const status = info.getValue();
+        let statusClass = "";
+        let IconComponent = null;
+        let fill = "";
+
+        if (status === "Elfogadva") {
+          statusClass = "border-[1px] border-green-600 text-green-600";
+          IconComponent = CheckIcon;
+          fill = "#43a047";
+        } else if (status === "Jelentkezett") {
+          statusClass = "border-[1px] border-yellow-700 text-yellow-700";
+          IconComponent = MoreIcon;
+          fill = "#fbc02d";
+        } else if (status === "Elutasítva") {
+          statusClass = "border-[1px] border-red-700 text-red-700";
+          IconComponent = RejectionIcon;
+          fill = "#d32f2f";
+        } else if (status === "Módosításra vár") {
+          statusClass = "border-[1px] border-orange-800 text-orange-800";
+          IconComponent = EditIcon;
+          fill = "#ef6c00";
+        } else if (status === "Eldöntésre vár") {
+          statusClass = "border-[1px] border-blue-800 text-blue-800";
+          IconComponent = QuestionIcon;
+          fill = "#1565c0";
+        } else {
+          statusClass =
+            "border-[1px] border-light-blue-300 text-light-blue-300";
+          IconComponent = InProgressIcon;
+          fill = "#4fc3f7";
+        }
+        return (
+          <span
+            className={`flex items-center gap-1 px-2 py-1 text-sm rounded-2xl w-max text-red text-gree ${statusClass}`}
+          >
+            {IconComponent && <IconComponent size={"16"} fill={fill} />}
+            {status}
+          </span>
+        );
+      },
     },
   ];
 
@@ -77,6 +127,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
 
   useEffect(() => {
     fetchData();
+    setExpanded({});
   }, [pageIndex, pageSize, selectedFilter, searchQuery, searchField]);
 
   // TanStack Table inicializálása, beleértve a manuális paginationt és a row expanziót
@@ -94,6 +145,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
 
   function jelentkezokSzurese(szuro) {
     setSelectedFilter(szuro);
+    setPageIndex(0);
   }
 
   return (

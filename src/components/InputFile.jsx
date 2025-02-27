@@ -71,9 +71,12 @@ function InputFile({
     const newFiles = Array.from(event.target.files); // FileList -> Array
 
     if (multiple) {
-      // Most már a newFiles tömböt adod át, nem a FileList-et
-      setValue(name, newFiles, { shouldDirty: true });
-      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+      // Összevonjuk az eddigi és az új fájlokat:
+      setSelectedFiles((prevFiles) => {
+        const updatedFiles = [...prevFiles, ...newFiles];
+        setValue(name, updatedFiles, { shouldDirty: true });
+        return updatedFiles;
+      });
     } else {
       setValue(name, newFiles[0] || null, { shouldDirty: true });
       setSelectedFiles(newFiles.slice(0, 1));
@@ -86,28 +89,21 @@ function InputFile({
 
   const handleRemoveFile = (index) => {
     setExtensionError(false);
-    const removedFile = selectedFiles[index];
     const newFiles = selectedFiles.filter((_, i) => i !== index);
 
-    if (multiple) {
-      const dataTransfer = new DataTransfer();
-      newFiles.forEach((file) => dataTransfer.items.add(file));
-      setValue(name, dataTransfer.files, { shouldDirty: true });
-    } else {
-      setValue(name, newFiles.length === 0 ? undefined : newFiles[0], {
-        shouldDirty: true,
-      });
-    }
-
+    // Frissítjük a form állapotát az új tömbbel
+    setValue(name, newFiles, { shouldDirty: true });
     setSelectedFiles(newFiles);
 
-    if (previewFile) {
-      if (removedFile && previewFile.name === removedFile.name) {
-        setPreviewFile(null);
-      }
+    // Ha a preview-ben lévő fájl már nem szerepel az új tömbben, zárjuk be a preview-t
+    if (
+      previewFile &&
+      !newFiles.some((file) => file.name === previewFile.name)
+    ) {
+      setPreviewFile(null);
     }
 
-    if (newFiles.length === 0) {
+    if (newFiles.length === 0 && fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };

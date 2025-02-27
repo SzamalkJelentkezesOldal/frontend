@@ -26,7 +26,11 @@ function BeiratkozasContainer({
             isOpen ? (
               <ArrowUpIcon onClick={() => setIsOpen(!isOpen)} />
             ) : (
-              <CheckIcon className={" rounded-full bg-teal-300"} />
+              <CheckIcon
+                fill={"white"}
+                size={"30"}
+                className={" rounded-full bg-teal-300"}
+              />
             )
           ) : isDisabled ? (
             <BlockIcon color={"#7e7e7e"} />

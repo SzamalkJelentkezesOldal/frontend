@@ -33,14 +33,32 @@ const CustomSelect = React.forwardRef(
         noOptionsMessage={() => "Nincs találat"}
         components={animatedComponents}
         styles={{
-          valueContainer: (baseStyles) => ({
+          valueContainer: (baseStyles, state) => ({
             ...baseStyles,
             height: "46px",
             maxHeight: "100px",
             overflowY: "auto",
             color: "#5a5a5a",
           }),
+          control: (baseStyles, state) => ({
+            ...baseStyles,
+            borderColor: state.isFocused ? "#d0ede6" : "rgb(204,204,204)",
+            boxShadow: state.isFocused ? "0 0 0 1px #3ac1bd" : "none",
+          }),
+          option: (base, state) => ({
+            ...base,
+            color: state.isFocused ? "white" : "black",
+            height: "100%",
+          }),
         }}
+        theme={(theme) => ({
+          ...theme,
+          colors: {
+            ...theme.colors,
+            primary25: "#00848b",
+            primary: "#3ac1bd",
+          },
+        })}
       />
     );
   }

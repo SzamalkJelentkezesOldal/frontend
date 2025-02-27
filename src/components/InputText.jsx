@@ -18,6 +18,19 @@ function InputText({
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
+  // Destrukturáljuk a formRegister-ből az onChange-t és a többi attribútumot
+  const { onChange: formOnChange, ...restRegister } = formRegister || {};
+
+  // Egyesítjük a két onChange-t
+  const handleChange = (e) => {
+    if (formOnChange) {
+      formOnChange(e);
+    }
+    if (onChange) {
+      onChange(e);
+    }
+  };
+
   return (
     <div className={`mb-4 ${wrapperClassName}`}>
       <div className="form__group field shadow-md relative">
@@ -26,10 +39,10 @@ function InputText({
           className="form__field"
           placeholder={label}
           id={label}
-          {...formRegister}
+          {...restRegister}
           min={min}
           max={max}
-          onChange={onChange}
+          onChange={handleChange}
         />
         <label htmlFor={label} className="form__label">
           {label}
