@@ -20,8 +20,19 @@ import { AdminJelentkezokProvider } from "./context/admin/AdminJelentkezokContex
 import { AdminUgyintezoProvider } from "./context/admin/AdminUgyintezoContext";
 import { AdminSzakStatisztikaProvider } from "./context/admin/AdminSzakStatisztikaContext";
 
-
-const themeMUI = createTheme({}, huHU);
+const themeMUI = createTheme(
+  {
+    palette: {
+      primary: {
+        main: "#00848b",
+      },
+      secondary: {
+        main: "#00848b",
+      },
+    },
+  },
+  huHU
+);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

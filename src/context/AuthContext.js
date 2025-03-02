@@ -103,7 +103,9 @@ export const AuthProvider = ({ children }) => {
             setStepperActive(2);
           } else if (
             jelentkezesAllapot?.data?.elnevezes === "Eldöntésre vár" ||
-            jelentkezesAllapot?.data?.elnevezes === "Módósításra vár"
+            jelentkezesAllapot?.data?.elnevezes === "Módósításra vár" ||
+            jelentkezesAllapot?.data?.elnevezes === "Elutasítva" ||
+            jelentkezesAllapot?.data?.elnevezes === "Elfogadva"
           ) {
             setStepperActive(3);
           }

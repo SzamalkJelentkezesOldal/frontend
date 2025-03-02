@@ -1,7 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezokContext";
 import { MantineReactTable } from "mantine-react-table";
-import { TextInput, Group, Select } from "@mantine/core";
+import {
+  TextInput,
+  Group,
+  Select,
+  Checkbox,
+  MantineProvider,
+  Box,
+  Button,
+} from "@mantine/core";
+import { IconDownload } from "@tabler/icons-react";
+import AdminJelentkezokLenyilo from "./AdminJelentkezokLenyilo";
 
 const AdminJelentkezokTabla = () => {
   const {
@@ -15,21 +25,21 @@ const AdminJelentkezokTabla = () => {
     setSelectedFilter,
     setPagination,
     pagination,
+    localization,
+    handleExportRows,
+    handleExportAllRows,
+    handleExportData,
+    exportMode,
+    setExportMode,
+    applyFilters,
+    setApplyFilters,
   } = useContext(AdminJelentkezokContext);
 
   const renderDetailPanel = ({ row }) => {
     return (
       <div className="p-4 bg-gray-50">
-        <h3 className="text-lg font-bold mb-2">Jelentkező részletes adatai</h3>
-        <p>
-          <strong>Név:</strong> {row.original.nev}
-        </p>
-        <p>
-          <strong>Email:</strong> {row.original.email}
-        </p>
-        <p>
-          <strong>Státusz:</strong> {row.original.status}
-        </p>
+        {console.log(row.original)}
+        <AdminJelentkezokLenyilo adatok={row.original} />
       </div>
     );
   };
@@ -42,16 +52,24 @@ const AdminJelentkezokTabla = () => {
       pagination,
       expanded: expanded,
     },
+    mantineBottomToolbarProps: {
+      className: "overflow-x-auto md:overflow-x-auto",
+    },
+    mantinePaginationProps: {
+      className: "flex flex-wrap",
+    },
     manualPagination: true,
     rowCount: totalCount,
     onPaginationChange: setPagination,
     enableExpanding: true,
     onExpandedChange: setExpanded,
     renderDetailPanel: renderDetailPanel,
+    localization,
+
     renderTopToolbarCustomActions: ({ table }) => (
       <Group mb="md" spacing="md">
         <TextInput
-          placeholder="Írja be a keresett kifejezést..."
+          placeholder="Írja be a keresett emailt..."
           label="Globális keresés"
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -74,11 +92,86 @@ const AdminJelentkezokTabla = () => {
         />
       </Group>
     ),
+    renderBottomToolbarCustomActions: ({ table }) => (
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "16px",
+          padding: "8px",
+          alignItems: "center",
+        }}
+      >
+        <Group spacing="sm">
+          <Select
+            withinPortal="true"
+            placeholder="Export módja"
+            data={[
+              { value: "current", label: "Jelenlegi oldal" },
+              { value: "all", label: "Összes oldal" },
+            ]}
+            value={exportMode}
+            onChange={(value) => {
+              setExportMode(value);
+              if (value === "current") {
+                setApplyFilters(false);
+              }
+            }}
+            style={{ width: 200 }}
+          />
+          <Checkbox
+            label="Szűrők alkalmazása"
+            checked={applyFilters}
+            onChange={(event) => setApplyFilters(event.currentTarget.checked)}
+            disabled={exportMode === "current"}
+          />
+        </Group>
+        <Button
+          color="lightblue"
+          leftIcon={<IconDownload />}
+          variant="filled"
+          onClick={async () => {
+            if (exportMode === "current") {
+              handleExportRows(table.getRowModel().rows);
+            } else {
+              if (applyFilters) {
+                await handleExportAllRows();
+              } else {
+                await handleExportData();
+              }
+            }
+          }}
+        >
+          Exportálás
+        </Button>
+      </Box>
+    ),
   };
 
   return (
-    <div className="p-4">
-      <MantineReactTable {...tableProps} />
+    <div className="p-4 z-0">
+      <MantineProvider
+        theme={{
+          primaryColor: "szPrimary",
+          primaryShade: 5,
+          colors: {
+            szPrimary: [
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+              "#00848b",
+            ],
+          },
+        }}
+      >
+        <MantineReactTable {...tableProps} />
+      </MantineProvider>
     </div>
   );
 };
