@@ -3,14 +3,14 @@ import SzakSorrendIcon from "../../icons/SzakSorrendIcon";
 import SzemelyAdatokIcon from "../../icons/SzemelyAdatokIcon";
 import DokumentumokIcon from "../../icons/DokumentumokIcon";
 import TimelineIcon from "../../icons/TimelineIcon";
-import {
-  IconGitBranch,
-  IconGitPullRequest,
-  IconGitCommit,
-  IconMessageDots,
-} from "@tabler/icons-react";
+import UserAddIcon from "../../icons/UserAddIcon";
+import UserCheckIcon from "../../icons/UserCheckIcon";
+import CheckIcon from "../../icons/CheckIcon";
 import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezokContext";
 import { useContext } from "react";
+import AdminSzakJelentkezesek from "./AdminSzakJelentkezesek";
+import AdminJelentkezoTorzsadatok from "./AdminJelentkezoTorzsadatok";
+import AdminJelentkezoDokumentumok from "./AdminJelentkezoDokumentumok";
 
 function AdminJelentkezokLenyilo({ adatok }) {
   const { idoMegjelenites } = useContext(AdminJelentkezokContext);
@@ -45,14 +45,22 @@ function AdminJelentkezokLenyilo({ adatok }) {
       </Tabs.List>
 
       <Tabs.Panel value="jelentkezesek">
-        <div className="p-4">
-          <p>adat</p>
+        <div className="p-4 ">
+          <AdminSzakJelentkezesek adat={adatok.jelentkezesek} />
         </div>
       </Tabs.Panel>
 
-      <Tabs.Panel value="torzsadatok">Messages tab content</Tabs.Panel>
+      <Tabs.Panel value="torzsadatok">
+        <div className="p-4 w-2/3">
+          <AdminJelentkezoTorzsadatok adat={adatok?.torzsadatok} />
+        </div>
+      </Tabs.Panel>
 
-      <Tabs.Panel value="dokumentumok">Settings tab content</Tabs.Panel>
+      <Tabs.Panel value="dokumentumok">
+        <div className="p-4 w-2/3">
+          <AdminJelentkezoDokumentumok adat={adatok?.dokumentumok} />
+        </div>
+      </Tabs.Panel>
 
       <Tabs.Panel value="idovonal">
         <div className="p-4">
@@ -62,7 +70,16 @@ function AdminJelentkezokLenyilo({ adatok }) {
             lineWidth={3}
           >
             <Timeline.Item
-              bullet={<IconGitBranch size={12} />}
+              bullet={
+                <UserAddIcon
+                  fill={
+                    adatok?.jelentkezesek[0]?.allapot - 1 >= 0
+                      ? "white"
+                      : "black"
+                  }
+                  size={20}
+                />
+              }
               title="Jelentkezett"
               lineVariant={
                 adatok?.jelentkezesek[0]?.allapot - 1 > 0
@@ -83,7 +100,16 @@ function AdminJelentkezokLenyilo({ adatok }) {
             </Timeline.Item>
 
             <Timeline.Item
-              bullet={<IconGitCommit size={12} />}
+              bullet={
+                <UserCheckIcon
+                  fill={
+                    adatok?.jelentkezesek[0]?.allapot - 1 >= 1
+                      ? "white"
+                      : "black"
+                  }
+                  size={20}
+                />
+              }
               title="Regisztrált"
               lineVariant={
                 adatok?.jelentkezesek[0]?.allapot - 1 > 1
@@ -106,7 +132,16 @@ function AdminJelentkezokLenyilo({ adatok }) {
 
             <Timeline.Item
               title="Törzsadatokat feltöltötte"
-              bullet={<IconGitPullRequest size={12} />}
+              bullet={
+                <SzemelyAdatokIcon
+                  fill={
+                    adatok?.jelentkezesek[0]?.allapot - 1 >= 2
+                      ? "white"
+                      : "black"
+                  }
+                  size={20}
+                />
+              }
               lineVariant={
                 adatok?.jelentkezesek[0]?.allapot - 1 > 2
                   ? "solid"
@@ -128,7 +163,16 @@ function AdminJelentkezokLenyilo({ adatok }) {
 
             <Timeline.Item
               title="Dokumentumokat feltöltötte"
-              bullet={<IconGitPullRequest size={12} />}
+              bullet={
+                <DokumentumokIcon
+                  fill={
+                    adatok?.jelentkezesek[0]?.allapot - 1 >= 3
+                      ? "white"
+                      : "black"
+                  }
+                  size={20}
+                />
+              }
               lineVariant={
                 adatok?.jelentkezesek[0]?.allapot - 1 > 3
                   ? "solid"
@@ -150,7 +194,16 @@ function AdminJelentkezokLenyilo({ adatok }) {
 
             <Timeline.Item
               title="Beiratkozást elküldte"
-              bullet={<IconMessageDots size={12} />}
+              bullet={
+                <CheckIcon
+                  fill={
+                    adatok?.jelentkezesek[0]?.allapot - 1 >= 5
+                      ? "white"
+                      : "black"
+                  }
+                  size={20}
+                />
+              }
             >
               <Text c="dimmed" size="sm">
                 A jelentkező elküldte a beiratkozását.

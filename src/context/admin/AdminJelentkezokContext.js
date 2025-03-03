@@ -261,7 +261,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
     rowNumbers: "Sorszámok",
     rowsPerPage: "Sorok száma oldalanként",
     save: "Mentés",
-    search: "Keresés",
+    search: "Keresés az oldalon...",
     selectedCountOfRowCountRowsSelected:
       "{selectedCount} a {rowCount} sorból kiválasztva",
     select: "Kiválaszt",
