@@ -92,6 +92,25 @@ export const AdminJelentkezokProvider = ({ children }) => {
     return localDate;
   }
 
+  const dokumentumLetolt = async (url, fileName) => {
+    try {
+      const response = await myAxios.get(url, {
+        responseType: "blob",
+        withCredentials: true,
+      });
+      const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Hiba a fájl letöltésekor:", error);
+    }
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -308,6 +327,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
         applyFilters,
         setApplyFilters,
         idoMegjelenites,
+        dokumentumLetolt,
       }}
     >
       {children}
