@@ -1,4 +1,4 @@
-import { Table } from "@mantine/core";
+import { Select, Table } from "@mantine/core";
 
 function AdminSzakJelentkezesek({ adat }) {
   const szakStatuszStilus = (allapot, allapotszotar) => {
@@ -27,7 +27,7 @@ function AdminSzakJelentkezesek({ adat }) {
       <td>
         {jelentkezes.allapot < 5 || jelentkezes.allapot === 8
           ? "#."
-          : jelentkezes.sorrend}
+          : `${jelentkezes.sorrend + 1}.`}
       </td>
       <td>{jelentkezes.tagozat ? "Nappali" : "Esti"}</td>
       <td>{jelentkezes.szak}</td>
@@ -44,6 +44,18 @@ function AdminSzakJelentkezesek({ adat }) {
               ? "Folyamatban"
               : jelentkezes.allapotszotar.elnevezes}
         </span>
+      </td>
+      <td>
+        <Select
+          withinPortal="true"
+          placeholder="Jelentkezés állapot"
+          data={[
+            { value: "elfogad", label: "Elfogadva" },
+            { value: "elutasit", label: "Elutasítva" },
+          ]}
+          allowDeselect
+          style={{ width: 200 }}
+        />
       </td>
     </tr>
   ));

@@ -9,9 +9,12 @@ import {
   MantineProvider,
   Box,
   Button,
+  Menu,
 } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import AdminJelentkezokLenyilo from "./AdminJelentkezokLenyilo";
+import EditIcon from "../../icons/EditIcon";
+import { EditNotificationsOutlined } from "@mui/icons-material";
 
 const AdminJelentkezokTabla = () => {
   const {
@@ -65,7 +68,25 @@ const AdminJelentkezokTabla = () => {
     onExpandedChange: setExpanded,
     renderDetailPanel: renderDetailPanel,
     localization,
-
+    layoutMode: "semantic",
+    defaultColumn: { minSize: 20, maxSize: 1000, size: 330 },
+    enableRowActions: true,
+    displayColumnDefOptions: {
+      "mrt-row-actions": {
+        header: "Módosítás",
+      },
+      "mrt-row-expand": {
+        size: 150,
+      },
+    },
+    renderRowActionMenuItems: () => (
+      <>
+        <Menu.Item icon={<EditIcon />}>Módosítás kérelem</Menu.Item>
+        <Menu.Item icon={<EditNotificationsOutlined />}>
+          Emlékeztető küldés
+        </Menu.Item>
+      </>
+    ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Group mb="md" spacing="md">
         <TextInput
@@ -78,7 +99,7 @@ const AdminJelentkezokTabla = () => {
         />
         <Select
           label="Jelentkezők szűrése"
-          placeholder="Válasszon..."
+          placeholder="Válasszon szűrőt..."
           data={[
             { value: "1", label: "Összes jelentkező" },
             { value: "2", label: "Csak jelentkezett" },
