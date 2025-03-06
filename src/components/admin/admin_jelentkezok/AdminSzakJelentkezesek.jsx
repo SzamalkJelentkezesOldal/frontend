@@ -48,13 +48,14 @@ function AdminSzakJelentkezesek({ adat }) {
       <td>
         <Select
           withinPortal="true"
-          placeholder="Jelentkezés állapot"
+          placeholder="Jelentkezés állapot..."
           data={[
             { value: "elfogad", label: "Elfogadva" },
             { value: "elutasit", label: "Elutasítva" },
           ]}
           allowDeselect
           style={{ width: 200 }}
+          disabled={jelentkezes.allapot === 6 || jelentkezes.allapot === 8}
         />
       </td>
     </tr>

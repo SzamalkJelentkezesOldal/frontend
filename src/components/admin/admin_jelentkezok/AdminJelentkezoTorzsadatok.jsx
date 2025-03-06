@@ -57,43 +57,43 @@ function AdminJelentkezoTorzsadatok({ adat }) {
       <tbody>
         <tr>
           <th className="w-[150px]">Vezetéknév</th>
-          <td>{renderCopyCell(adat.vezeteknev)}</td>
+          <td>{renderCopyCell(adat?.vezeteknev)}</td>
         </tr>
         <tr>
           <th>Keresztnév</th>
-          <td>{renderCopyCell(adat.keresztnev)}</td>
+          <td>{renderCopyCell(adat?.keresztnev)}</td>
         </tr>
         <tr>
           <th>Születési név</th>
-          <td>{renderCopyCell(adat.szuletesi_nev)}</td>
+          <td>{renderCopyCell(adat?.szuletesi_nev)}</td>
         </tr>
         <tr>
           <th>Állampolgárság</th>
-          <td>{renderCopyCell(adat.allampolgarsag)}</td>
+          <td>{renderCopyCell(adat?.allampolgarsag)}</td>
         </tr>
         <tr>
           <th>Anyja neve</th>
-          <td>{renderCopyCell(adat.anyja_neve)}</td>
+          <td>{renderCopyCell(adat?.anyja_neve)}</td>
         </tr>
         <tr>
           <th>Lakcím</th>
-          <td>{renderCopyCell(adat.lakcim)}</td>
+          <td>{renderCopyCell(adat?.lakcim)}</td>
         </tr>
         <tr>
           <th>Születési dátum</th>
-          <td>{renderCopyCell(adat.szuletesi_datum)}</td>
+          <td>{renderCopyCell(adat?.szuletesi_datum)}</td>
         </tr>
         <tr>
           <th>Születési hely</th>
-          <td>{renderCopyCell(adat.szuletesi_hely)}</td>
+          <td>{renderCopyCell(adat?.szuletesi_hely)}</td>
         </tr>
         <tr>
           <th>Adóazonosító</th>
-          <td>{renderCopyCell(adat.adoazonosito || "Nincs adat")}</td>
+          <td>{renderCopyCell(adat?.adoazonosito || "Nincs adat")}</td>
         </tr>
         <tr>
           <th>TAJ szám</th>
-          <td>{renderCopyCell(adat.taj_szam || "Nincs adat")}</td>
+          <td>{renderCopyCell(adat?.taj_szam || "Nincs adat")}</td>
         </tr>
       </tbody>
     </Table>

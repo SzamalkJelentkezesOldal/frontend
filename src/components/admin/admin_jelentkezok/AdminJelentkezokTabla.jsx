@@ -15,6 +15,7 @@ import { IconDownload } from "@tabler/icons-react";
 import AdminJelentkezokLenyilo from "./AdminJelentkezokLenyilo";
 import EditIcon from "../../icons/EditIcon";
 import { EditNotificationsOutlined } from "@mui/icons-material";
+import AdminJelentkezoModositasKerelem from "./AdminJelentkezoModositasKerelem";
 
 const AdminJelentkezokTabla = () => {
   const {
@@ -35,13 +36,17 @@ const AdminJelentkezokTabla = () => {
     exportMode,
     setExportMode,
     applyFilters,
+    handleModositasKerelem,
+    isModalOpen,
+    setModalOpen,
+    selectedRowData,
     setApplyFilters,
+    isModositasraVar,
   } = useContext(AdminJelentkezokContext);
 
   const renderDetailPanel = ({ row }) => {
     return (
       <div className="p-4 bg-gray-50">
-        {console.log(row.original)}
         <AdminJelentkezokLenyilo adatok={row.original} />
       </div>
     );
@@ -79,9 +84,20 @@ const AdminJelentkezokTabla = () => {
         size: 150,
       },
     },
-    renderRowActionMenuItems: () => (
+    renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item icon={<EditIcon />}>Módosítás kérelem</Menu.Item>
+        <Menu.Item
+          icon={<EditIcon />}
+          onClick={() => handleModositasKerelem(row.original)}
+          disabled={
+            !(row.original.dokumentumok?.length > 0) ||
+            !row.original.dokumentumok ||
+            isModositasraVar(row.original.jelentkezesek)
+          }
+        >
+          {console.log(row.original)}
+          Módosítás kérelem
+        </Menu.Item>
         <Menu.Item icon={<EditNotificationsOutlined />}>
           Emlékeztető küldés
         </Menu.Item>
@@ -192,6 +208,15 @@ const AdminJelentkezokTabla = () => {
         }}
       >
         <MantineReactTable {...tableProps} />
+        {selectedRowData && (
+          <AdminJelentkezoModositasKerelem
+            opened={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            torzsadatok={selectedRowData.torzsadatok}
+            dokumentumok={selectedRowData.dokumentumok}
+            email={selectedRowData.email}
+          />
+        )}
       </MantineProvider>
     </div>
   );

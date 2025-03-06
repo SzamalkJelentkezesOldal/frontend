@@ -79,6 +79,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
   const [expanded, setExpanded] = useState({});
   const [exportMode, setExportMode] = useState("current"); // "current" vagy "all"
   const [applyFilters, setApplyFilters] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState(null);
 
   function idoMegjelenites(ido) {
     const utcDate = ido;
@@ -194,6 +196,29 @@ export const AdminJelentkezokProvider = ({ children }) => {
       console.error("Hiba az összes adat exportálásakor:", error);
     }
   };
+
+  const handleModositasKerelem = (rowData) => {
+    setSelectedRowData(rowData);
+    setModalOpen(true);
+  };
+
+  const handleModositasKerelemEmail = async (emailData) => {
+    try {
+      const response = await myAxios.post(
+        "/api/modositas-kerelem-email",
+        emailData
+      );
+      console.log("Email elküldve:", response.data);
+    } catch (error) {
+      console.error("Hiba az email elküldésekor:", error);
+    }
+  };
+
+  function isModositasraVar(jelentkezesek) {
+    return jelentkezesek.some(
+      (jelentkezes) => jelentkezes.allapotszotar.elnevezes === "Módosításra vár"
+    );
+  }
 
   useEffect(() => {
     fetchData();
@@ -328,6 +353,12 @@ export const AdminJelentkezokProvider = ({ children }) => {
         setApplyFilters,
         idoMegjelenites,
         dokumentumLetolt,
+        isModalOpen,
+        setModalOpen,
+        selectedRowData,
+        handleModositasKerelem,
+        handleModositasKerelemEmail,
+        isModositasraVar,
       }}
     >
       {children}

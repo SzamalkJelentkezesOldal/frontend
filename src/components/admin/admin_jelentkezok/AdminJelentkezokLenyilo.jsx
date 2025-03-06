@@ -10,7 +10,7 @@ import AdminJelentkezoIdovonal from "./AdminJelentkezoIdovonal";
 
 function AdminJelentkezokLenyilo({ adatok }) {
   const minAllapot =
-    adatok?.jelentkezesek && adatok.jelentkezesek.length > 0
+    adatok?.jelentkezesek && adatok?.jelentkezesek?.length > 0
       ? Math.min(...adatok.jelentkezesek.map((j) => j.allapot))
       : 0;
 
@@ -31,7 +31,7 @@ function AdminJelentkezokLenyilo({ adatok }) {
         </Tabs.Tab>
         <Tabs.Tab
           value="dokumentumok"
-          disabled={adatok.dokumentumok.length === 0}
+          disabled={!(adatok.dokumentumok?.length > 0) || !adatok.dokumentumok}
         >
           <div className="flex items-center gap-2">
             <DokumentumokIcon />
