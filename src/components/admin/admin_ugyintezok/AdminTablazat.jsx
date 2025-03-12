@@ -17,6 +17,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
 } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -57,8 +62,69 @@ function AdminTablazat() {
     setKivalasztottUgyintezo,
   } = useContext(AdminUgyintezoContext);
 
+  const [keresesNev, setKeresesNev] = useState("");
+  const [keresesMaster, setKeresesMaster] = useState("");
+  const [szurtUgyintezoLista, setSzurtUgyintezoLista] = useState(ugyintezoLista);
+
+  const handleKereses = () => {
+    const filteredList = ugyintezoLista.filter((sor) => {
+      const nameMatch = sor.name.toUpperCase().includes(keresesNev.toUpperCase());
+      const masterMatch =
+        keresesMaster === "" ||
+        (keresesMaster === "Igen" && sor.role > 1) ||
+        (keresesMaster === "Nem" && sor.role <= 1);
+      return nameMatch && masterMatch;
+    });
+    setSzurtUgyintezoLista(filteredList);
+  };
+
+  const handleOsszesUgyintezo = () => {
+    setSzurtUgyintezoLista(ugyintezoLista);
+    setKeresesNev("");
+    setKeresesMaster("");
+  };
+
   return (
     <section className="container pt-10 pb-10">
+      <div style={{ marginBottom: "20px" }}>
+        <TextField
+          label="Keresés név alapján"
+          variant="outlined"
+          value={keresesNev}
+          onChange={(e) => setKeresesNev(e.target.value)}
+          style={{ marginRight: "10px" }}
+        />
+        <FormControl variant="outlined" style={{ marginRight: "10px", minWidth: 120 }}>
+          <InputLabel>Master</InputLabel>
+          <Select
+            value={keresesMaster}
+            onChange={(e) => setKeresesMaster(e.target.value)}
+            label="Master"
+          >
+            <MenuItem value="">
+              <em>Vissza</em>
+            </MenuItem>
+            <MenuItem value="Igen">Igen</MenuItem>
+            <MenuItem value="Nem">Nem</MenuItem>
+          </Select>
+        </FormControl>
+      <Button
+          variant="contained"
+          color="primary"
+          onClick={handleKereses}
+          style={{ height: "56px", marginRight: "10px" }} 
+        >
+          Keresés
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleOsszesUgyintezo}
+          style={{ height: "56px" }} 
+        >
+          Összes ügyintéző
+        </Button>
+      </div>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -71,7 +137,7 @@ function AdminTablazat() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ugyintezoLista.map((sor) => (
+            {szurtUgyintezoLista.map((sor) => (
               <StyledTableRow key={sor.id}>
                 <StyledTableCell component="th" scope="row">
                   {sor.name}
