@@ -60,22 +60,26 @@ function AdminTablazat() {
     setOpen,
     ugyintezoLista,
     setKivalasztottUgyintezo,
+    torlesUgyintezo,
   } = useContext(AdminUgyintezoContext);
 
   const [keresesNev, setKeresesNev] = useState("");
   const [keresesMaster, setKeresesMaster] = useState("");
-  const [szurtUgyintezoLista, setSzurtUgyintezoLista] = useState(ugyintezoLista);
+  const [szurtUgyintezoLista, setSzurtUgyintezoLista] =
+    useState(ugyintezoLista);
 
   const handleKereses = () => {
-    const filteredList = ugyintezoLista.filter((sor) => {
-      const nameMatch = sor.name.toUpperCase().includes(keresesNev.toUpperCase());
-      const masterMatch =
+    const szurtLista = ugyintezoLista.filter((sor) => {
+      const nevEgyezik = sor.name
+        .toUpperCase()
+        .includes(keresesNev.toUpperCase());
+      const masterEgyezik =
         keresesMaster === "" ||
         (keresesMaster === "Igen" && sor.role > 1) ||
         (keresesMaster === "Nem" && sor.role <= 1);
-      return nameMatch && masterMatch;
+      return nevEgyezik && masterEgyezik;
     });
-    setSzurtUgyintezoLista(filteredList);
+    setSzurtUgyintezoLista(szurtLista);
   };
 
   const handleOsszesUgyintezo = () => {
@@ -94,7 +98,10 @@ function AdminTablazat() {
           onChange={(e) => setKeresesNev(e.target.value)}
           style={{ marginRight: "10px" }}
         />
-        <FormControl variant="outlined" style={{ marginRight: "10px", minWidth: 120 }}>
+        <FormControl
+          variant="outlined"
+          style={{ marginRight: "10px", minWidth: 120 }}
+        >
           <InputLabel>Master</InputLabel>
           <Select
             value={keresesMaster}
@@ -108,11 +115,11 @@ function AdminTablazat() {
             <MenuItem value="Nem">Nem</MenuItem>
           </Select>
         </FormControl>
-      <Button
+        <Button
           variant="contained"
           color="primary"
           onClick={handleKereses}
-          style={{ height: "56px", marginRight: "10px" }} 
+          style={{ height: "56px", marginRight: "10px" }}
         >
           Keresés
         </Button>
@@ -120,7 +127,7 @@ function AdminTablazat() {
           variant="contained"
           color="secondary"
           onClick={handleOsszesUgyintezo}
-          style={{ height: "56px" }} 
+          style={{ height: "56px" }}
         >
           Összes ügyintéző
         </Button>
@@ -155,7 +162,11 @@ function AdminTablazat() {
                 >
                   <EditIcon size={"24"} />
                 </StyledTableCell>
-                <StyledTableCell /*onClick={}*/>
+                <StyledTableCell
+                  onClick={() => {
+                    torlesUgyintezo(sor.id);
+                  }}
+                >
                   <PersonRemoveIcon size={"24"} />
                 </StyledTableCell>
                 <Dialog

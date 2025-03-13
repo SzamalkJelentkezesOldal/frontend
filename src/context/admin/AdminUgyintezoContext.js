@@ -11,12 +11,13 @@ export const AdminUgyintezoContext = createContext("");
 
 export const AdminUgyintezoProvider = ({ children }) => {
   const [editLoading, setEditLoading] = useState(false);
-  const { ugyintezoLista } = useContext(ApiContext);
+  const { ugyintezoLista,setUgyintezoLista} = useContext(ApiContext);
   const [kivalasztottUgyintezo, setKivalasztottUgyintezo] = useState();
 
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -75,6 +76,16 @@ export const AdminUgyintezoProvider = ({ children }) => {
     }
   };
 
+  const torlesUgyintezo = async (id) => {
+    try {
+      const response = await myAxios.delete(`/api/delete-ugyintezo/${id}`);
+      console.log('Törlés sikeres:', response.data);
+      setUgyintezoLista((prevLista) => prevLista.filter((ugyintezo) => ugyintezo.id !== id));
+    } catch (error) {
+      console.error('Hiba történt az ügyintéző törlésekor:', error);
+    }
+  };  
+
   return (
     <AdminUgyintezoContext.Provider
       value={{
@@ -93,6 +104,7 @@ export const AdminUgyintezoProvider = ({ children }) => {
         setOpen,
         ugyintezoLista,
         setKivalasztottUgyintezo,
+        torlesUgyintezo,
       }}
     >
       {children}
