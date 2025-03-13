@@ -1,11 +1,9 @@
 import React, { useContext } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { AdminSzakStatisztikaContext } from "../../../context/admin/AdminSzakStatisztikaContext";
-import { map } from "zod";
 import { BarChart } from '@mui/x-charts/BarChart';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CardActionArea from '@mui/material/CardActionArea';
