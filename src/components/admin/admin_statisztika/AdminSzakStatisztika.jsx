@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { PieChart } from "@mui/x-charts/PieChart";
+import { pieArcLabelClasses, PieChart } from "@mui/x-charts/PieChart";
 import { AdminSzakStatisztikaContext } from "../../../context/admin/AdminSzakStatisztikaContext";
 import { BarChart } from '@mui/x-charts/BarChart';
 import Card from '@mui/material/Card';
@@ -17,6 +17,7 @@ function AdminSzakStatisztika() {
   const { jelentkezokSzamaTagozatraSzakokra } = useContext(AdminSzakStatisztikaContext)
 
   console.log(nappaliEsti);
+  const palette = ["#B52626", "#F57373", "#FFA3A3" , "#FFCDA3", "#F5AE73", "#B56726", "#76B8B8", "#459393", "#176C6C"];
   const tagozatSzakData = [
     {
       label: 'Nappali',
@@ -43,6 +44,7 @@ function AdminSzakStatisztika() {
               Tagozantonkénti jelentkezők száma
             </Typography>
             <PieChart
+            colors={palette}
               margin={{ top: 50, bottom: 50, left: 50, right: 75 }}
               series={[
                 {
@@ -52,8 +54,16 @@ function AdminSzakStatisztika() {
                   ],
                   highlightScope: { fade: "global", highlight: "item" },
                   faded: { innerRadius: 30, additionalRadius: -80, color: "gray" },
-                },
-              ]}
+                  arcLabel: (item) => `${item.value}`,
+                  arcLabelMinAngle: 35,
+                  arcLabelRadius: '60%',
+              },
+            ]}
+            sx={{
+              [`& .${pieArcLabelClasses.root}`]: {
+                fontWeight: 'bold',
+              },
+            }}
               width={700}
               height={400}
               slotProps={{
@@ -86,6 +96,7 @@ function AdminSzakStatisztika() {
               Szakonkénti jelentkezők száma
             </Typography>
             <PieChart
+              colors={palette}
               margin={{ top: 20, bottom: 100, left: 50, right: 50 }}
               series={[
                 {
@@ -96,9 +107,16 @@ function AdminSzakStatisztika() {
                   })),
                   highlightScope: { fade: 'global', highlight: 'item' },
                   faded: { innerRadius: 30, additionalRadius: -80, color: 'gray' },
-
+                    arcLabel: (item) => `${item.value}`,
+                    arcLabelMinAngle: 35,
+                    arcLabelRadius: '60%',
                 },
               ]}
+              sx={{
+                [`& .${pieArcLabelClasses.root}`]: {
+                  fontWeight: 'bold',
+                },
+              }}
               width={780}
               height={400}
               slotProps={{
@@ -110,6 +128,7 @@ function AdminSzakStatisztika() {
                   itemGap: 5,
                 },
               }
+              
               }
             />
           </CardContent>
@@ -138,8 +157,11 @@ function AdminSzakStatisztika() {
               series={tagozatSzakData}
               xAxis={[{
                 scaleType: 'band', data: tagozatSzakxAxisData}]}
+                
               width={1600}
               height={350}
+              barLabel="value"
+              
             />
           </CardContent>
         </CardActionArea>
