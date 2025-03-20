@@ -10,6 +10,13 @@ function NavItem({ className, onClick }) {
           user?.role > 1 ? (
             <>
               <Link
+                to="/admin/szakok"
+                className={className}
+                onClick={onClick}
+              >
+                Szakok
+              </Link>
+              <Link
                 to="/admin/ugyintezok"
                 className={className}
                 onClick={onClick}
