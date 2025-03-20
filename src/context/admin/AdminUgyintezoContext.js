@@ -55,7 +55,18 @@ export const AdminUgyintezoProvider = ({ children }) => {
     },
   });
 
-  
+  useEffect(() => {
+    if (kivalasztottUgyintezo) {
+      const kivalasztott = ugyintezoLista.find((ugyintezo) => ugyintezo.id === kivalasztottUgyintezo);
+      if (kivalasztott) {
+        reset({
+          nev: kivalasztott.name,
+          email: kivalasztott.email,
+          master: kivalasztott.role > 1, 
+        });
+      }
+    }
+  }, [kivalasztottUgyintezo, ugyintezoLista, reset]);
 
   const handleUgyintezoAdatok = async () => {
     const adatok = getValues(["nev", "email", "master"]);
