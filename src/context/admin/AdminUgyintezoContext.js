@@ -11,13 +11,17 @@ export const AdminUgyintezoContext = createContext("");
 
 export const AdminUgyintezoProvider = ({ children }) => {
   const [editLoading, setEditLoading] = useState(false);
-  const { ugyintezoLista,setUgyintezoLista} = useContext(ApiContext);
+  const { ugyintezoLista, setUgyintezoLista } = useContext(ApiContext);
   const [kivalasztottUgyintezo, setKivalasztottUgyintezo] = useState();
-
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  
+
+  const [szurtUgyintezoLista, setSzurtUgyintezoLista] = useState(ugyintezoLista);
+
+  useEffect(() => {
+    setSzurtUgyintezoLista(ugyintezoLista);
+  }, [ugyintezoLista]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,6 +55,8 @@ export const AdminUgyintezoProvider = ({ children }) => {
     },
   });
 
+  
+
   const handleUgyintezoAdatok = async () => {
     const adatok = getValues(["nev", "email", "master"]);
 
@@ -62,13 +68,12 @@ export const AdminUgyintezoProvider = ({ children }) => {
 
     try {
       setEditLoading(true);
-      // Az axios patch hívás: (myAxios az előre konfigurált axios instance)
       const response = await myAxios.patch(
         `/api/modosit-ugyintezo/${kivalasztottUgyintezo}`,
         ugyintezoAdatok
       );
       console.log("Módosítás sikeres:", response.data);
-      // Itt pl. értesítheted a felhasználót, vagy frissítheted a listát
+      
     } catch (error) {
       console.error("Hiba történt a módosítás során:", error);
     } finally {
@@ -80,11 +85,14 @@ export const AdminUgyintezoProvider = ({ children }) => {
     try {
       const response = await myAxios.delete(`/api/delete-ugyintezo/${id}`);
       console.log('Törlés sikeres:', response.data);
+
       setUgyintezoLista((prevLista) => prevLista.filter((ugyintezo) => ugyintezo.id !== id));
+
+      setSzurtUgyintezoLista((prevLista) => prevLista.filter((ugyintezo) => ugyintezo.id !== id));
     } catch (error) {
       console.error('Hiba történt az ügyintéző törlésekor:', error);
     }
-  };  
+  };
 
   return (
     <AdminUgyintezoContext.Provider
@@ -105,6 +113,8 @@ export const AdminUgyintezoProvider = ({ children }) => {
         ugyintezoLista,
         setKivalasztottUgyintezo,
         torlesUgyintezo,
+        szurtUgyintezoLista,
+        setSzurtUgyintezoLista, 
       }}
     >
       {children}

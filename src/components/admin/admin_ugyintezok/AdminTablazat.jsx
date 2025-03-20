@@ -61,12 +61,12 @@ function AdminTablazat() {
     ugyintezoLista,
     setKivalasztottUgyintezo,
     torlesUgyintezo,
+    szurtUgyintezoLista,
+    setSzurtUgyintezoLista,
   } = useContext(AdminUgyintezoContext);
 
   const [keresesNev, setKeresesNev] = useState("");
   const [keresesMaster, setKeresesMaster] = useState("");
-  const [szurtUgyintezoLista, setSzurtUgyintezoLista] =
-    useState(ugyintezoLista);
 
   const handleKereses = () => {
     const szurtLista = ugyintezoLista.filter((sor) => {
