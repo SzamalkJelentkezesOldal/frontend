@@ -10,30 +10,6 @@ export const AdminSzakStatisztikaProvider = ({ children }) => {
   const [statisztikaOldal, setStatisztikaOldal] = useState("Szakokra");
 
 
-  const tagozatonkentiJelentkezes = async () => {
-    try {
-      const response = await myAxios.get("/api/jelentkezok-tagozatra-bontva");
-      setNappaliEsti(response.data[0]);
-    } catch (err) {
-      console.log("Hiba történt az adatok lekérésekor.", err);
-    }
-  };
-  const jelentkezesekSzamaSzakokra = async () => {
-    try {
-      const response = await myAxios.get("/api/jelentkezok-szama-statisztika");
-      setJelentkezokSzamaSzakokra(response.data);
-    } catch (err) {
-      console.log("Hiba történt az adatok lekérésekor.", err);
-    }
-  };
-  const jelentkezesekSzamaTagozatraSzakokra = async () => {
-    try {
-      const response = await myAxios.get("/api/jelentkezok-tagozatra-szakra-bontva");
-      setJelentkezokSzamaTagozatraSzakokra(response.data);
-    } catch (err) {
-      console.log("Hiba történt az adatok lekérésekor.", err);
-    }
-  };
   function oldalValtas() {
     if (statisztikaOldal==="Szakokra") {
       setStatisztikaOldal("Jelentkezőkre")
@@ -42,6 +18,31 @@ export const AdminSzakStatisztikaProvider = ({ children }) => {
     }
   }
   useEffect(() => {
+    const tagozatonkentiJelentkezes = async () => {
+      try {
+        const response = await myAxios.get("/api/jelentkezok-tagozatra-bontva");
+        setNappaliEsti(response.data[0]);
+      } catch (err) {
+        console.log("Hiba történt az adatok lekérésekor.", err);
+      }
+    };
+    const jelentkezesekSzamaSzakokra = async () => {
+      try {
+        const response = await myAxios.get("/api/jelentkezok-szama-statisztika");
+        setJelentkezokSzamaSzakokra(response.data);
+      } catch (err) {
+        console.log("Hiba történt az adatok lekérésekor.", err);
+      }
+    };
+    const jelentkezesekSzamaTagozatraSzakokra = async () => {
+      try {
+        const response = await myAxios.get("/api/jelentkezok-tagozatra-szakra-bontva");
+        setJelentkezokSzamaTagozatraSzakokra(response.data);
+      } catch (err) {
+        console.log("Hiba történt az adatok lekérésekor.", err);
+      }
+    };
+
     tagozatonkentiJelentkezes();
     jelentkezesekSzamaSzakokra();
     jelentkezesekSzamaTagozatraSzakokra();
