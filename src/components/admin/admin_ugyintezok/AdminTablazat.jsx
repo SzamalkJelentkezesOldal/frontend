@@ -23,6 +23,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import AdminTorol from "./AdminTorol";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -49,20 +50,24 @@ function AdminTablazat() {
     isSubmitting,
     errors,
     getValues,
-    adatokEdit,
     editLoading,
     handleUgyintezoAdatok,
-    handleClickOpen,
-    handleClose,
+    handleClickOpenEdit,
+    handleCloseEdit,
+    handleClickOpenDelete, 
+    handleCloseDelete, 
     theme,
     fullScreen,
-    open,
-    setOpen,
+    openEdit, 
+    openDelete,
+    setOpenEdit,
+    setOpenDelete,
     ugyintezoLista,
     setKivalasztottUgyintezo,
     torlesUgyintezo,
     szurtUgyintezoLista,
     setSzurtUgyintezoLista,
+    kivalasztottUgyintezo,
   } = useContext(AdminUgyintezoContext);
 
   const [keresesNev, setKeresesNev] = useState("");
@@ -155,8 +160,7 @@ function AdminTablazat() {
                 </StyledTableCell>
                 <StyledTableCell
                   onClick={() => {
-                    console.log(sor.id);
-                    handleClickOpen();
+                    handleClickOpenEdit();
                     setKivalasztottUgyintezo(sor.id);
                   }}
                 >
@@ -164,40 +168,72 @@ function AdminTablazat() {
                 </StyledTableCell>
                 <StyledTableCell
                   onClick={() => {
-                    torlesUgyintezo(sor.id);
+                    handleClickOpenDelete(); 
+                    setKivalasztottUgyintezo(sor.id);
                   }}
                 >
                   <PersonRemoveIcon size={"24"} />
                 </StyledTableCell>
-                <Dialog
-                  fullScreen={fullScreen}
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="responsive-dialog-title"
-                  disableEnforceFocus
-                >
-                  <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
-                    <DialogTitle id="responsive-dialog-title">
-                      {"Ügyintéző módosítása"}
-                    </DialogTitle>
-                    <DialogContent>
-                      <AdminModosit />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button type={"button"} autoFocus onClick={handleClose}>
-                        Mégse
-                      </Button>
-                      <Button type={"submit"} onClick={handleClose} autoFocus>
-                        Módosítás
-                      </Button>
-                    </DialogActions>
-                  </form>
-                </Dialog>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="responsive-dialog-title"
+        disableEnforceFocus
+      >
+        <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
+          <DialogTitle id="responsive-dialog-title">
+            {"Ügyintéző módosítása"}
+          </DialogTitle>
+          <DialogContent>
+            <AdminModosit />
+          </DialogContent>
+          <DialogActions>
+            <Button type={"button"} autoFocus onClick={handleCloseEdit}>
+              Mégse
+            </Button>
+            <Button type={"submit"} onClick={handleCloseEdit} autoFocus>
+              Módosítás
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="responsive-dialog-title"
+        disableEnforceFocus
+      >
+        <DialogTitle id="responsive-dialog-title">
+          {"Ügyintéző törlés megerősítése"}
+        </DialogTitle>
+        <DialogContent>
+          <AdminTorol />
+        </DialogContent>
+        <DialogActions>
+          <Button type={"button"} autoFocus onClick={handleCloseDelete}>
+            Mégse
+          </Button>
+          <Button
+            type={"button"}
+            onClick={() => {
+              torlesUgyintezo(kivalasztottUgyintezo); 
+              handleCloseDelete(); 
+            }}
+            autoFocus
+          >
+            Megerősítés
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
   );
 }
