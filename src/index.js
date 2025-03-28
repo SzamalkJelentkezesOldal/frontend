@@ -20,7 +20,7 @@ import { AdminJelentkezokProvider } from "./context/admin/AdminJelentkezokContex
 import { AdminUgyintezoProvider } from "./context/admin/AdminUgyintezoContext";
 import { AdminSzakStatisztikaProvider } from "./context/admin/AdminSzakStatisztikaContext";
 import { AdminJelentkezoStatisztikaProvider } from "./context/admin/AdminJelentkezoStatisztikaContext";
-
+import { AdminSzakFelveszProvider } from "./context/admin/AdminSzakFelveszContext";
 
 const themeMUI = createTheme(
   {
@@ -48,23 +48,25 @@ root.render(
                 <AdminJelentkezoStatisztikaProvider>
                   <AdminUgyintezoProvider>
                     <AdminFelveszProvider>
-                      <AdminJelentkezokProvider>
-                        <AdminNyilatkozatProvider>
-                          <JelentkezesProvider>
-                            <RegisztralasProvider>
-                              <BelepesProvider>
-                                <DokumentumokProvider>
-                                  <SzemelyesAdatokProvider>
-                                    <ThemeProvider theme={themeMUI}>
-                                      <App />
-                                    </ThemeProvider>
-                                  </SzemelyesAdatokProvider>
-                                </DokumentumokProvider>
-                              </BelepesProvider>
-                            </RegisztralasProvider>
-                          </JelentkezesProvider>
-                        </AdminNyilatkozatProvider>
-                      </AdminJelentkezokProvider>
+                      <AdminSzakFelveszProvider>
+                        <AdminJelentkezokProvider>
+                          <AdminNyilatkozatProvider>
+                            <JelentkezesProvider>
+                              <RegisztralasProvider>
+                                <BelepesProvider>
+                                  <DokumentumokProvider>
+                                    <SzemelyesAdatokProvider>
+                                      <ThemeProvider theme={themeMUI}>
+                                        <App />
+                                      </ThemeProvider>
+                                    </SzemelyesAdatokProvider>
+                                  </DokumentumokProvider>
+                                </BelepesProvider>
+                              </RegisztralasProvider>
+                            </JelentkezesProvider>
+                          </AdminNyilatkozatProvider>
+                        </AdminJelentkezokProvider>
+                      </AdminSzakFelveszProvider>
                     </AdminFelveszProvider>
                   </AdminUgyintezoProvider>
                 </AdminJelentkezoStatisztikaProvider>
