@@ -11,9 +11,12 @@ export const AdminSzakFelveszProvider = ({ children }) => {
 
   const felveszSchema = z.object({
     elnevezes: z.string().min(3, "Az elnevezés legalább 3 karakter hosszú legyen!"),
-    portfolio: z.string().min(3, "A portfólió legalább 3 karakter hosszú legyen!"),
-    tagozat: z.string().min(3, "A tagozat legalább 3 karakter hosszú legyen!"),
-    nappali: z.boolean(),
+    portfolio: z.enum(["Igen", "Nem"], {
+      required_error: "A portfólió kiválasztása kötelező!",
+    }),
+    nappali: z.enum(["Igen", "Nem"], {
+      required_error: "A tagozat kiválasztása kötelező!",
+    }),
   });
 
   const {
@@ -24,14 +27,13 @@ export const AdminSzakFelveszProvider = ({ children }) => {
     getValues,
   } = useForm({
     resolver: zodResolver(felveszSchema),
-    defaultValues: { elnevezes: "", portfolio: "", tagozat: "", nappali: false },
+    defaultValues: { elnevezes: "", portfolio: false,  nappali: false },
   });
 
-  // Meglévő szakok lekérése a komponens betöltésekor
   useEffect(() => {
     const fetchSzakok = async () => {
       try {
-        const response = await myAxios.get("/api/szakok"); // Alkalmazd a megfelelő végpontot!
+        const response = await myAxios.get("/api/szakok"); 
         setSzakLista(response.data);
       } catch (error) {
         console.error("Hiba a szakok lekérésekor:", error);
@@ -44,28 +46,26 @@ export const AdminSzakFelveszProvider = ({ children }) => {
   const postSzak = async (data) => {
     try {
       const response = await myAxios.post("/api/uj-szak", data);
-      console.log("Új szak felvéve: ", response);
-      setSzakLista((prev) => [...prev, response.data]);
+      setSzakLista((prev) => [...prev, response.data]); 
       return true;
     } catch (e) {
-      console.error("Hiba a szak felvételekor:", e.response?.data?.errors || e.message);
       return false;
     }
   };
 
   const szakFelvesz = async () => {
-    const adatok = getValues(["elnevezes", "portfolio", "tagozat", "nappali"]);
-
+    const adatok = getValues(["elnevezes", "portfolio", "nappali"]);
     const szakAdatok = {
       elnevezes: adatok[0],
-      portfolio: adatok[1],
-      tagozat: adatok[2],
-      nappali: adatok[3],
+      portfolio: adatok[1] === "Igen",
+      nappali: adatok[2] === "Igen", 
     };
-
+  
+  
     const result = await postSzak(szakAdatok);
     if (result) {
-      reset();
+      reset(); 
+    } else {
     }
   };
 
@@ -79,17 +79,6 @@ export const AdminSzakFelveszProvider = ({ children }) => {
         szakFelvesz,
         szakLista,
         setSzakLista,
-        // Az alábbi funkciók a módosítás/törlés dialógusokhoz vannak (még nincs implementálva a funkcionalitásuk)
-        handleSzakAdatok: () => {},
-        handleClickOpenEdit: () => {},
-        handleCloseEdit: () => {},
-        handleClickOpenDelete: () => {},
-        handleCloseDelete: () => {},
-        torlesSzak: () => {},
-        openEdit: false,
-        openDelete: false,
-        setKivalasztottSzak: () => {},
-        kivalasztottSzak: null,
       }}
     >
       {children}

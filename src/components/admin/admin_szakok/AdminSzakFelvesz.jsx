@@ -37,22 +37,32 @@ const AdminSzakFelvesz = () => {
             <MenuItem value="Igen">Igen</MenuItem>
             <MenuItem value="Nem">Nem</MenuItem>
           </Select>
+          {errors.portfolio && (
+            <Typography color="error" variant="caption">
+              {errors.portfolio.message}
+            </Typography>
+          )}
         </FormControl>
         <Typography variant="subtitle1" gutterBottom>
           Tagozat
         </Typography>
         <FormControl fullWidth>
           <Select
-            {...formRegister("tagozat")}
+            {...formRegister("nappali")}
             defaultValue=""
-            error={!!errors.tagozat}
+            error={!!errors.nappali}
           >
             <MenuItem value="">
               <em>Válassz</em>
             </MenuItem>
-            <MenuItem value="Nappali">Nappali</MenuItem>
-            <MenuItem value="Esti">Esti</MenuItem>
+            <MenuItem value="Igen">Nappali</MenuItem>
+            <MenuItem value="Nem">Esti</MenuItem>
           </Select>
+          {errors.nappali && (
+            <Typography color="error" variant="caption">
+              {errors.nappali.message}
+            </Typography>
+          )}
         </FormControl>
         <SubmitButton isSubmitting={isSubmitting} text="Szak felvétele" />
       </CustomForm>
