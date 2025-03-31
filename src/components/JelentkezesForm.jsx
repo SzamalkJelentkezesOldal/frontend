@@ -75,7 +75,9 @@ function JelentkezesForm() {
                 <div>
                   <InputText
                     key={`input-${index}`}
-                    formRegister={`portfolioSzakok.${index}.portfolio_url`}
+                    formRegister={register(
+                      `portfolioSzakok.${index}.portfolio_url`
+                    )}
                     type="text"
                     error={
                       errors?.portfolioSzakok?.[index]?.portfolio_url || null

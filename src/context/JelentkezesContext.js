@@ -22,7 +22,7 @@ export const JelentkezesProvider = ({ children }) => {
       .array(
         z.object({
           szak_id: z.number(),
-          portfolio_url: z.string().url("Érvénytelen URL!"),
+          portfolio_url: z.string().url("URL megadása kötelező!"),
         })
       )
       .optional()
