@@ -1,16 +1,21 @@
 import { useContext } from "react";
 import { AdminUgyintezoContext } from "../../../context/admin/AdminUgyintezoContext";
-import InputText from "../../InputText";
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
 
-function AdminModosit({}) {
+function AdminModosit() {
   const {
-    handleUgyintezoAdatok,
     register,
     handleSubmit,
     isSubmitting,
     errors,
+    getValues,
+    kivalasztottUgyintezo,
+    ugyintezoLista,
   } = useContext(AdminUgyintezoContext);
+
+  const kivalasztottUgyintezoAdatok = ugyintezoLista.find(
+    (ugyintezo) => ugyintezo.id === kivalasztottUgyintezo
+  );
 
   return (
     <>
@@ -44,7 +49,15 @@ function AdminModosit({}) {
         variant="standard"
       />
 
-      <FormControlLabel control={<Checkbox />} label="Master" />
+      <FormControlLabel
+        control={
+          <Checkbox
+            {...register("master")}
+            defaultChecked={kivalasztottUgyintezoAdatok?.role > 1}
+          />
+        }
+        label="Master"
+      />
     </>
   );
 }

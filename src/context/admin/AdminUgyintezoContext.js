@@ -11,19 +11,36 @@ export const AdminUgyintezoContext = createContext("");
 
 export const AdminUgyintezoProvider = ({ children }) => {
   const [editLoading, setEditLoading] = useState(false);
-  const { ugyintezoLista } = useContext(ApiContext);
+  const { ugyintezoLista, setUgyintezoLista } = useContext(ApiContext);
   const [kivalasztottUgyintezo, setKivalasztottUgyintezo] = useState();
 
-  const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const [szurtUgyintezoLista, setSzurtUgyintezoLista] =
+    useState(ugyintezoLista);
+
+  useEffect(() => {
+    setSzurtUgyintezoLista(ugyintezoLista);
+  }, [ugyintezoLista]);
+
+  const handleClickOpenEdit = () => {
+    setOpenEdit(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickOpenDelete = () => {
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
 
   const ugyintezoAdatokSchema = z.object({
@@ -50,6 +67,21 @@ export const AdminUgyintezoProvider = ({ children }) => {
     },
   });
 
+  useEffect(() => {
+    if (kivalasztottUgyintezo) {
+      const kivalasztott = ugyintezoLista.find(
+        (ugyintezo) => ugyintezo.id === kivalasztottUgyintezo
+      );
+      if (kivalasztott) {
+        reset({
+          nev: kivalasztott.name,
+          email: kivalasztott.email,
+          master: kivalasztott.role > 1,
+        });
+      }
+    }
+  }, [kivalasztottUgyintezo, ugyintezoLista, reset]);
+
   const handleUgyintezoAdatok = async () => {
     const adatok = getValues(["nev", "email", "master"]);
 
@@ -61,17 +93,48 @@ export const AdminUgyintezoProvider = ({ children }) => {
 
     try {
       setEditLoading(true);
-      // Az axios patch hívás: (myAxios az előre konfigurált axios instance)
       const response = await myAxios.patch(
         `/api/modosit-ugyintezo/${kivalasztottUgyintezo}`,
         ugyintezoAdatok
       );
       console.log("Módosítás sikeres:", response.data);
-      // Itt pl. értesítheted a felhasználót, vagy frissítheted a listát
+
+      setUgyintezoLista((prevLista) =>
+        prevLista.map((ugyintezo) =>
+          ugyintezo.id === kivalasztottUgyintezo
+            ? { ...ugyintezo, ...ugyintezoAdatok } 
+            : ugyintezo
+        )
+      );
+
+      setSzurtUgyintezoLista((prevLista) =>
+        prevLista.map((ugyintezo) =>
+          ugyintezo.id === kivalasztottUgyintezo
+            ? { ...ugyintezo, ...ugyintezoAdatok } 
+            : ugyintezo
+        )
+      );
     } catch (error) {
       console.error("Hiba történt a módosítás során:", error);
     } finally {
       setEditLoading(false);
+    }
+  };
+
+  const torlesUgyintezo = async (id) => {
+    try {
+      const response = await myAxios.delete(`/api/delete-ugyintezo/${id}`);
+      console.log("Törlés sikeres:", response.data);
+
+      setUgyintezoLista((prevLista) =>
+        prevLista.filter((ugyintezo) => ugyintezo.id !== id)
+      );
+
+      setSzurtUgyintezoLista((prevLista) =>
+        prevLista.filter((ugyintezo) => ugyintezo.id !== id)
+      );
+    } catch (error) {
+      console.error("Hiba történt az ügyintéző törlésekor:", error);
     }
   };
 
@@ -85,14 +148,22 @@ export const AdminUgyintezoProvider = ({ children }) => {
         getValues,
         editLoading,
         handleUgyintezoAdatok,
-        handleClickOpen,
-        handleClose,
+        handleClickOpenEdit,
+        handleCloseEdit,
+        handleClickOpenDelete,
+        handleCloseDelete,
         theme,
         fullScreen,
-        open,
-        setOpen,
+        openEdit,
+        openDelete,
+        setOpenEdit,
+        setOpenDelete,
         ugyintezoLista,
         setKivalasztottUgyintezo,
+        torlesUgyintezo,
+        szurtUgyintezoLista,
+        setSzurtUgyintezoLista,
+        kivalasztottUgyintezo,
       }}
     >
       {children}

@@ -17,7 +17,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
 } from "@mui/material";
+import AdminTorol from "./AdminTorol";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,21 +50,93 @@ function AdminTablazat() {
     isSubmitting,
     errors,
     getValues,
-    adatokEdit,
     editLoading,
     handleUgyintezoAdatok,
-    handleClickOpen,
-    handleClose,
+    handleClickOpenEdit,
+    handleCloseEdit,
+    handleClickOpenDelete, 
+    handleCloseDelete, 
     theme,
     fullScreen,
-    open,
-    setOpen,
+    openEdit, 
+    openDelete,
+    setOpenEdit,
+    setOpenDelete,
     ugyintezoLista,
     setKivalasztottUgyintezo,
+    torlesUgyintezo,
+    szurtUgyintezoLista,
+    setSzurtUgyintezoLista,
+    kivalasztottUgyintezo,
   } = useContext(AdminUgyintezoContext);
+
+  const [keresesNev, setKeresesNev] = useState("");
+  const [keresesMaster, setKeresesMaster] = useState("");
+
+  const handleKereses = () => {
+    const szurtLista = ugyintezoLista.filter((sor) => {
+      const nevEgyezik = sor.name
+        .toUpperCase()
+        .includes(keresesNev.toUpperCase());
+      const masterEgyezik =
+        keresesMaster === "" ||
+        (keresesMaster === "Igen" && sor.role > 1) ||
+        (keresesMaster === "Nem" && sor.role <= 1);
+      return nevEgyezik && masterEgyezik;
+    });
+    setSzurtUgyintezoLista(szurtLista);
+  };
+
+  const handleOsszesUgyintezo = () => {
+    setSzurtUgyintezoLista(ugyintezoLista);
+    setKeresesNev("");
+    setKeresesMaster("");
+  };
 
   return (
     <section className="container pt-10 pb-10">
+      <div style={{ marginBottom: "20px" }}>
+        <TextField
+          label="Keresés név alapján"
+          variant="outlined"
+          value={keresesNev}
+          onChange={(e) => setKeresesNev(e.target.value)}
+          style={{ marginRight: "10px" }}
+        />
+        <FormControl
+          variant="outlined"
+          style={{ marginRight: "10px", minWidth: 120 }}
+        >
+          <InputLabel>Master</InputLabel>
+          <Select
+            value={keresesMaster}
+            onChange={(e) => setKeresesMaster(e.target.value)}
+            label="Master"
+          >
+            <MenuItem value="">
+              <em>Vissza</em>
+            </MenuItem>
+            <MenuItem value="Igen">Igen</MenuItem>
+            <MenuItem value="Nem">Nem</MenuItem>
+          </Select>
+        </FormControl>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleKereses}
+          style={{ height: "56px", marginRight: "10px" }}
+        >
+          Keresés
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleOsszesUgyintezo}
+          style={{ height: "56px" }}
+        >
+          Összes ügyintéző
+        </Button>
+      </div>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -71,7 +149,7 @@ function AdminTablazat() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ugyintezoLista.map((sor) => (
+            {szurtUgyintezoLista.map((sor) => (
               <StyledTableRow key={sor.id}>
                 <StyledTableCell component="th" scope="row">
                   {sor.name}
@@ -82,45 +160,80 @@ function AdminTablazat() {
                 </StyledTableCell>
                 <StyledTableCell
                   onClick={() => {
-                    console.log(sor.id);
-                    handleClickOpen();
+                    handleClickOpenEdit();
                     setKivalasztottUgyintezo(sor.id);
                   }}
                 >
                   <EditIcon size={"24"} />
                 </StyledTableCell>
-                <StyledTableCell /*onClick={}*/>
+                <StyledTableCell
+                  onClick={() => {
+                    handleClickOpenDelete(); 
+                    setKivalasztottUgyintezo(sor.id);
+                  }}
+                >
                   <PersonRemoveIcon size={"24"} />
                 </StyledTableCell>
-                <Dialog
-                  fullScreen={fullScreen}
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="responsive-dialog-title"
-                  disableEnforceFocus
-                >
-                  <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
-                    <DialogTitle id="responsive-dialog-title">
-                      {"Ügyintéző módosítása"}
-                    </DialogTitle>
-                    <DialogContent>
-                      <AdminModosit />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button type={"button"} autoFocus onClick={handleClose}>
-                        Mégse
-                      </Button>
-                      <Button type={"submit"} onClick={handleClose} autoFocus>
-                        Módosítás
-                      </Button>
-                    </DialogActions>
-                  </form>
-                </Dialog>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="responsive-dialog-title"
+        disableEnforceFocus
+      >
+        <form onSubmit={handleSubmit(handleUgyintezoAdatok)}>
+          <DialogTitle id="responsive-dialog-title">
+            {"Ügyintéző módosítása"}
+          </DialogTitle>
+          <DialogContent>
+            <AdminModosit />
+          </DialogContent>
+          <DialogActions>
+            <Button type={"button"} autoFocus onClick={handleCloseEdit}>
+              Mégse
+            </Button>
+            <Button type={"submit"} onClick={handleCloseEdit} autoFocus>
+              Módosítás
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="responsive-dialog-title"
+        disableEnforceFocus
+      >
+        <DialogTitle id="responsive-dialog-title">
+          {"Ügyintéző törlés megerősítése"}
+        </DialogTitle>
+        <DialogContent>
+          <AdminTorol />
+        </DialogContent>
+        <DialogActions>
+          <Button type={"button"} autoFocus onClick={handleCloseDelete}>
+            Mégse
+          </Button>
+          <Button
+            type={"button"}
+            onClick={() => {
+              torlesUgyintezo(kivalasztottUgyintezo); 
+              handleCloseDelete(); 
+            }}
+            autoFocus
+          >
+            Megerősítés
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
   );
 }
