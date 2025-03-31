@@ -97,7 +97,6 @@ function AdminSzakTablazat() {
 
   return (
     <section className="container pt-10 pb-10">
-      {/* Keresési mezők */}
       <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
         <TextField
           label="Keresés név alapján"
@@ -147,8 +146,6 @@ function AdminSzakTablazat() {
           Összes szak
         </Button>
       </div>
-
-      {/* Táblázat */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -193,7 +190,6 @@ function AdminSzakTablazat() {
         </Table>
       </TableContainer>
 
-      {/* Módosítási dialógus – itt csomagoljuk a formot a FormProvider-be */}
       <Dialog open={openEdit} onClose={handleCloseEdit}>
         <form onSubmit={handleSubmit(handleSzakAdatok)}>
           <DialogTitle>Szak módosítása</DialogTitle>
@@ -233,8 +229,7 @@ function AdminSzakTablazat() {
         </form>
       </Dialog>
 
-      
-      {/* Törlési dialógus */}
+    
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle>Szak törlése</DialogTitle>
         <DialogContent>Biztosan törölni szeretnéd ezt a szakot?</DialogContent>
