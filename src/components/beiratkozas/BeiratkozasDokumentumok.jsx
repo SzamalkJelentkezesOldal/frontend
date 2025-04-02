@@ -23,6 +23,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
     trigger,
     isOpen,
     setIsOpen,
+    nyilatkozatLoading,
   } = useContext(DokumentumokContext);
 
   const inputResponsiveness =
@@ -163,6 +164,7 @@ function BeiratkozasDokumentumok({ isDisabled, isCompleted }) {
           error={errors.nyilatkozatok}
           download={true}
           handleDownloadClick={nyilatkozatLetoltes}
+          loader={nyilatkozatLoading}
         />
       </div>
 

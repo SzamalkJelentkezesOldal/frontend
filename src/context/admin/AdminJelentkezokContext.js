@@ -119,6 +119,9 @@ export const AdminJelentkezokProvider = ({ children }) => {
   const [applyFilters, setApplyFilters] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [jelentkezesEldontesLoader, setJelentkezesEldontesLoader] =
+    useState(false);
+  const [modositasKerelemLoader, setModositasKerelemLoader] = useState(false);
 
   function idoMegjelenites(ido) {
     const utcDate = ido;
@@ -242,6 +245,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
 
   const handleModositasKerelemEmail = async (emailData) => {
     try {
+      setModositasKerelemLoader(true);
       const response = await myAxios.post(
         "/api/modositas-kerelem-email",
         emailData
@@ -249,6 +253,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
       console.log("Email elküldve:", response.data);
     } catch (error) {
       console.error("Hiba az email elküldésekor:", error);
+    } finally {
+      setModositasKerelemLoader(false);
     }
   };
 
@@ -257,6 +263,20 @@ export const AdminJelentkezokProvider = ({ children }) => {
       (jelentkezes) => jelentkezes.allapotszotar.elnevezes === "Módosításra vár"
     );
   }
+
+  const jelentkezesEldontese = async (adat) => {
+    try {
+      setJelentkezesEldontesLoader(true);
+      const response = await myAxios.patch(
+        `/api/jelentkezes-eldontese/${adat.jelentkezes}/${adat.allapot}`
+      );
+      console.log("jelentkezés eldöntés elküldve:", response.data.data);
+    } catch (error) {
+      console.error("Hiba a jelentkezés eldöntésének elküldésekor:", error);
+    } finally {
+      setJelentkezesEldontesLoader(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -397,6 +417,9 @@ export const AdminJelentkezokProvider = ({ children }) => {
         handleModositasKerelem,
         handleModositasKerelemEmail,
         isModositasraVar,
+        jelentkezesEldontese,
+        jelentkezesEldontesLoader,
+        modositasKerelemLoader,
       }}
     >
       {children}
