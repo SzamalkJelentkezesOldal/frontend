@@ -1,9 +1,8 @@
-import React from "react";
-import { TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 function AdminSzakModosit() {
-  const { register } = useFormContext();
+  const { register, watch } = useFormContext();
 
   return (
     <>
@@ -13,23 +12,31 @@ function AdminSzakModosit() {
         label="Elnevezés"
         fullWidth
         variant="outlined"
+        value={watch("elnevezes") || ""}
       />
       <FormControl margin="dense" fullWidth variant="outlined">
         <InputLabel>Portfólió</InputLabel>
-        <Select label="Portfólió" {...register("portfolio")} defaultValue={false}>
-          <MenuItem value={true}>Igen</MenuItem>
-          <MenuItem value={false}>Nem</MenuItem>
+        <Select
+          label="Portfólió"
+          {...register("portfolio")}
+          value={watch("portfolio") ? "1" : "0"}
+        >
+          <MenuItem value="1">Igen</MenuItem>
+          <MenuItem value="0">Nem</MenuItem>
         </Select>
       </FormControl>
       <FormControl margin="dense" fullWidth variant="outlined">
         <InputLabel>Tagozat</InputLabel>
-        <Select label="Tagozat" {...register("nappali")} defaultValue={false}>
-          <MenuItem value={true}>Nappali</MenuItem>
-          <MenuItem value={false}>Esti</MenuItem>
+        <Select
+          label="Tagozat"
+          {...register("nappali")}
+          value={watch("nappali") ? "1" : "0"}
+        >
+          <MenuItem value="1">Nappali</MenuItem>
+          <MenuItem value="0">Esti</MenuItem>
         </Select>
       </FormControl>
     </>
   );
 }
-
-export default AdminSzakModosit;
+ export default AdminSzakModosit;
