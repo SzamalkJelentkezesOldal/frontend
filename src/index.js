@@ -21,6 +21,7 @@ import { AdminUgyintezoProvider } from "./context/admin/AdminUgyintezoContext";
 import { AdminSzakStatisztikaProvider } from "./context/admin/AdminSzakStatisztikaContext";
 import { AdminJelentkezoStatisztikaProvider } from "./context/admin/AdminJelentkezoStatisztikaContext";
 import { AdminSzakFelveszProvider } from "./context/admin/AdminSzakFelveszContext";
+import { AdminSzakProvider } from "./context/admin/AdminSzakContext";
 
 const themeMUI = createTheme(
   {
@@ -48,6 +49,7 @@ root.render(
                 <AdminJelentkezoStatisztikaProvider>
                   <AdminUgyintezoProvider>
                     <AdminFelveszProvider>
+                      <AdminSzakProvider>
                       <AdminSzakFelveszProvider>
                         <AdminJelentkezokProvider>
                           <AdminNyilatkozatProvider>
@@ -67,6 +69,7 @@ root.render(
                           </AdminNyilatkozatProvider>
                         </AdminJelentkezokProvider>
                       </AdminSzakFelveszProvider>
+                      </AdminSzakProvider>
                     </AdminFelveszProvider>
                   </AdminUgyintezoProvider>
                 </AdminJelentkezoStatisztikaProvider>
