@@ -55,7 +55,11 @@ function AdminSzakJelentkezesek({ adat }) {
           ]}
           allowDeselect
           style={{ width: 200 }}
-          disabled={jelentkezes.allapot === 6 || jelentkezes.allapot === 8}
+          disabled={
+            jelentkezes.allapot < 5 ||
+            jelentkezes.allapot === 6 ||
+            jelentkezes.allapot === 8
+          }
         />
       </td>
     </tr>

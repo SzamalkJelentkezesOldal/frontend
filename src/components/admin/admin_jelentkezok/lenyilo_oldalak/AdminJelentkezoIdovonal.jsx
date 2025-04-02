@@ -1,11 +1,11 @@
 import { Text, Timeline } from "@mantine/core";
 import { useContext } from "react";
-import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezokContext";
-import UserAddIcon from "../../icons/UserAddIcon";
-import UserCheckIcon from "../../icons/UserCheckIcon";
-import CheckIcon from "../../icons/CheckIcon";
-import SzemelyAdatokIcon from "../../icons/SzemelyAdatokIcon";
-import DokumentumokIcon from "../../icons/DokumentumokIcon";
+import { AdminJelentkezokContext } from "../../../../context/admin/AdminJelentkezokContext";
+import UserAddIcon from "../../../icons/UserAddIcon";
+import UserCheckIcon from "../../../icons/UserCheckIcon";
+import CheckIcon from "../../../icons/CheckIcon";
+import SzemelyAdatokIcon from "../../../icons/SzemelyAdatokIcon";
+import DokumentumokIcon from "../../../icons/DokumentumokIcon";
 
 function AdminJelentkezoIdovonal({ adatok, minAllapot }) {
   const { idoMegjelenites } = useContext(AdminJelentkezokContext);
