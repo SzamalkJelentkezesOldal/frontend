@@ -27,7 +27,7 @@ function App() {
           <Route path="admin/jelentkezok" element={<AdminJelentkezok />} />
           <Route path="admin/statisztika" element={<AdminStatisztika />} />
           <Route path="admin/nyilatkozat" element={<AdminNyilatkozat />} />
-          <Route path="admin/szakok" element={<AdminSzakok/>} />
+          <Route path="admin/szakok" element={<AdminSzakok />} />
           <Route element={<MasterLayout />}>
             <Route path="admin/ugyintezok" element={<AdminUgyintezok />} />
           </Route>

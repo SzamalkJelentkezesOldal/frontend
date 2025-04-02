@@ -19,6 +19,11 @@ export const AdminJelentkezokProvider = ({ children }) => {
       enableClickToCopy: true,
     },
     {
+      accessorKey: "tel",
+      header: "Mobilszám",
+      enableClickToCopy: true,
+    },
+    {
       accessorKey: "nev",
       header: "Név",
     },
@@ -63,6 +68,39 @@ export const AdminJelentkezokProvider = ({ children }) => {
           >
             {IconComponent && <IconComponent size={"16"} fill={fill} />}
             {status}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "portfolioAllapot",
+      header: "Portfólió",
+      Cell: ({ cell }) => {
+        const portfolio = cell.getValue();
+        let statusClass = "";
+        let IconComponent = null;
+        let fill = "";
+
+        if (portfolio === "Elfogadva") {
+          statusClass = "border-[1px] border-green-600 text-green-600";
+          IconComponent = CheckIcon;
+          fill = "#43a047";
+        } else if (portfolio === "Elutasítva") {
+          statusClass = "border-[1px] border-red-700 text-red-700";
+          IconComponent = RejectionIcon;
+          fill = "#d32f2f";
+        } else if (portfolio === "Eldöntésre vár") {
+          statusClass = "border-[1px] border-blue-800 text-blue-800";
+          IconComponent = QuestionIcon;
+          fill = "#1565c0";
+        }
+
+        return (
+          <span
+            className={`flex items-center gap-1 px-2 py-1 text-sm rounded-2xl w-max ${statusClass}`}
+          >
+            {IconComponent && <IconComponent size={16} fill={fill} />}
+            {portfolio}
           </span>
         );
       },
