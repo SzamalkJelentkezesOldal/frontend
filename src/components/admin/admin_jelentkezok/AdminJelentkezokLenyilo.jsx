@@ -80,12 +80,13 @@ function AdminJelentkezokLenyilo({ adatok }) {
         </div>
       </Tabs.Panel>
 
-      <Tabs.Panel value="portfolio">
-        <div className="p-4">
-          <AdminJelentkezokPortfolio adat={adatok?.portfoliok} />
-        </div>
-      </Tabs.Panel>
-
+      {adatok.portfoliok?.length > 0 ? (
+        <Tabs.Panel value="portfolio">
+          <div className="p-4">
+            <AdminJelentkezokPortfolio adat={adatok?.portfoliok} />
+          </div>
+        </Tabs.Panel>
+      ) : null}
       <Tabs.Panel value="idovonal">
         <div className="p-4">
           <AdminJelentkezoIdovonal adatok={adatok} minAllapot={minAllapot} />

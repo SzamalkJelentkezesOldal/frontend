@@ -22,34 +22,39 @@ function AdminJelentkezokPortfolio({ adat }) {
     }
   };
 
-  //   const rows = adat.map((portfolio) => (
-  //     <tr key={portfolio.id}>
-  //       <td>{portfolio.tagozat ? "Nappali" : "Esti"}</td>
-  //       <td>{portfolio.szak}</td>
-  //       <td>
-  //         <span
-  //           className={`px-2 py-0.5 text-sm rounded-2xl w-max ${portfolioStatuszStilus(
-  //             portfolio.allapot
-  //           )}`}
-  //         >
-  //           {portfolio.allapot}
-  //         </span>
-  //       </td>
-  //       <td>
-  //         <Select
-  //           withinPortal="true"
-  //           placeholder="Jelentkezés állapot..."
-  //           data={[
-  //             { value: "elfogad", label: "Elfogadva" },
-  //             { value: "elutasit", label: "Elutasítva" },
-  //           ]}
-  //           allowDeselect
-  //           style={{ width: 200 }}
-  //           //   disabled={}
-  //         />
-  //       </td>
-  //     </tr>
-  //   ));
+  console.log("PORTFÓLIÓ: ", adat);
+
+  const rows = adat.map((portfolio) => (
+    <tr key={portfolio.id}>
+      <td>{portfolio.tagozat ? "Nappali" : "Esti"}</td>
+      <td>{portfolio.szak}</td>
+      <td>
+        <span
+          className={`px-2 py-0.5 text-sm rounded-2xl w-max ${portfolioStatuszStilus(
+            portfolio.allapot
+          )}`}
+        >
+          {portfolio.allapot}
+        </span>
+      </td>
+      <td>
+        
+      </td>
+      <td>
+        <Select
+          withinPortal="true"
+          placeholder="Jelentkezés állapot..."
+          data={[
+            { value: "elfogad", label: "Elfogadva" },
+            { value: "elutasit", label: "Elutasítva" },
+          ]}
+          allowDeselect
+          style={{ width: 200 }}
+          //   disabled={}
+        />
+      </td>
+    </tr>
+  ));
 
   return (
     <Table>
@@ -58,11 +63,11 @@ function AdminJelentkezokPortfolio({ adat }) {
           <th>Tagozat</th>
           <th>Szak</th>
           <th>Státusz</th>
+          <th>Portfólió</th>
           <th />
         </tr>
       </thead>
-      {/* <tbody>{rows}</tbody> */}
-      <tbody></tbody>
+      <tbody>{rows}</tbody>
     </Table>
   );
 }
