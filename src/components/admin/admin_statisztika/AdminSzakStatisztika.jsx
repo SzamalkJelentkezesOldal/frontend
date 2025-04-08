@@ -15,6 +15,7 @@ function AdminSzakStatisztika() {
   const { nappaliEsti } = useContext(AdminSzakStatisztikaContext);
   const { jelentkezokSzamaSzakokra } = useContext(AdminSzakStatisztikaContext);
   const { jelentkezokSzamaTagozatraSzakokra } = useContext(AdminSzakStatisztikaContext)
+  const { exportToCSV } = useContext(AdminSzakStatisztikaContext);
 
   console.log(nappaliEsti);
   const palette = ["#B52626", "#F57373", "#FFA3A3" , "#FFCDA3", "#F5AE73", "#B56726", "#76B8B8", "#459393", "#176C6C"];
@@ -84,6 +85,13 @@ function AdminSzakStatisztika() {
             variant="contained"
             tabIndex={-1}
             startIcon={<SaveIcon />}
+            onClick={() => {
+              const data = [
+                { Tagozat: "Nappali", Darabszám: nappaliEsti.nappali },
+                { Tagozat: "Esti", Darabszám: nappaliEsti.esti }
+              ];
+              exportToCSV(data, "tagozat_osszefoglalas.csv");
+            }}
           >
             Letöltés
           </Button>
@@ -140,6 +148,13 @@ function AdminSzakStatisztika() {
             variant="contained"
             tabIndex={-1}
             startIcon={<SaveIcon />}
+            onClick={() => {
+              const headerMap = {
+                elnevezes: "Szak neve",
+                ennyien: "Jelentkezők száma"
+              };
+              exportToCSV(jelentkezokSzamaSzakokra, "jelentkezok_szakonkent.csv", headerMap);
+            }}
           >
             Letöltés
           </Button>
@@ -172,6 +187,15 @@ function AdminSzakStatisztika() {
             variant="contained"
             tabIndex={-1}
             startIcon={<SaveIcon />}
+            onClick={() => {
+              const headerMap = {
+                elnevezes: "Szak neve",
+                nappali: "Nappali",
+                esti: "Esti",
+                osszesen: "Összesen"
+              };
+              exportToCSV(jelentkezokSzamaTagozatraSzakokra, "tagozat_szak_jelentkezesek.csv", headerMap);
+            }}
           >
             Letöltés
           </Button>
