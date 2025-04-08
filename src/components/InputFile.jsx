@@ -2,6 +2,7 @@ import PlusIcon from "./icons/PlusIcon";
 import { useEffect, useRef, useState } from "react";
 import SmallCloseIcon from "./icons/SmallCloseIcon";
 import DownloadIcon from "./icons/DownloadIcon";
+import SubmitSpinner from "./icons/SubmitSpinner";
 
 function InputFile({
   formRegister,
@@ -18,6 +19,7 @@ function InputFile({
   existingFiles,
   trigger,
   admin,
+  loader,
 }) {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -165,6 +167,7 @@ function InputFile({
               type="button"
               className="bg-gradient-to-r from-szSecondary-100/90 to-szSecondary-100 p-[3px] px-2 text-center rounded-2xl hover:bg-szSecondary-200/90 duration-200 transition-all text-white flex items-center"
             >
+              {loader ? <SubmitSpinner /> : ""}
               <DownloadIcon />
               <span className="hidden sm:inline text-base">Letöltés</span>
             </button>

@@ -2,11 +2,13 @@ import { Tabs } from "@mantine/core";
 import SzakSorrendIcon from "../../icons/SzakSorrendIcon";
 import SzemelyAdatokIcon from "../../icons/SzemelyAdatokIcon";
 import DokumentumokIcon from "../../icons/DokumentumokIcon";
+import PortfolioIcon from "../../icons/PortfolioIcon";
 import TimelineIcon from "../../icons/TimelineIcon";
-import AdminSzakJelentkezesek from "./AdminSzakJelentkezesek";
-import AdminJelentkezoTorzsadatok from "./AdminJelentkezoTorzsadatok";
-import AdminJelentkezoDokumentumok from "./AdminJelentkezoDokumentumok";
-import AdminJelentkezoIdovonal from "./AdminJelentkezoIdovonal";
+import AdminSzakJelentkezesek from "./lenyilo_oldalak/AdminSzakJelentkezesek";
+import AdminJelentkezoTorzsadatok from "./lenyilo_oldalak/AdminJelentkezoTorzsadatok";
+import AdminJelentkezoDokumentumok from "./lenyilo_oldalak/AdminJelentkezoDokumentumok";
+import AdminJelentkezoIdovonal from "./lenyilo_oldalak/AdminJelentkezoIdovonal";
+import AdminJelentkezokPortfolio from "./lenyilo_oldalak/AdminJelentkezokPortfolio";
 
 function AdminJelentkezokLenyilo({ adatok }) {
   const minAllapot =
@@ -14,10 +16,23 @@ function AdminJelentkezokLenyilo({ adatok }) {
       ? Math.min(...adatok.jelentkezesek.map((j) => j.allapot))
       : 0;
 
+  const disableJelentkezesekTab = adatok?.portfoliok?.some(
+    (portfolio) => portfolio.allapot === "Eldöntésre vár" && !portfolio.ertesito
+  );
   return (
-    <Tabs color="cyan" radius="md" defaultValue="jelentkezesek">
+    <Tabs
+      color="cyan"
+      radius="md"
+      defaultValue={
+        adatok.portfoliok?.length > 0
+          ? disableJelentkezesekTab
+            ? "portfolio"
+            : "jelentkezesek"
+          : "jelentkezesek"
+      }
+    >
       <Tabs.List>
-        <Tabs.Tab value="jelentkezesek">
+        <Tabs.Tab value="jelentkezesek" disabled={disableJelentkezesekTab}>
           <div className="flex items-center gap-2">
             <SzakSorrendIcon />
             <span className="font-medium">Jelentkezések</span>
@@ -38,6 +53,14 @@ function AdminJelentkezokLenyilo({ adatok }) {
             <span className="font-medium">Dokumentumok</span>
           </div>
         </Tabs.Tab>
+        {adatok.portfoliok?.length > 0 ? (
+          <Tabs.Tab value="portfolio">
+            <div className="flex items-center gap-2">
+              <PortfolioIcon />
+              <span className="font-medium">Portfólió</span>
+            </div>
+          </Tabs.Tab>
+        ) : null}
         <Tabs.Tab value="idovonal" ml="auto">
           <div className="flex items-center gap-2">
             <TimelineIcon />
@@ -64,6 +87,13 @@ function AdminJelentkezokLenyilo({ adatok }) {
         </div>
       </Tabs.Panel>
 
+      {adatok.portfoliok?.length > 0 ? (
+        <Tabs.Panel value="portfolio">
+          <div className="p-4">
+            <AdminJelentkezokPortfolio adat={adatok?.portfoliok} />
+          </div>
+        </Tabs.Panel>
+      ) : null}
       <Tabs.Panel value="idovonal">
         <div className="p-4">
           <AdminJelentkezoIdovonal adatok={adatok} minAllapot={minAllapot} />

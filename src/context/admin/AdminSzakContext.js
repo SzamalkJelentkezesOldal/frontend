@@ -68,27 +68,28 @@ export const AdminSzakProvider = ({ children }) => {
 
   useEffect(() => {
     if (kivalasztottSzak) {
-      const kivalasztott = szakLista.find((szak) => szak.id === kivalasztottSzak);
+      const kivalasztott = szakLista.find(
+        (szak) => szak.id === kivalasztottSzak
+      );
       if (kivalasztott) {
         reset({
           elnevezes: kivalasztott.elnevezes,
-          portfolio: kivalasztott.portfolio ?? false, 
-          nappali: kivalasztott.nappali ?? false, 
+          portfolio: kivalasztott.portfolio ?? false,
+          nappali: kivalasztott.nappali ?? false,
         });
       }
     }
   }, [kivalasztottSzak, szakLista, reset]);
 
   const handleSzakAdatok = async () => {
-    const adatok = getValues(["elnevezes", "portfolio", "nappali"]);
+    const adatok = getValues();
 
     const szakAdatok = {
-      elnevezes: adatok[0],
-      portfolio: adatok[1] ? 1: 0,
-      nappali: adatok[2] ? 1: 0,
+      elnevezes: adatok.elnevezes || "",
+      portfolio: Boolean(adatok.portfolio) ? 1 : 0,
+      nappali: Boolean(adatok.nappali) ? 1 : 0,
     };
 
-    
     try {
       setEditLoading(true);
       const response = await myAxios.patch(
@@ -99,35 +100,29 @@ export const AdminSzakProvider = ({ children }) => {
 
       setSzakLista((prevLista) =>
         prevLista.map((szak) =>
-          szak.id === kivalasztottSzak
-            ? { ...szak, ...szakAdatok }
-            : szak
+          szak.id === kivalasztottSzak ? { ...szak, ...szakAdatok } : szak
         )
       );
 
       setSzurtSzakLista((prevLista) =>
         prevLista.map((szak) =>
-          szak.id === kivalasztottSzak
-            ? { ...szak, ...szakAdatok } 
-            : szak
+          szak.id === kivalasztottSzak ? { ...szak, ...szakAdatok } : szak
         )
       );
     } catch (error) {
       console.error("Hiba történt a módosítás során:", error);
     } finally {
       setEditLoading(false);
+      handleCloseEdit();
     }
   };
-
 
   const torlesSzak = async (id) => {
     try {
       const response = await myAxios.delete(`/api/delete-szak/${id}`);
       console.log("Törlés sikeres:", response.data);
 
-      setSzakLista((prevLista) =>
-        prevLista.filter((szak) => szak.id !== id)
-      );
+      setSzakLista((prevLista) => prevLista.filter((szak) => szak.id !== id));
 
       setSzurtSzakLista((prevLista) =>
         prevLista.filter((szak) => szak.id !== id)
@@ -140,6 +135,7 @@ export const AdminSzakProvider = ({ children }) => {
   return (
     <AdminSzakContext.Provider
       value={{
+        reset,
         register,
         handleSubmit,
         isSubmitting,

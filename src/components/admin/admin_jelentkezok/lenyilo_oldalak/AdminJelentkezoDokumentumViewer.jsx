@@ -5,7 +5,7 @@ import {
   IconArrowRight,
   IconDownload,
 } from "@tabler/icons-react";
-import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezokContext";
+import { AdminJelentkezokContext } from "../../../../context/admin/AdminJelentkezokContext";
 
 function AdminJelentkezoDokumentumViewer({ previewUrls }) {
   const [opened, setOpened] = useState(false);

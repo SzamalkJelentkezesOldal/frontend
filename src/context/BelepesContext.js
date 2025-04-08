@@ -17,6 +17,7 @@ export const BelepesProvider = ({ children }) => {
     formState: { errors, isSubmitting },
     reset,
     getValues,
+    setError,
   } = useForm({
     resolver: zodResolver(belepesSchema),
     defaultValues: { email: "", password: "" },
@@ -31,6 +32,7 @@ export const BelepesProvider = ({ children }) => {
         reset,
         isSubmitting,
         getValues,
+        setError,
       }}
     >
       {children}

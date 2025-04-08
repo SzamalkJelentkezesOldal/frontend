@@ -11,17 +11,31 @@ function BelepesForm() {
 
   const { login } = useAuthContext();
 
-  const { handleSubmit, isSubmitting, errors, reset, getValues, formRegister } =
-    useContext(BelepesContext);
+  const {
+    handleSubmit,
+    isSubmitting,
+    errors,
+    reset,
+    getValues,
+    formRegister,
+    setError,
+  } = useContext(BelepesContext);
 
   const handleLogin = async () => {
     try {
       const email = getValues("email");
       const password = getValues("password");
 
-      await login({ email, password });
-      reset();
-      navigate("/");
+      const response = await login({ email, password });
+
+      if (!response) {
+        setError("password", {
+          type: "manual",
+          message: "A jelszó vagy az email cím helytelen!",
+        });
+      } else {
+        reset();
+      }
     } catch (e) {
       console.log("bejelentkezési hiba");
     }

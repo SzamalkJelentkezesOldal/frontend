@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Modal, Checkbox, Select, Button, Group, Divider } from "@mantine/core";
 import { AdminJelentkezokContext } from "../../../context/admin/AdminJelentkezokContext";
+import SubmitSpinner from "../../icons/SubmitSpinner";
 
 const AdminJelentkezoModositasKerelem = ({
   opened,
@@ -11,7 +12,9 @@ const AdminJelentkezoModositasKerelem = ({
 }) => {
   const [selectedTorzsadat, setSelectedTorzsadat] = useState({});
   const [selectedDokumentum, setSelectedDokumentum] = useState({});
-  const { handleModositasKerelemEmail } = useContext(AdminJelentkezokContext);
+  const { handleModositasKerelemEmail, modositasKerelemLoader } = useContext(
+    AdminJelentkezokContext
+  );
 
   const torzsadatSelect = [
     { value: "hibasAdat", label: "Hibás adat" },
@@ -167,7 +170,12 @@ const AdminJelentkezoModositasKerelem = ({
 
         <Divider className="mt-6" />
 
-        <Button onClick={handleKuldes} mt="xl">
+        <Button
+          onClick={handleKuldes}
+          mt="xl"
+          disabled={modositasKerelemLoader}
+        >
+          {modositasKerelemLoader ? <SubmitSpinner /> : ""}
           Kérelem küldése
         </Button>
       </div>

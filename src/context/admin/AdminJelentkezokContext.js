@@ -19,6 +19,11 @@ export const AdminJelentkezokProvider = ({ children }) => {
       enableClickToCopy: true,
     },
     {
+      accessorKey: "tel",
+      header: "Mobilszám",
+      enableClickToCopy: true,
+    },
+    {
       accessorKey: "nev",
       header: "Név",
     },
@@ -67,6 +72,39 @@ export const AdminJelentkezokProvider = ({ children }) => {
         );
       },
     },
+    {
+      accessorKey: "portfolioAllapot",
+      header: "Portfólió",
+      Cell: ({ cell }) => {
+        const portfolio = cell.getValue();
+        let statusClass = "";
+        let IconComponent = null;
+        let fill = "";
+
+        if (portfolio === "Elfogadva") {
+          statusClass = "border-[1px] border-green-600 text-green-600";
+          IconComponent = CheckIcon;
+          fill = "#43a047";
+        } else if (portfolio === "Elutasítva") {
+          statusClass = "border-[1px] border-red-700 text-red-700";
+          IconComponent = RejectionIcon;
+          fill = "#d32f2f";
+        } else if (portfolio === "Eldöntésre vár") {
+          statusClass = "border-[1px] border-blue-800 text-blue-800";
+          IconComponent = QuestionIcon;
+          fill = "#1565c0";
+        }
+
+        return (
+          <span
+            className={`flex items-center gap-1 px-2 py-1 text-sm rounded-2xl w-max ${statusClass}`}
+          >
+            {IconComponent && <IconComponent size={16} fill={fill} />}
+            {portfolio}
+          </span>
+        );
+      },
+    },
   ];
 
   const [data, setData] = useState([]);
@@ -81,6 +119,9 @@ export const AdminJelentkezokProvider = ({ children }) => {
   const [applyFilters, setApplyFilters] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [jelentkezesEldontesLoader, setJelentkezesEldontesLoader] =
+    useState(false);
+  const [modositasKerelemLoader, setModositasKerelemLoader] = useState(false);
 
   function idoMegjelenites(ido) {
     const utcDate = ido;
@@ -93,6 +134,27 @@ export const AdminJelentkezokProvider = ({ children }) => {
 
     return localDate;
   }
+
+  const updatePortfolioStatus = async (portfolioId, newStatus) => {
+    try {
+      const response = await myAxios.patch(`/api/portfolio/${portfolioId}`, {
+        allapot: newStatus,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("portfolio update error:", error);
+    }
+  };
+
+  // Összegző email küldés az admin műveletéből
+  const sendPortfolioOsszegzo = async (portfolioId) => {
+    try {
+      const response = await myAxios.post(`/api/portfolio-osszegzo/${portfolioId}`);
+      return response.data;
+    } catch (error) {
+      console.error("osszegzo email error:", error);
+    }
+  };
 
   const dokumentumLetolt = async (url, fileName) => {
     try {
@@ -204,6 +266,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
 
   const handleModositasKerelemEmail = async (emailData) => {
     try {
+      setModositasKerelemLoader(true);
       const response = await myAxios.post(
         "/api/modositas-kerelem-email",
         emailData
@@ -211,6 +274,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
       console.log("Email elküldve:", response.data);
     } catch (error) {
       console.error("Hiba az email elküldésekor:", error);
+    } finally {
+      setModositasKerelemLoader(false);
     }
   };
 
@@ -219,6 +284,20 @@ export const AdminJelentkezokProvider = ({ children }) => {
       (jelentkezes) => jelentkezes.allapotszotar.elnevezes === "Módosításra vár"
     );
   }
+
+  const jelentkezesEldontese = async (adat) => {
+    try {
+      setJelentkezesEldontesLoader(true);
+      const response = await myAxios.patch(
+        `/api/jelentkezes-eldontese/${adat.jelentkezes}/${adat.allapot}`
+      );
+      console.log("jelentkezés eldöntés elküldve:", response.data.data);
+    } catch (error) {
+      console.error("Hiba a jelentkezés eldöntésének elküldésekor:", error);
+    } finally {
+      setJelentkezesEldontesLoader(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -359,6 +438,11 @@ export const AdminJelentkezokProvider = ({ children }) => {
         handleModositasKerelem,
         handleModositasKerelemEmail,
         isModositasraVar,
+        jelentkezesEldontese,
+        jelentkezesEldontesLoader,
+        modositasKerelemLoader,
+        sendPortfolioOsszegzo,
+        updatePortfolioStatus,
       }}
     >
       {children}

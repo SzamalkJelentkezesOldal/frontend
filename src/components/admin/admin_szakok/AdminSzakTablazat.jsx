@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AdminSzakContext } from "../../../context/admin/AdminSzakContext";
+import AdminSzakModosit from "./AdminSzakModosit";
 import {
   Button,
   Dialog,
@@ -22,8 +23,6 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import AdminSzakModosit from "./AdminSzakModosit";
-import { FormProvider } from "react-hook-form";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,7 +45,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 function AdminSzakTablazat() {
   const {
+    reset,
     register,
+    fullScreen,
     handleSubmit,
     handleSzakAdatok,
     handleClickOpenEdit,
@@ -171,14 +172,25 @@ function AdminSzakTablazat() {
                 </StyledTableCell>
                 <StyledTableCell
                   onClick={() => {
-                    handleClickOpenEdit(sor.id);
+                    setKivalasztottSzak(sor.id);
+                    const kivalasztott = szakLista.find(
+                      (szak) => szak.id === sor.id
+                    );
+                    if (kivalasztott) {
+                      reset({
+                        elnevezes: kivalasztott.elnevezes,
+                        portfolio: kivalasztott.portfolio ?? false,
+                        nappali: kivalasztott.nappali ?? false,
+                      });
+                    }
+                    handleClickOpenEdit();
                   }}
                 >
                   <EditIcon fontSize="small" />
                 </StyledTableCell>
                 <StyledTableCell
                   onClick={() => {
-                    handleClickOpenDelete(); 
+                    handleClickOpenDelete();
                     setKivalasztottSzak(sor.id);
                   }}
                 >
@@ -190,46 +202,31 @@ function AdminSzakTablazat() {
         </Table>
       </TableContainer>
 
-      <Dialog open={openEdit} onClose={handleCloseEdit}>
+      <Dialog
+        fullScreen={fullScreen}
+        open={openEdit}
+        onClose={handleCloseEdit}
+        aria-labelledby="responsive-dialog-title"
+        disableEnforceFocus
+      >
         <form onSubmit={handleSubmit(handleSzakAdatok)}>
-          <DialogTitle>Szak módosítása</DialogTitle>
+          <DialogTitle id="responsive-dialog-title">
+            {"Szak módosítása"}
+          </DialogTitle>
           <DialogContent>
-            <TextField
-              {...register("elnevezes")}
-              margin="dense"
-              label="Elnevezés"
-              fullWidth
-              variant="outlined"
-              error={!!errors.elnevezes}
-              helperText={errors.elnevezes?.message}
-            />
-            <FormControl fullWidth margin="dense">
-              <InputLabel>Portfólió</InputLabel>
-              <Select {...register("portfolio")} label="Portfólió">
-                <MenuItem value={true}>Igen</MenuItem>
-                <MenuItem value={false}>Nem</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth margin="dense">
-              <InputLabel>Tagozat</InputLabel>
-              <Select {...register("nappali")} label="Tagozat">
-                <MenuItem value={true}>Nappali</MenuItem>
-                <MenuItem value={false}>Esti</MenuItem>
-              </Select>
-            </FormControl>
+            <AdminSzakModosit />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseEdit} color="secondary">
+            <Button type={"button"} autoFocus onClick={handleCloseEdit}>
               Mégse
             </Button>
-            <Button type="submit" color="primary" disabled={editLoading}>
-              {editLoading ? "Mentés..." : "Mentés"}
+            <Button type={"submit"} onClick={handleCloseEdit} autoFocus>
+              Módosítás
             </Button>
           </DialogActions>
         </form>
       </Dialog>
 
-    
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle>Szak törlése</DialogTitle>
         <DialogContent>Biztosan törölni szeretnéd ezt a szakot?</DialogContent>
@@ -248,7 +245,6 @@ function AdminSzakTablazat() {
           </Button>
         </DialogActions>
       </Dialog>
-
     </section>
   );
 }

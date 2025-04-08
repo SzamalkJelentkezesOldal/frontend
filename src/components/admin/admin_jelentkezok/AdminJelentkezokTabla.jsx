@@ -74,14 +74,14 @@ const AdminJelentkezokTabla = () => {
     renderDetailPanel: renderDetailPanel,
     localization,
     layoutMode: "semantic",
-    defaultColumn: { minSize: 20, maxSize: 1000, size: 330 },
+    defaultColumn: { minSize: 20, maxSize: 1000 },
     enableRowActions: true,
     displayColumnDefOptions: {
       "mrt-row-actions": {
         header: "Módosítás",
       },
       "mrt-row-expand": {
-        size: 150,
+        size: 30,
       },
     },
     renderRowActionMenuItems: ({ row }) => (

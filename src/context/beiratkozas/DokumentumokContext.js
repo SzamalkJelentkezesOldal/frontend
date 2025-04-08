@@ -13,6 +13,7 @@ const fileSchema = z.union([
   typeof FileList !== "undefined" ? z.instanceof(FileList) : z.any(),
 ]);
 
+// ha filelist akkor -> array
 const multiFilePreprocess = z.preprocess(
   (val) => (val instanceof FileList ? Array.from(val) : val),
   z.array(fileSchema).optional()
@@ -83,6 +84,7 @@ export const DokumentumokProvider = ({ children }) => {
   const [resetTrigger, setResetTrigger] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [nyilatkozatLoading, setNyilatkozatLoading] = useState(false);
 
   const {
     register,
@@ -178,6 +180,7 @@ export const DokumentumokProvider = ({ children }) => {
   const nyilatkozatLetoltes = async () => {
     const year = new Date().getFullYear();
     try {
+      setNyilatkozatLoading(true);
       await myAxios.get("/sanctum/csrf-cookie");
       const response = await myAxios.get(`/api/nyilatkozat-letoltes/${year}`, {
         responseType: "blob",
@@ -202,6 +205,8 @@ export const DokumentumokProvider = ({ children }) => {
         "Letöltési hiba:",
         error.response?.data?.error || error.message
       );
+    } finally {
+      setNyilatkozatLoading(false);
     }
   };
 
@@ -356,6 +361,7 @@ export const DokumentumokProvider = ({ children }) => {
         trigger,
         isOpen,
         setIsOpen,
+        nyilatkozatLoading,
       }}
     >
       {children}
