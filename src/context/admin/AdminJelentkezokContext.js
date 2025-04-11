@@ -135,6 +135,27 @@ export const AdminJelentkezokProvider = ({ children }) => {
     return localDate;
   }
 
+  const updatePortfolioStatus = async (portfolioId, newStatus) => {
+    try {
+      const response = await myAxios.patch(`/api/portfolio/${portfolioId}`, {
+        allapot: newStatus,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("portfolio update error:", error);
+    }
+  };
+
+  // Összegző email küldés az admin műveletéből
+  const sendPortfolioOsszegzo = async (portfolioId) => {
+    try {
+      const response = await myAxios.post(`/api/portfolio-osszegzo/${portfolioId}`);
+      return response.data;
+    } catch (error) {
+      console.error("osszegzo email error:", error);
+    }
+  };
+
   const dokumentumLetolt = async (url, fileName) => {
     try {
       const response = await myAxios.get(url, {
@@ -420,6 +441,8 @@ export const AdminJelentkezokProvider = ({ children }) => {
         jelentkezesEldontese,
         jelentkezesEldontesLoader,
         modositasKerelemLoader,
+        sendPortfolioOsszegzo,
+        updatePortfolioStatus,
       }}
     >
       {children}

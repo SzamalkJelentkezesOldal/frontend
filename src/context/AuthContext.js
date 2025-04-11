@@ -52,7 +52,9 @@ export const AuthProvider = ({ children }) => {
         navigate("/beiratkozas");
       }
       console.log(data);
+      return true;
     } catch (e) {
+      return false;
       console.log(e.response.data.errors);
     }
   };

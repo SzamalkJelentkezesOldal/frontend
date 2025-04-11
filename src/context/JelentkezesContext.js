@@ -105,7 +105,7 @@ export const JelentkezesProvider = ({ children }) => {
       }
       return true;
     } catch (e) {
-      console.log(e.response.data.errors);
+      console.log(e);
       setPostStatus(false);
       setSnackbarOpen(true);
       return false;

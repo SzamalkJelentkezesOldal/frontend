@@ -42,8 +42,8 @@ function AdminSzakJelentkezesek({ adat }) {
           <th>Tagozat</th>
           <th>Szak</th>
           <th>Státusz</th>
-          <th />
-          <th />
+          <th>Jelentkezés módosítása</th>
+          <th>Művelet</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>
