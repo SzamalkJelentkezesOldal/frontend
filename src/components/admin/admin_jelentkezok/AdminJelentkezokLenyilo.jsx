@@ -16,16 +16,23 @@ function AdminJelentkezokLenyilo({ adatok }) {
       ? Math.min(...adatok.jelentkezesek.map((j) => j.allapot))
       : 0;
 
+  const disableJelentkezesekTab = adatok?.portfoliok?.some(
+    (portfolio) => portfolio.allapot === "Eldöntésre vár" && !portfolio.ertesito
+  );
   return (
     <Tabs
       color="cyan"
       radius="md"
       defaultValue={
-        adatok.portfoliok?.length > 0 ? "portfolio" : "jelentkezesek"
+        adatok.portfoliok?.length > 0
+          ? disableJelentkezesekTab
+            ? "portfolio"
+            : "jelentkezesek"
+          : "jelentkezesek"
       }
     >
       <Tabs.List>
-        <Tabs.Tab value="jelentkezesek">
+        <Tabs.Tab value="jelentkezesek" disabled={disableJelentkezesekTab}>
           <div className="flex items-center gap-2">
             <SzakSorrendIcon />
             <span className="font-medium">Jelentkezések</span>
