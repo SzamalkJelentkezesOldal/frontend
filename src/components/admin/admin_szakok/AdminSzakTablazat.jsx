@@ -46,8 +46,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function AdminSzakTablazat() {
   const {
     reset,
-    register,
-    fullScreen,
     handleSubmit,
     handleSzakAdatok,
     handleClickOpenEdit,
@@ -63,8 +61,6 @@ function AdminSzakTablazat() {
     setSzurtSzakLista,
     setKivalasztottSzak,
     errors,
-    isDirty,
-    editLoading,
   } = useContext(AdminSzakContext);
 
   const [keresesNev, setKeresesNev] = useState("");
@@ -173,16 +169,6 @@ function AdminSzakTablazat() {
                 <StyledTableCell
                   onClick={() => {
                     setKivalasztottSzak(sor.id);
-                    const kivalasztott = szakLista.find(
-                      (szak) => szak.id === sor.id
-                    );
-                    if (kivalasztott) {
-                      reset({
-                        elnevezes: kivalasztott.elnevezes,
-                        portfolio: kivalasztott.portfolio ?? false,
-                        nappali: kivalasztott.nappali ?? false,
-                      });
-                    }
                     handleClickOpenEdit();
                   }}
                 >
@@ -203,7 +189,6 @@ function AdminSzakTablazat() {
       </TableContainer>
 
       <Dialog
-        fullScreen={fullScreen}
         open={openEdit}
         onClose={handleCloseEdit}
         aria-labelledby="responsive-dialog-title"
@@ -217,10 +202,10 @@ function AdminSzakTablazat() {
             <AdminSzakModosit />
           </DialogContent>
           <DialogActions>
-            <Button type={"button"} autoFocus onClick={handleCloseEdit}>
+            <Button type="button" autoFocus onClick={handleCloseEdit}>
               Mégse
             </Button>
-            <Button type={"submit"} onClick={handleCloseEdit} autoFocus>
+            <Button type="submit" onClick={handleCloseEdit} autoFocus>
               Módosítás
             </Button>
           </DialogActions>

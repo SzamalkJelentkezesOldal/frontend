@@ -1,42 +1,43 @@
-import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { useFormContext } from "react-hook-form";
+import React, { useContext } from "react";
+import { Checkbox, FormControlLabel, TextField } from "@mui/material";
+import { AdminSzakContext } from "../../../context/admin/AdminSzakContext";
 
 function AdminSzakModosit() {
-  const { register, watch } = useFormContext();
+  const { register, errors, kivalasztottSzak, szakLista } = useContext(AdminSzakContext);
+  const kivalasztottSzakAdatok = szakLista.find(sz => sz.id === kivalasztottSzak);
 
   return (
     <>
       <TextField
         {...register("elnevezes")}
+        defaultValue={kivalasztottSzakAdatok?.elnevezes || ""}
         margin="dense"
         label="Elnevezés"
         fullWidth
-        variant="outlined"
-        value={watch("elnevezes") || ""}
+        variant="standard"
+        error={!!errors.elnevezes}
+        helperText={errors.elnevezes?.message}
       />
-      <FormControl margin="dense" fullWidth variant="outlined">
-        <InputLabel>Portfólió</InputLabel>
-        <Select
-          label="Portfólió"
-          {...register("portfolio")}
-          value={watch("portfolio") ? "1" : "0"}
-        >
-          <MenuItem value="1">Igen</MenuItem>
-          <MenuItem value="0">Nem</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl margin="dense" fullWidth variant="outlined">
-        <InputLabel>Tagozat</InputLabel>
-        <Select
-          label="Tagozat"
-          {...register("nappali")}
-          value={watch("nappali") ? "1" : "0"}
-        >
-          <MenuItem value="1">Nappali</MenuItem>
-          <MenuItem value="0">Esti</MenuItem>
-        </Select>
-      </FormControl>
+      <FormControlLabel
+        control={
+          <Checkbox
+            {...register("portfolio")}
+            defaultChecked={kivalasztottSzakAdatok?.portfolio === 1}
+          />
+        }
+        label="Portfólió"
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            {...register("nappali")}
+            defaultChecked={kivalasztottSzakAdatok?.nappali === 1}
+          />
+        }
+        label="Nappali"
+      />
     </>
   );
 }
- export default AdminSzakModosit;
+
+export default AdminSzakModosit;
