@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import BeiratkozasDokumentumok from "../components/beiratkozas/BeiratkozasDokumentumok";
 import BeiratkozasMain from "../components/beiratkozas/BeiratkozasMain";
 import BeiratkozasSorrend from "../components/beiratkozas/sorrend/BeiratkozasSorrend";
 import BeiratkozasSzemelyesAdatok from "../components/beiratkozas/BeiratkozasSzemelyesAdatok";
 import { BeiratkozasContext } from "../context/beiratkozas/BeiratkozasContext";
 import { Button } from "@mantine/core";
+import CustomSnackbar from "../components/CustomSnackbar";
 
 function Beiratkozas() {
   const {
@@ -12,7 +13,34 @@ function Beiratkozas() {
     allapotLoading,
     modositasraVar,
     modositasVegrehajtas,
+    modositasLoading,
   } = useContext(BeiratkozasContext);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSuccess, setSnackbarSuccess] = useState(true);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleModositasClick = async () => {
+    try {
+      const success = await modositasVegrehajtas();
+      if (success) {
+        setSnackbarMessage("Módosítás sikeresen végrehajtva!");
+        setSnackbarSuccess(true);
+      } else {
+        setSnackbarMessage("Sikertelen módosítás!");
+        setSnackbarSuccess(false);
+      }
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Hiba történt a módosítás során!");
+      setSnackbarSuccess(false);
+      setSnackbarOpen(true);
+    }
+  };
 
   if (allapotLoading) {
     return (
@@ -33,11 +61,12 @@ function Beiratkozas() {
                 Sikeres módosítás esetén kattints a gombra!
               </h3>
               <Button
-                onClick={() => modositasVegrehajtas()}
+                onClick={handleModositasClick}
                 className="bg-yellow-700 text-black hover:bg-yellow-800"
                 type="button"
+                disabled={modositasLoading}
               >
-                Módosítás kész
+                {modositasLoading ? "Folyamatban..." : "Módosítás kész"}
               </Button>
             </div>
           </div>
@@ -58,6 +87,13 @@ function Beiratkozas() {
           />
         </div>
       </div>
+
+      <CustomSnackbar
+        open={snackbarOpen}
+        handleClose={handleSnackbarClose}
+        severity={snackbarSuccess}
+        msg={snackbarMessage}
+      />
     </div>
   );
 }

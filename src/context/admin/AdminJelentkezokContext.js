@@ -149,10 +149,23 @@ export const AdminJelentkezokProvider = ({ children }) => {
   // Összegző email küldés az admin műveletéből
   const sendPortfolioOsszegzo = async (portfolioId) => {
     try {
-      const response = await myAxios.post(`/api/portfolio-osszegzo/${portfolioId}`);
+      const response = await myAxios.post(
+        `/api/portfolio-osszegzo/${portfolioId}`
+      );
       return response.data;
     } catch (error) {
       console.error("osszegzo email error:", error);
+    }
+  };
+
+  const jelentkezesekVeglegesitese = async (jelentkezo) => {
+    try {
+      const response = await myAxios.post(
+        `/api/jelentkezesek-veglegesitese/${jelentkezo}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("jelentkezesek veglegesitese error:", error);
     }
   };
 
@@ -443,6 +456,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
         modositasKerelemLoader,
         sendPortfolioOsszegzo,
         updatePortfolioStatus,
+        jelentkezesekVeglegesitese,
       }}
     >
       {children}

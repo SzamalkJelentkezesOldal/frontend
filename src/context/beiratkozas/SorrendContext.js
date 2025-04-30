@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { myAxios } from "../MyAxios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,10 +10,10 @@ export const SorrendContext = createContext();
 
 export const SorrendProvider = ({ children }) => {
   const [jelentkezesek, setJelentkezesek] = useState([]);
-  const [sorrendLoading, setSorrendLoading] = useState(true);
+  const [sorrendLoading, setSorrendLoading] = useState(false);
   const { stepperActive, setStepperActive } = useContext(BeiratkozasContext);
   const [isOpen, setIsOpen] = useState(false);
-  // const { user } = useAuthContext();
+  const { user } = useAuthContext();
 
   const sorrendSchema = z.object({});
 
@@ -56,7 +56,25 @@ export const SorrendProvider = ({ children }) => {
     }
   };
 
-  const sorrendLekerdez = async () => {};
+  const sorrendLekerdez = async () => {
+    if (!user || !user.email) return;
+
+    setSorrendLoading(true);
+    try {
+      const response = await myAxios.get(`/api/jelentkezesek/${user.email}`);
+      setJelentkezesek(response.data);
+    } catch (e) {
+      console.log("Hiba jelentkezések lekérése kor.", e);
+    } finally {
+      setSorrendLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user.email) {
+      sorrendLekerdez();
+    }
+  }, [user]);
 
   return (
     <SorrendContext.Provider

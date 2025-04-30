@@ -1,24 +1,22 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useContext } from "react";
+import { AuthContext } from "../AuthContext";
 
 export const BeiratkozasContext = createContext("");
 
 export const BeiratkozasProvider = ({ children }) => {
-  const [postStatus, setPostStatus] = useState(false);
-  const [stepperActive, setStepperActive] = useState(0);
-  const [allapotLoading, setAllapotLoading] = useState(false);
-  const [modositasraVar, setModositasraVar] = useState(false);
-  const [jelentkezoEmail, setJelentkezoEmail] = useState("");
-  const emailRef = useRef("");
-
-  const setEmail = (email) => {
-    emailRef.current = email;
-    setJelentkezoEmail(email);
-  };
-
-  function modositasVegrehajtas() {
-    console.log(emailRef.current);
-    setModositasraVar(false);
-  }
+  const {
+    postStatus,
+    stepperActive,
+    setStepperActive,
+    allapotLoading,
+    setAllapotLoading,
+    modositasraVar,
+    setModositasraVar,
+    jelentkezoEmail,
+    setJelentkezoEmail,
+    modositasVegrehajtas,
+    modositasLoading,
+  } = useContext(AuthContext);
 
   return (
     <BeiratkozasContext.Provider
@@ -30,8 +28,10 @@ export const BeiratkozasProvider = ({ children }) => {
         allapotLoading,
         modositasraVar,
         setModositasraVar,
-        setJelentkezoEmail: setEmail,
+        setJelentkezoEmail,
         modositasVegrehajtas,
+        jelentkezoEmail,
+        modositasLoading,
       }}
     >
       {children}

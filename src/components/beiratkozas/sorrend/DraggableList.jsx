@@ -12,7 +12,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { SorrendContext } from "../../../context/beiratkozas/SorrendContext";
 import {
   restrictToVerticalAxis,
@@ -20,9 +20,26 @@ import {
 } from "@dnd-kit/modifiers";
 
 const DraggableList = () => {
-  const { jelentkezesek, setJelentkezesek, sorrendLoading } =
+  const { jelentkezesek, setJelentkezesek, sorrendLoading, setSorrendLoading } =
     useContext(SorrendContext);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
+
+  // Reset loading state when data is available
+  useEffect(() => {
+    // If we have data but loading is still true, set it to false
+    if (jelentkezesek && jelentkezesek.length > 0 && sorrendLoading) {
+      setSorrendLoading(false);
+    }
+
+    // If we've been waiting too long (3 sec) with no data, stop showing loading
+    const timer = setTimeout(() => {
+      if (sorrendLoading) {
+        setSorrendLoading(false);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [jelentkezesek, sorrendLoading, setSorrendLoading]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -60,7 +77,7 @@ const DraggableList = () => {
             <div className="w-full flex justify-center">
               <div className="loader"></div>
             </div>
-          ) : (
+          ) : jelentkezesek.length > 0 ? (
             jelentkezesek.map((item, index) => (
               <SortableItem
                 key={item.szak_id}
@@ -70,6 +87,8 @@ const DraggableList = () => {
                 index={index}
               />
             ))
+          ) : (
+            <div className="text-center py-4">Nincsenek jelentkezések</div>
           )}
         </div>
       </SortableContext>

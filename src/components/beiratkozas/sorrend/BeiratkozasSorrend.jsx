@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import BeiratkozasContainer from "../BeiratkozasContainer";
 import DraggableList from "./DraggableList";
 import { SorrendContext } from "../../../context/beiratkozas/SorrendContext";
@@ -14,7 +14,15 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
     sorrendLekerdez,
     isOpen,
     setIsOpen,
+    jelentkezesek,
   } = useContext(SorrendContext);
+
+  // Fetch data when component mounts if needed
+  useEffect(() => {
+    if (!isDisabled && (!jelentkezesek || jelentkezesek.length === 0)) {
+      sorrendLekerdez();
+    }
+  }, [isDisabled, jelentkezesek, sorrendLekerdez]);
 
   return (
     <BeiratkozasContainer

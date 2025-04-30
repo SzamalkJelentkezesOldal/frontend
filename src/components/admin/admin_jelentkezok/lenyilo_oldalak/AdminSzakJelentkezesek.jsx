@@ -1,9 +1,12 @@
 import { Button, Select, Table } from "@mantine/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AdminSzakJelentkezesekSorok from "./AdminSzakJelentkezesekSorok";
+import { AdminJelentkezokContext } from "../../../../context/admin/AdminJelentkezokContext";
+import InfoBox from "../../../InfoBox";
 
 function AdminSzakJelentkezesek({ adat }) {
   const [selected, setSelected] = useState(null);
+  const { jelentkezesekVeglegesitese } = useContext(AdminJelentkezokContext);
 
   const szakStatuszStilus = (allapot, allapotszotar) => {
     if (allapot === 1) {
@@ -26,6 +29,11 @@ function AdminSzakJelentkezesek({ adat }) {
     }
   };
 
+  const vanEldontesreVaro = () => {
+    if (!adat || adat.length === 0) return false;
+    return adat.some((jelentkezes) => jelentkezes.allapot === 5);
+  };
+
   const rows = adat.map((jelentkezes) => (
     <AdminSzakJelentkezesekSorok
       key={jelentkezes.id}
@@ -35,19 +43,34 @@ function AdminSzakJelentkezesek({ adat }) {
   ));
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Sorrend</th>
-          <th>Tagozat</th>
-          <th>Szak</th>
-          <th>Státusz</th>
-          <th>Jelentkezés módosítása</th>
-          <th>Művelet</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </Table>
+    <div className="flex flex-col gap-5">
+      <div>
+        <InfoBox>
+          A "Jelentkezések véglegesítése" gomb megnyomásával a jelentkezés nem
+          lesz többet módosítható és a jelentkezés eredményéről egy értesítő
+          email kerül kiküldésre.
+        </InfoBox>
+        <Button
+          onClick={() => jelentkezesekVeglegesitese(adat.jelentkezo_id)}
+          disabled={vanEldontesreVaro()}
+        >
+          Jelentkezések véglegesítése
+        </Button>
+      </div>
+      <Table>
+        <thead>
+          <tr>
+            <th>Sorrend</th>
+            <th>Tagozat</th>
+            <th>Szak</th>
+            <th>Státusz</th>
+            <th>Jelentkezés módosítása</th>
+            <th>Művelet</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
+    </div>
   );
 }
 

@@ -8,25 +8,25 @@ import {
 import { myAxios } from "./MyAxios";
 import { useNavigate } from "react-router-dom";
 import { SorrendContext } from "./beiratkozas/SorrendContext";
-import { BeiratkozasContext } from "./beiratkozas/BeiratkozasContext";
 
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
-  const { setJelentkezesek, setSorrendLoading } = useContext(SorrendContext);
-  const {
-    setStepperActive,
-    setAllapotLoading,
-    setModositasraVar,
-    setJelentkezoEmail,
-  } = useContext(BeiratkozasContext);
+  const sorrendContext = useContext(SorrendContext);
+
   const [user, setUser] = useState(null);
   const [jelentkezoID, setJelentkezoID] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMaster, setIsMaster] = useState(false);
+  const [modositasLoading, setModositasLoading] = useState(false);
+
+  const [stepperActive, setStepperActive] = useState(0);
+  const [allapotLoading, setAllapotLoading] = useState(false);
+  const [modositasraVar, setModositasraVar] = useState(false);
+  const [jelentkezoEmail, setJelentkezoEmail] = useState("");
 
   const getUser = useCallback(async () => {
     setIsLoading(true);
@@ -35,6 +35,9 @@ export const AuthProvider = ({ children }) => {
       setIsAdmin(data.role > 0);
       setIsMaster(data.role > 1);
       setUser(data);
+      if (data && data.email) {
+        setJelentkezoEmail(data.email);
+      }
       return data;
     } catch (error) {
       console.warn("Nem vagy belépve:", error);
@@ -82,6 +85,23 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const modositasVegrehajtas = async () => {
+    const emailToUse = jelentkezoEmail || (user ? user.email : "");
+    console.log("AuthContext - emailToUse:", emailToUse);
+
+    setModositasLoading(true);
+    try {
+      await myAxios.patch(`/api/modositas-vegrehajtas/${emailToUse}`);
+      setModositasraVar(false);
+      return true;
+    } catch (e) {
+      console.log("Módosítás sikertelen", e);
+      return false;
+    } finally {
+      setModositasLoading(false);
+    }
+  };
+
   useEffect(() => {
     const initializeUser = async () => {
       const data = await getUser();
@@ -125,16 +145,18 @@ export const AuthProvider = ({ children }) => {
           setAllapotLoading(false);
         }
 
-        try {
-          setSorrendLoading(true);
-          const jelentkezesLista = await myAxios.get(
-            `/api/jelentkezesek/${data.email}`
-          );
-          setJelentkezesek(jelentkezesLista.data);
-        } catch (e) {
-          console.log("Hiba jelentkezések lekérése kor.", e);
-        } finally {
-          setSorrendLoading(false);
+        if (sorrendContext) {
+          try {
+            sorrendContext.setSorrendLoading(true);
+            const jelentkezesLista = await myAxios.get(
+              `/api/jelentkezesek/${data.email}`
+            );
+            sorrendContext.setJelentkezesek(jelentkezesLista.data);
+          } catch (e) {
+            console.log("Hiba jelentkezések lekérése kor.", e);
+          } finally {
+            sorrendContext.setSorrendLoading(false);
+          }
         }
       }
       console.log(data);
@@ -143,7 +165,7 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       initializeUser();
     }
-  }, [user, getUser, navigate, setJelentkezesek]);
+  }, [user, getUser, navigate, sorrendContext]);
 
   return (
     <AuthContext.Provider
@@ -158,6 +180,17 @@ export const AuthProvider = ({ children }) => {
         isMaster,
         jelentkezoID,
         csrf,
+        // Beiratkozas-related values
+        stepperActive,
+        setStepperActive,
+        allapotLoading,
+        setAllapotLoading,
+        modositasraVar,
+        setModositasraVar,
+        jelentkezoEmail,
+        setJelentkezoEmail,
+        modositasVegrehajtas,
+        modositasLoading,
       }}
     >
       {children}
