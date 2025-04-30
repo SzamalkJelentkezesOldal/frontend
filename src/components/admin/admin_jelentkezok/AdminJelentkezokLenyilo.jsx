@@ -9,16 +9,22 @@ import AdminJelentkezoTorzsadatok from "./lenyilo_oldalak/AdminJelentkezoTorzsad
 import AdminJelentkezoDokumentumok from "./lenyilo_oldalak/AdminJelentkezoDokumentumok";
 import AdminJelentkezoIdovonal from "./lenyilo_oldalak/AdminJelentkezoIdovonal";
 import AdminJelentkezokPortfolio from "./lenyilo_oldalak/AdminJelentkezokPortfolio";
+import { useState } from "react";
 
 function AdminJelentkezokLenyilo({ adatok }) {
+  const [portfoliosData, setPortfoliosData] = useState(adatok.portfoliok || []);
+
+  const regisztralt = Boolean(adatok.beregisztralt);
+
   const minAllapot =
     adatok?.jelentkezesek && adatok?.jelentkezesek?.length > 0
       ? Math.min(...adatok.jelentkezesek.map((j) => j.allapot))
       : 0;
 
-  const disableJelentkezesekTab = adatok?.portfoliok?.some(
+  const disableJelentkezesekTab = portfoliosData.some(
     (portfolio) => portfolio.allapot === "Eldöntésre vár" && !portfolio.ertesito
   );
+
   return (
     <Tabs
       color="cyan"
@@ -90,7 +96,11 @@ function AdminJelentkezokLenyilo({ adatok }) {
       {adatok.portfoliok?.length > 0 ? (
         <Tabs.Panel value="portfolio">
           <div className="p-4">
-            <AdminJelentkezokPortfolio adat={adatok?.portfoliok} />
+            <AdminJelentkezokPortfolio
+              adat={adatok?.portfoliok}
+              setPortfoliosData={setPortfoliosData}
+              regisztralt={regisztralt}
+            />
           </div>
         </Tabs.Panel>
       ) : null}

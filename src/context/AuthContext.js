@@ -16,8 +16,12 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
   const { setJelentkezesek, setSorrendLoading } = useContext(SorrendContext);
-  const { setStepperActive, setAllapotLoading } =
-    useContext(BeiratkozasContext);
+  const {
+    setStepperActive,
+    setAllapotLoading,
+    setModositasraVar,
+    setJelentkezoEmail,
+  } = useContext(BeiratkozasContext);
   const [user, setUser] = useState(null);
   const [jelentkezoID, setJelentkezoID] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,11 +109,15 @@ export const AuthProvider = ({ children }) => {
             setStepperActive(2);
           } else if (
             jelentkezesAllapot?.data?.elnevezes === "Eldöntésre vár" ||
-            jelentkezesAllapot?.data?.elnevezes === "Módósításra vár" ||
+            jelentkezesAllapot?.data?.elnevezes === "Módosításra vár" ||
             jelentkezesAllapot?.data?.elnevezes === "Elutasítva" ||
             jelentkezesAllapot?.data?.elnevezes === "Elfogadva"
           ) {
             setStepperActive(3);
+            if (jelentkezesAllapot?.data?.elnevezes === "Módosításra vár") {
+              setModositasraVar(true);
+              setJelentkezoEmail(jelentkezesAllapot?.data?.email);
+            }
           }
         } catch (e) {
           console.log("állapot lekérés hiba", e);

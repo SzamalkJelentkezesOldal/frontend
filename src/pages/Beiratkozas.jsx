@@ -4,9 +4,15 @@ import BeiratkozasMain from "../components/beiratkozas/BeiratkozasMain";
 import BeiratkozasSorrend from "../components/beiratkozas/sorrend/BeiratkozasSorrend";
 import BeiratkozasSzemelyesAdatok from "../components/beiratkozas/BeiratkozasSzemelyesAdatok";
 import { BeiratkozasContext } from "../context/beiratkozas/BeiratkozasContext";
+import { Button } from "@mantine/core";
 
 function Beiratkozas() {
-  const { stepperActive, allapotLoading } = useContext(BeiratkozasContext);
+  const {
+    stepperActive,
+    allapotLoading,
+    modositasraVar,
+    modositasVegrehajtas,
+  } = useContext(BeiratkozasContext);
 
   if (allapotLoading) {
     return (
@@ -20,6 +26,22 @@ function Beiratkozas() {
     <div className=" min-h-[100vh] screen w-screen">
       <BeiratkozasMain currentActive={stepperActive} />
       <div className="lg:container bg-gray-50 min-h-[100vh] border-x-2 border-gray-300/50 shadow-md pb-10 !max-w-[1000px]">
+        {modositasraVar && (
+          <div className=" pt-36 xsm:pt-[7.5rem]">
+            <div className="flex justify-between items-center p-5 bg-yellow-400/90">
+              <h3 className="text-lg tracking-wide">
+                Sikeres módosítás esetén kattints a gombra!
+              </h3>
+              <Button
+                onClick={() => modositasVegrehajtas()}
+                className="bg-yellow-700 text-black hover:bg-yellow-800"
+                type="button"
+              >
+                Módosítás kész
+              </Button>
+            </div>
+          </div>
+        )}
         <div>
           <BeiratkozasSzemelyesAdatok isCompleted={stepperActive > 0} />
         </div>

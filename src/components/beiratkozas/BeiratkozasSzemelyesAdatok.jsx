@@ -3,6 +3,7 @@ import BeiratkozasContainer from "./BeiratkozasContainer";
 import { SzemelyesAdatokContext } from "../../context/beiratkozas/SzemelyesAdatokContext";
 import SubmitButton from "../SubmitButton";
 import InputText from "../InputText";
+import { BeiratkozasContext } from "../../context/beiratkozas/BeiratkozasContext";
 
 function BeiratkozasSzemelyesAdatok({ isCompleted }) {
   const {
@@ -19,13 +20,15 @@ function BeiratkozasSzemelyesAdatok({ isCompleted }) {
     setIsOpen,
   } = useContext(SzemelyesAdatokContext);
 
+  const { modositasraVar } = useContext(BeiratkozasContext);
+
   const inputResponsiveness =
     "min-w-[250px] xsm:min-w-[390px] sm:min-w-[430px] md:min-w-[450px] md:max-w-[450px] lg:min-w-[380px] lg:max-w-[380px] xl:max-w-[300px]";
 
   return (
     <BeiratkozasContainer
       title={"Személyes Adatok"}
-      first={true}
+      first={modositasraVar ? false : true}
       isOpen={isOpen}
       onSubmit={handleSubmit(handleSzemelyesAdatok)}
       isCompleted={isCompleted}
