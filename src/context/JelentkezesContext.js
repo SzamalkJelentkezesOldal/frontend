@@ -13,7 +13,7 @@ export const JelentkezesProvider = ({ children }) => {
     email: z.string().email("Érvénytelen e-mail cím!"),
     nev: z.string().min(1, "A név megadása kötelező!"),
     tel: z
-      .string()
+      .string()         
       .length(11, "A telefonszámnak 11 karakter hosszúnak kell lennie!"),
     szakok: z
       .array(z.number())
