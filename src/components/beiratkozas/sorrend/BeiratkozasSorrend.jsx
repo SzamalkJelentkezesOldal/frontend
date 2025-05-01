@@ -5,6 +5,8 @@ import { SorrendContext } from "../../../context/beiratkozas/SorrendContext";
 import SubmitButton from "../../SubmitButton";
 import InfoBox from "../../InfoBox";
 import SubmitSpinner from "../../icons/SubmitSpinner";
+import { BeiratkozasContext } from "../../../context/beiratkozas/BeiratkozasContext";
+import { AuthContext } from "../../../context/AuthContext";
 
 function BeiratkozasSorrend({ isDisabled, isCompleted }) {
   const {
@@ -15,14 +17,33 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
     isOpen,
     setIsOpen,
     jelentkezesek,
+    submitStatus,
+    sorrendLoading,
   } = useContext(SorrendContext);
 
-  // Fetch data when component mounts if needed
+  const { user } = useContext(AuthContext);
+  const { stepperActive } = useContext(BeiratkozasContext);
+
   useEffect(() => {
-    if (!isDisabled && (!jelentkezesek || jelentkezesek.length === 0)) {
-      sorrendLekerdez();
+    if (user && user.email) {
+      sorrendLekerdez(true);
+
+      const loadTimer = setTimeout(() => {
+        if (user && user.email) {
+          sorrendLekerdez(true);
+        }
+      }, 1000);
+
+      return () => clearTimeout(loadTimer);
     }
-  }, [isDisabled, jelentkezesek, sorrendLekerdez]);
+  }, [sorrendLekerdez, user]);
+
+  const isButtonDisabled =
+    isSubmitting ||
+    submitStatus.loading ||
+    sorrendLoading ||
+    !jelentkezesek ||
+    jelentkezesek.length === 0;
 
   return (
     <BeiratkozasContainer
@@ -31,7 +52,7 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
       isDisabled={isDisabled}
       onSubmit={handleSubmit(handleSorrend)}
       isCompleted={isCompleted}
-      handleEdit={sorrendLekerdez}
+      handleEdit={() => sorrendLekerdez(true)}
       setIsOpen={setIsOpen}
     >
       <div className="container md:max-w-[700px] pt-5">
@@ -39,22 +60,28 @@ function BeiratkozasSorrend({ isDisabled, isCompleted }) {
           Módosítsd a szakok sorrendjét saját prefeneciád szerint.
         </InfoBox>
         <DraggableList />
+
+        {submitStatus.error && (
+          <div className="text-red-600 mt-4 text-center">
+            Hiba történt: {submitStatus.error}
+          </div>
+        )}
       </div>
       {isCompleted ? (
         <SubmitButton
           text="Módosítás"
-          isSubmitting={isSubmitting}
+          isSubmitting={isButtonDisabled}
           className="!mb-5 !mt-10 md:max-w-xs lg:mt-8"
         />
       ) : (
         <button
           className="min-w-36 p-3 text-gray-50/90 self-center mt-10 w-1/4 bg-gradient-to-br from-szSecondary-100/80 via-szSecondary-100  to-szSecondary-200 rounded-lg px-5 shadow-lg hover:text-white hover:bg-red-800 hover:shadow-xl duration-200 transition-all font-semibold tracking-widest flex items-center justify-center"
           type="submit"
-          disabled={isSubmitting}
+          disabled={isButtonDisabled}
         >
-          {isSubmitting ? (
+          {submitStatus.loading ? (
             <>
-              <SubmitSpinner /> Beiratkozás
+              <SubmitSpinner /> Folyamatban...
             </>
           ) : (
             "Beiratkozás"

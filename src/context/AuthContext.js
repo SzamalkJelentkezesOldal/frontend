@@ -7,14 +7,12 @@ import {
 } from "react";
 import { myAxios } from "./MyAxios";
 import { useNavigate } from "react-router-dom";
-import { SorrendContext } from "./beiratkozas/SorrendContext";
 
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
-  const sorrendContext = useContext(SorrendContext);
 
   const [user, setUser] = useState(null);
   const [jelentkezoID, setJelentkezoID] = useState(null);
@@ -145,17 +143,14 @@ export const AuthProvider = ({ children }) => {
           setAllapotLoading(false);
         }
 
-        if (sorrendContext) {
+        if (data) {
           try {
-            sorrendContext.setSorrendLoading(true);
             const jelentkezesLista = await myAxios.get(
               `/api/jelentkezesek/${data.email}`
             );
-            sorrendContext.setJelentkezesek(jelentkezesLista.data);
+            // Do something with jelentkezesLista if needed for future functionality
           } catch (e) {
             console.log("Hiba jelentkezések lekérése kor.", e);
-          } finally {
-            sorrendContext.setSorrendLoading(false);
           }
         }
       }
@@ -165,7 +160,7 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       initializeUser();
     }
-  }, [user, getUser, navigate, sorrendContext]);
+  }, [user, getUser, navigate]);
 
   return (
     <AuthContext.Provider

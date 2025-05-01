@@ -21,15 +21,15 @@ import { AdminSzakProvider } from "./admin/AdminSzakContext";
 export const CoreProviders = ({ children }) => {
   return (
     <ApiProvider>
-      <SorrendProvider>
-        <AuthProvider>
-          <JelentkezesProvider>
-            <RegisztralasProvider>
-              <BelepesProvider>{children}</BelepesProvider>
-            </RegisztralasProvider>
-          </JelentkezesProvider>
-        </AuthProvider>
-      </SorrendProvider>
+      <AuthProvider>
+        <JelentkezesProvider>
+          <RegisztralasProvider>
+            <BelepesProvider>
+              <SorrendProvider>{children}</SorrendProvider>
+            </BelepesProvider>
+          </RegisztralasProvider>
+        </JelentkezesProvider>
+      </AuthProvider>
     </ApiProvider>
   );
 };
