@@ -7,22 +7,24 @@ import {
 } from "react";
 import { myAxios } from "./MyAxios";
 import { useNavigate } from "react-router-dom";
-import { SorrendContext } from "./beiratkozas/SorrendContext";
-import { BeiratkozasContext } from "./beiratkozas/BeiratkozasContext";
 
 export const AuthContext = createContext("");
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const csrf = () => myAxios.get("/sanctum/csrf-cookie");
-  const { setJelentkezesek, setSorrendLoading } = useContext(SorrendContext);
-  const { setStepperActive, setAllapotLoading } =
-    useContext(BeiratkozasContext);
+
   const [user, setUser] = useState(null);
   const [jelentkezoID, setJelentkezoID] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMaster, setIsMaster] = useState(false);
+  const [modositasLoading, setModositasLoading] = useState(false);
+
+  const [stepperActive, setStepperActive] = useState(0);
+  const [allapotLoading, setAllapotLoading] = useState(false);
+  const [modositasraVar, setModositasraVar] = useState(false);
+  const [jelentkezoEmail, setJelentkezoEmail] = useState("");
 
   const getUser = useCallback(async () => {
     setIsLoading(true);
@@ -31,6 +33,9 @@ export const AuthProvider = ({ children }) => {
       setIsAdmin(data.role > 0);
       setIsMaster(data.role > 1);
       setUser(data);
+      if (data && data.email) {
+        setJelentkezoEmail(data.email);
+      }
       return data;
     } catch (error) {
       console.warn("Nem vagy belépve:", error);
@@ -78,6 +83,23 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const modositasVegrehajtas = async () => {
+    const emailToUse = jelentkezoEmail || (user ? user.email : "");
+    console.log("AuthContext - emailToUse:", emailToUse);
+
+    setModositasLoading(true);
+    try {
+      await myAxios.patch(`/api/modositas-vegrehajtas/${emailToUse}`);
+      setModositasraVar(false);
+      return true;
+    } catch (e) {
+      console.log("Módosítás sikertelen", e);
+      return false;
+    } finally {
+      setModositasLoading(false);
+    }
+  };
+
   useEffect(() => {
     const initializeUser = async () => {
       const data = await getUser();
@@ -105,11 +127,15 @@ export const AuthProvider = ({ children }) => {
             setStepperActive(2);
           } else if (
             jelentkezesAllapot?.data?.elnevezes === "Eldöntésre vár" ||
-            jelentkezesAllapot?.data?.elnevezes === "Módósításra vár" ||
+            jelentkezesAllapot?.data?.elnevezes === "Módosításra vár" ||
             jelentkezesAllapot?.data?.elnevezes === "Elutasítva" ||
             jelentkezesAllapot?.data?.elnevezes === "Elfogadva"
           ) {
             setStepperActive(3);
+            if (jelentkezesAllapot?.data?.elnevezes === "Módosításra vár") {
+              setModositasraVar(true);
+              setJelentkezoEmail(jelentkezesAllapot?.data?.email);
+            }
           }
         } catch (e) {
           console.log("állapot lekérés hiba", e);
@@ -117,16 +143,15 @@ export const AuthProvider = ({ children }) => {
           setAllapotLoading(false);
         }
 
-        try {
-          setSorrendLoading(true);
-          const jelentkezesLista = await myAxios.get(
-            `/api/jelentkezesek/${data.email}`
-          );
-          setJelentkezesek(jelentkezesLista.data);
-        } catch (e) {
-          console.log("Hiba jelentkezések lekérése kor.", e);
-        } finally {
-          setSorrendLoading(false);
+        if (data) {
+          try {
+            const jelentkezesLista = await myAxios.get(
+              `/api/jelentkezesek/${data.email}`
+            );
+            // Do something with jelentkezesLista if needed for future functionality
+          } catch (e) {
+            console.log("Hiba jelentkezések lekérése kor.", e);
+          }
         }
       }
       console.log(data);
@@ -135,7 +160,7 @@ export const AuthProvider = ({ children }) => {
     if (!user) {
       initializeUser();
     }
-  }, [user, getUser, navigate, setJelentkezesek]);
+  }, [user, getUser, navigate]);
 
   return (
     <AuthContext.Provider
@@ -150,6 +175,17 @@ export const AuthProvider = ({ children }) => {
         isMaster,
         jelentkezoID,
         csrf,
+        // Beiratkozas-related values
+        stepperActive,
+        setStepperActive,
+        allapotLoading,
+        setAllapotLoading,
+        modositasraVar,
+        setModositasraVar,
+        jelentkezoEmail,
+        setJelentkezoEmail,
+        modositasVegrehajtas,
+        modositasLoading,
       }}
     >
       {children}

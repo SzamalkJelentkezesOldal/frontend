@@ -11,6 +11,7 @@ import {
   Button,
   Menu,
 } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { IconDownload } from "@tabler/icons-react";
 import AdminJelentkezokLenyilo from "./AdminJelentkezokLenyilo";
 import EditIcon from "../../icons/EditIcon";
@@ -207,6 +208,7 @@ const AdminJelentkezokTabla = () => {
           },
         }}
       >
+        <Notifications position="bottom-right" zIndex={1000} />
         <MantineReactTable {...tableProps} />
         {selectedRowData && (
           <AdminJelentkezoModositasKerelem

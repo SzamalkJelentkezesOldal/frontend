@@ -3,6 +3,7 @@ import ArrowDownIcon from "../icons/ArrowDownIcon";
 import BlockIcon from "../icons/BlockIcon";
 import CheckIcon from "../icons/CheckIcon";
 import EditIcon from "../icons/EditIcon";
+import { useEffect } from "react";
 
 function BeiratkozasContainer({
   children,

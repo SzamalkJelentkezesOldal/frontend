@@ -8,7 +8,7 @@ import QuestionIcon from "../../components/icons/QuestionIcon";
 import InProgressIcon from "../../components/icons/InProgressIcon";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import moment from "moment";
-
+import LezartIcon from "../../components/icons/LezartIcon";
 export const AdminJelentkezokContext = createContext("");
 
 export const AdminJelentkezokProvider = ({ children }) => {
@@ -30,13 +30,23 @@ export const AdminJelentkezokProvider = ({ children }) => {
     {
       accessorKey: "status",
       header: "Státusz",
-      Cell: ({ cell }) => {
+      Cell: ({ cell, row }) => {
         const status = cell.getValue();
+        const jelentkezesek = row.original.jelentkezesek || [];
+        const isLezart =
+          jelentkezesek.length > 0 && jelentkezesek.every((j) => j.lezart);
+
         let statusClass = "";
         let IconComponent = null;
         let fill = "";
+        let displayedStatus = status;
 
-        if (status === "Elfogadva") {
+        if (isLezart) {
+          statusClass = "border-[1px] border-purple-600 text-purple-600";
+          IconComponent = LezartIcon;
+          fill = "#8e24aa";
+          displayedStatus = "Lezárt";
+        } else if (status === "Elfogadva") {
           statusClass = "border-[1px] border-green-600 text-green-600";
           IconComponent = CheckIcon;
           fill = "#43a047";
@@ -67,7 +77,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
             className={`flex items-center gap-1 px-2 py-1 text-sm rounded-2xl w-max  ${statusClass}`}
           >
             {IconComponent && <IconComponent size={"16"} fill={fill} />}
-            {status}
+            {displayedStatus}
           </span>
         );
       },
@@ -149,10 +159,24 @@ export const AdminJelentkezokProvider = ({ children }) => {
   // Összegző email küldés az admin műveletéből
   const sendPortfolioOsszegzo = async (portfolioId) => {
     try {
-      const response = await myAxios.post(`/api/portfolio-osszegzo/${portfolioId}`);
+      const response = await myAxios.post(
+        `/api/portfolio-osszegzo/${portfolioId}`
+      );
       return response.data;
     } catch (error) {
       console.error("osszegzo email error:", error);
+    }
+  };
+
+  const jelentkezesekVeglegesitese = async (jelentkezo) => {
+    try {
+      const response = await myAxios.patch(
+        `/api/jelentkezes-lezaras/${jelentkezo}`
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("jelentkezesek veglegesitese error:", error);
+      return { success: false, error };
     }
   };
 
@@ -292,8 +316,11 @@ export const AdminJelentkezokProvider = ({ children }) => {
         `/api/jelentkezes-eldontese/${adat.jelentkezes}/${adat.allapot}`
       );
       console.log("jelentkezés eldöntés elküldve:", response.data.data);
+
+      return response.data.data;
     } catch (error) {
       console.error("Hiba a jelentkezés eldöntésének elküldésekor:", error);
+      return null;
     } finally {
       setJelentkezesEldontesLoader(false);
     }
@@ -443,6 +470,7 @@ export const AdminJelentkezokProvider = ({ children }) => {
         modositasKerelemLoader,
         sendPortfolioOsszegzo,
         updatePortfolioStatus,
+        jelentkezesekVeglegesitese,
       }}
     >
       {children}

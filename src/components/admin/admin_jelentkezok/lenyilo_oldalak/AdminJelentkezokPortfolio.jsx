@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import EditIcon from "../../../icons/EditIcon";
 import SubmitSpinner from "../../../icons/SubmitSpinner"; // Győződj meg róla, hogy létezik
 
-function AdminJelentkezokPortfolio({ adat, jelentkezoId }) {
+function AdminJelentkezokPortfolio({ adat, setPortfoliosData, regisztralt }) {
   const { updatePortfolioStatus, sendPortfolioOsszegzo } = useContext(
     AdminJelentkezokContext
   );
@@ -44,8 +44,11 @@ function AdminJelentkezokPortfolio({ adat, jelentkezoId }) {
 
   const [loadingSummary, setLoadingSummary] = useState(false);
 
+  const disableEditing = regisztralt;
+
   // PATCH API hívás véglegesítéskor, majd a local state frissítése
   const handleFinalization = async (portfolioId) => {
+    if (disableEditing) return;
     const value = selectValues[portfolioId];
     if (!value) {
       console.error("Nincs érték kiválasztva a portfólióhoz: " + portfolioId);
@@ -179,7 +182,7 @@ function AdminJelentkezokPortfolio({ adat, jelentkezoId }) {
           <Button
             onClick={() => toggleEdit(portfolio.id)}
             size="xs"
-            disabled={loadingStates[portfolio.id]}
+            disabled={loadingStates[portfolio.id] || disableEditing}
           >
             {loadingStates[portfolio.id] ? (
               <SubmitSpinner size="xs" />
@@ -213,6 +216,9 @@ function AdminJelentkezokPortfolio({ adat, jelentkezoId }) {
                   prev.map((pf) =>
                     pf.id === portfolioId ? { ...pf, ertesito: true } : pf
                   )
+                );
+                setPortfoliosData((prev) =>
+                  prev.map((pf) => ({ ...pf, ertesito: true }))
                 );
               })
               .catch((error) => {
