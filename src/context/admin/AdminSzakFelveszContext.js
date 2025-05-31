@@ -1,13 +1,14 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ApiContext } from "../ApiContext"; // 💡 Hozzáadás!
 import { myAxios } from "../MyAxios";
 
 export const AdminSzakFelveszContext = createContext("");
 
 export const AdminSzakFelveszProvider = ({ children }) => {
-  const [szakLista, setSzakLista] = useState([]);
+  const { refreshSzaklista } = useContext(ApiContext); // 🧠 API context-ből frissítő függvény
 
   const felveszSchema = z.object({
     elnevezes: z.string().min(3, "Az elnevezés legalább 3 karakter hosszú legyen!"),
@@ -27,26 +28,13 @@ export const AdminSzakFelveszProvider = ({ children }) => {
     getValues,
   } = useForm({
     resolver: zodResolver(felveszSchema),
-    defaultValues: { elnevezes: "", portfolio: false,  nappali: false },
+    defaultValues: { elnevezes: "", portfolio: false, nappali: false },
   });
-
-  useEffect(() => {
-    const fetchSzakok = async () => {
-      try {
-        const response = await myAxios.get("/api/szakok"); 
-        setSzakLista(response.data);
-      } catch (error) {
-        console.error("Hiba a szakok lekérésekor:", error);
-      }
-    };
-
-    fetchSzakok();
-  }, []);
 
   const postSzak = async (data) => {
     try {
-      const response = await myAxios.post("/api/uj-szak", data);
-      setSzakLista((prev) => [...prev, response.data]); 
+      await myAxios.post("/api/uj-szak", data);
+      await refreshSzaklista(); // 🆕 Lista újratöltése sikeres POST után
       return true;
     } catch (e) {
       return false;
@@ -58,14 +46,12 @@ export const AdminSzakFelveszProvider = ({ children }) => {
     const szakAdatok = {
       elnevezes: adatok[0],
       portfolio: adatok[1] === "Igen",
-      nappali: adatok[2] === "Igen", 
+      nappali: adatok[2] === "Igen",
     };
-  
-  
+
     const result = await postSzak(szakAdatok);
     if (result) {
-      reset(); 
-    } else {
+      reset();
     }
   };
 
@@ -77,8 +63,6 @@ export const AdminSzakFelveszProvider = ({ children }) => {
         errors,
         isSubmitting,
         szakFelvesz,
-        szakLista,
-        setSzakLista,
       }}
     >
       {children}

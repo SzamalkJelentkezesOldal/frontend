@@ -37,9 +37,11 @@ export const ApiProvider = ({ children }) => {
     getAdat("/api/ugyintezok", setUgyintezoLista);
   }, []);
 
+  const refreshSzaklista = () => getAdat("/api/szakok", setSzakLista);
+
   return (
     <ApiContext.Provider
-      value={{ szakLista, postAdat, ugyintezoLista, setUgyintezoLista }}
+      value={{ szakLista, postAdat, ugyintezoLista, setUgyintezoLista,refreshSzaklista }}
     >
       {children}
     </ApiContext.Provider>
