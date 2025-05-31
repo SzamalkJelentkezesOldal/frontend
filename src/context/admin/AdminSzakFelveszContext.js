@@ -2,13 +2,13 @@ import { createContext, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ApiContext } from "../ApiContext"; // 💡 Hozzáadás!
+import { ApiContext } from "../ApiContext"; 
 import { myAxios } from "../MyAxios";
 
 export const AdminSzakFelveszContext = createContext("");
 
 export const AdminSzakFelveszProvider = ({ children }) => {
-  const { refreshSzaklista } = useContext(ApiContext); // 🧠 API context-ből frissítő függvény
+  const { refreshSzaklista } = useContext(ApiContext); 
 
   const felveszSchema = z.object({
     elnevezes: z.string().min(3, "Az elnevezés legalább 3 karakter hosszú legyen!"),
@@ -34,7 +34,7 @@ export const AdminSzakFelveszProvider = ({ children }) => {
   const postSzak = async (data) => {
     try {
       await myAxios.post("/api/uj-szak", data);
-      await refreshSzaklista(); // 🆕 Lista újratöltése sikeres POST után
+      await refreshSzaklista(); 
       return true;
     } catch (e) {
       return false;
