@@ -11,7 +11,7 @@ export const AdminSzakContext = createContext("");
 
 export const AdminSzakProvider = ({ children }) => {
   const [editLoading, setEditLoading] = useState(false);
-  const { szakLista, setSzakLista } = useContext(ApiContext);
+  const { szakLista, setSzakLista, refreshSzaklista } = useContext(ApiContext);
   const [kivalasztottSzak, setKivalasztottSzak] = useState();
 
   const [openEdit, setOpenEdit] = useState(false);
@@ -74,6 +74,7 @@ export const AdminSzakProvider = ({ children }) => {
     try {
       setEditLoading(true);
       await myAxios.patch(`/api/modosit-szak/${kivalasztottSzak}`, ujSzak);
+      await refreshSzaklista();
       setSzakLista(prev => prev.map(sz => sz.id === kivalasztottSzak ? { ...sz, ...ujSzak } : sz));
       setSzurtSzakLista(prev => prev.map(sz => sz.id === kivalasztottSzak ? { ...sz, ...ujSzak } : sz));
     } catch (err) {
@@ -87,8 +88,10 @@ export const AdminSzakProvider = ({ children }) => {
   const torlesSzak = async id => {
     try {
       await myAxios.delete(`/api/delete-szak/${id}`);
+      await refreshSzaklista();
       setSzakLista(prev => prev.filter(sz => sz.id !== id));
       setSzurtSzakLista(prev => prev.filter(sz => sz.id !== id));
+      
     } catch (err) {
       console.error(err);
     }
