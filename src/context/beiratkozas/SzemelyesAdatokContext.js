@@ -78,7 +78,7 @@ export const SzemelyesAdatokProvider = ({ children }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty, dirtyFields },
+    formState: { errors, isSubmitting, isDirty },
     getValues,
     watch,
     reset,

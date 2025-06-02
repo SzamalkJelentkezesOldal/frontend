@@ -15,7 +15,6 @@ import { Notifications } from "@mantine/notifications";
 import { IconDownload } from "@tabler/icons-react";
 import AdminJelentkezokLenyilo from "./AdminJelentkezokLenyilo";
 import EditIcon from "../../icons/EditIcon";
-import { EditNotificationsOutlined } from "@mui/icons-material";
 import AdminJelentkezoModositasKerelem from "./AdminJelentkezoModositasKerelem";
 
 const AdminJelentkezokTabla = () => {
@@ -98,9 +97,6 @@ const AdminJelentkezokTabla = () => {
         >
           {console.log(row.original)}
           Módosítás kérelem
-        </Menu.Item>
-        <Menu.Item icon={<EditNotificationsOutlined />}>
-          Emlékeztető küldés
         </Menu.Item>
       </>
     ),
